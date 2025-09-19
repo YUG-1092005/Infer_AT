@@ -5,6 +5,54 @@ Our solution leverages **AI-powered OCR, document understanding, and validation 
 
 ---
 
+## 📝 Problem Statement
+
+**Problem Statement ID:** 25080  
+**Title:** Document Overload at Kochi Metro Rail Limited (KMRL) – An Automated Solution  
+**Organization:** Government of Kerala  
+**Department:** Kochi Metro Rail Limited (KMRL)  
+**Category:** Software  
+**Theme:** Smart Automation  
+
+### 📖 Description
+
+Since its first commercial run in 2017, **KMRL** has grown into a complex, multidisciplinary enterprise that stretches far beyond train operations.  
+Every business day the organization generates and receives **thousands of pages of material**:
+
+- Engineering drawings  
+- Maintenance job cards  
+- Incident reports  
+- Vendor invoices & purchase-order correspondence  
+- Regulatory directives & safety circulars  
+- HR policies, legal opinions, board-meeting minutes  
+- Environmental-impact studies  
+
+These documents arrive through **emails, Maximo exports, SharePoint repositories, WhatsApp PDFs, hard-copy scans, and cloud links**—often in **English, Malayalam, or hybrid bilingual formats**, frequently containing **tables, photos, and signatures**.  
+
+This results in several challenges:
+
+- ⏳ **Information latency** – Managers spend hours skimming lengthy documents for key insights, delaying critical decisions.  
+- 🗂️ **Siloed awareness** – Departments work in isolation, missing crucial cross-team updates.  
+- ⚖️ **Compliance exposure** – Regulatory updates risk being buried in inboxes, leading to missed deadlines or non-compliance.  
+- 🧠 **Knowledge attrition** – Institutional memory is lost when staff transfer or retire.  
+- 🔄 **Duplicated effort** – Teams redundantly create summaries and reports of the same documents, wasting time.  
+
+As **KMRL expands** with new depots, corridors, and **emerging technologies** like UNS data streams and IoT monitoring, this document overload will only intensify.  
+Without a smart, organization-wide mechanism, KMRL faces **slower decision cycles, higher costs, safety risks, and compliance vulnerabilities**.  
+
+### 🎯 The Challenge
+
+Equip every stakeholder—from **station controllers and engineers to finance officers and executive directors**—with **rapid, trustworthy snapshots of documents that matter to them**, while preserving traceability to the original source.  
+
+**Impact:**  
+- Faster cross-department coordination  
+- Stronger regulatory compliance  
+- Preservation of institutional knowledge  
+- Improved service reliability  
+- Safer and more passenger-centric metro operations  
+
+---
+
 ## ✨ Key Features
 
 - 📥 **Multi-Source Ingestion** – Supports emails, SharePoint, scanned PDFs, exports, and even WhatsApp links.  
