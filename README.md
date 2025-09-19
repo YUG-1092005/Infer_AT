@@ -79,7 +79,7 @@ We are a group of passionate innovators collaborating under **Smart India Hackat
 ## 🎯 Vision
 
 <p align="center">
-  <img src="https://img.icons8.com/external-flat-juicy-fish/600/000000/external-vision-strategy-and-management-flat-flat-juicy-fish.png" width="120" alt="Vision Icon"/>
+  <img src="Frontend/20250914_234002.png" width="120" alt="Vision Icon"/>
 </p>
 
 > “Transforming how KMRL handles documents —  
