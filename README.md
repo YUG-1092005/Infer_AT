@@ -19,12 +19,12 @@ Our solution leverages **AI-powered OCR, document understanding, and validation 
 
 ## 🛠️ Tech Stack
 
-- **Frontend** → React.js, Tailwind CSS  
-- **Backend** → Node.js, Express.js  
-- **AI/ML** → Python, OpenCV, TensorFlow  
+- **Frontend** → HTML,CSS,JD  
+- **Backend** → Node.js, Express.js, Flask
+- **AI/ML** → Python, OpenCV
 - **OCR** → Tesseract, Google Document AI  
 - **Messaging & APIs** → WebSockets, REST APIs  
-- **Database** → MongoDB / PostgreSQL  
+- **Database** → MongoDB  
 - **Deployment** → Docker + Kubernetes  
 - **Monitoring** → Grafana, Prometheus  
 
@@ -43,9 +43,46 @@ Our solution leverages **AI-powered OCR, document understanding, and validation 
 
 ---
 
-## 🚀 Getting Started
+## 📂 Repository Structure
+SIH25/
+├── Credentials_Server/    # Secure storage of credentials
+├── Frontend/              # React-based frontend
+├── OCR_Backend/           # AI-powered OCR & extraction services
+├── node_modules/          # Dependencies (ignored in GitHub)
+├── start-local-network.bat
+├── start-system.bat
+├── package.json
+└── README.md
 
-1. **Clone the repository**
-   ```sh
-   git clone https://github.com/YUG-1092005/Infera.git
-   cd Infera
+---
+
+## 📽️ Demo
+🔗 [Click here to watch our solution video](https://drive.google.com/file/d/1avSMbWBuqz7W4FwSi-brYzF4bMKDY1EO/view)
+
+--- 
+
+## 👨‍💻 Team
+
+We are a group of passionate innovators collaborating under **Smart India Hackathon 2025** to build **Infera**.
+
+| Name               | Role(s) |
+|--------------------|-----------------------------------------------------------|
+| **Vrajkumar S. Parekh** | Team Leader • Full Stack Developer |
+| **Yug N. Trivedi**      | Backend Developer • OCR Integration Engineer |
+| **Vraj A. Parekh**      | Frontend Developer • UI/UX Designer |
+| **Yug S. Patel**        | Frontend Developer • Visual Designer |
+| **Utsav G. Patel**      | Content Strategist • Web App Designer • Video Editor |
+| **Tia J. Patel**        | Data Collection • Resource Management |
+
+---
+
+## 🎯 Vision
+
+<p align="center">
+  <img src="https://img.icons8.com/external-flat-juicy-fish/600/000000/external-vision-strategy-and-management-flat-flat-juicy-fish.png" width="120" alt="Vision Icon"/>
+</p>
+
+> “Transforming how KMRL handles documents —  
+> from **manual effort** to **AI-powered automation**.”
+
+Our vision is to **reduce time, cost, and errors** in document workflows while ensuring **accuracy, compliance, and efficiency** at scale.
