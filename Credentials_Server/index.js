@@ -32,6 +32,8 @@ const io = socketIo(server, {
 
 // Middleware - Secure CORS configuration
 const allowedOrigins = [
+  'https://infera-official.vercel.app/',
+  'https://credential-5ht0.onrender.com',
   'http://localhost:3000',
   'http://localhost:5000',
   'http://127.0.0.1:5000',
