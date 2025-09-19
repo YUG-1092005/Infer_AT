@@ -10,7 +10,8 @@
     <div id="channels"></div>
     
     <script>
-        const API_BASE = "http://localhost:5000/api";
+        // const API_BASE = "http://localhost:5000/api";
+        const API_BASE = "https://credential-5ht0.onrender.com/api";
         const params = new URLSearchParams(location.search);
         const userId = params.get("id") || localStorage.getItem("userId");
         const token = localStorage.getItem("token");
@@ -37,7 +38,8 @@
             try {
                 // Test server connection
                 log('Testing server connection...');
-                const serverRes = await fetch('http://localhost:5000/');
+                // const serverRes = await fetch('http://localhost:5000/');
+                const serverRes = await fetch('https://credential-5ht0.onrender.com');
                 log('Server status: ' + serverRes.status);
                 
                 // Test user endpoint

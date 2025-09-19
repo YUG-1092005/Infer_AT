@@ -1,7 +1,8 @@
 const fetch = require('node-fetch');
 
 async function testGenerateToken() {
-  const url = 'http://localhost:5000/api/token';
+  // const url = 'http://localhost:5000/api/token';
+  const url = 'https://credential-5ht0.onrender.com/api/token';
 
   const payload = {
     username: 'testuser',  // Replace with an existing username in your DB

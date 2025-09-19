@@ -1,7 +1,8 @@
 const fetch = require('node-fetch');
 
 async function testCreateChannel() {
-  const url = 'http://localhost:5000/api/channels';
+  // const url = 'http://localhost:5000/api/channels';
+  const url = 'https://credential-5ht0.onrender.com/api/channels';
   const token = 'your_valid_jwt_token_here'; // Replace with a valid JWT token
 
   const payload = {

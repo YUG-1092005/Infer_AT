@@ -25,7 +25,8 @@ if %errorlevel% neq 0 (
 
 echo.
 echo Starting the server...
-echo Server will be available at: http://localhost:5000
+@REM echo Server will be available at: http://localhost:5000
+echo Server will be available at: https://credential-5ht0.onrender.com
 echo Frontend will be available at: file:///d:/collage/SIH25/Frontend/index.html
 echo.
 echo Press Ctrl+C to stop the server
