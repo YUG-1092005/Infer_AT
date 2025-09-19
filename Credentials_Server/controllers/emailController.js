@@ -1,13 +1,13 @@
-const nodemailer = require('nodemailer');
-const crypto = require('crypto');
+const nodemailer = require("nodemailer");
+const crypto = require("crypto");
 
 // Email configuration
 const EMAIL_CONFIG = {
-  service: 'gmail',
+  service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER || 'inferadoc@gmail.com',
-    pass: process.env.EMAIL_PASS || 'olfk lrgz qpzr wblt'
-  }
+    user: process.env.EMAIL_USER || "inferadoc@gmail.com",
+    pass: process.env.EMAIL_PASS || "olfk lrgz qpzr wblt",
+  },
 };
 
 // Create transporter
@@ -18,81 +18,90 @@ async function sendChannelInvite(req, res) {
   try {
     const { channelId, recipientEmail, personalMessage } = req.body;
     const inviterUserId = req.user.id;
-    
-    console.log('Received invite request:', { channelId, recipientEmail, inviterUserId });
-    
+
+    console.log("Received invite request:", {
+      channelId,
+      recipientEmail,
+      inviterUserId,
+    });
+
     // Validate inputs
-    if (!channelId || channelId === 'currentChannel') {
-      return res.status(400).json({ message: 'Invalid channel ID provided' });
+    if (!channelId || channelId === "currentChannel") {
+      return res.status(400).json({ message: "Invalid channel ID provided" });
     }
-    
+
     // Handle test/general invitations
-    if (channelId === 'test-channel') {
+    if (channelId === "test-channel") {
       // Send general KMRL system invitation with redirect
-      const networkIP = '10.13.123.182:5000';
-      const publicDomain = 'https://kmrl-redirect.netlify.app';
-      const generalInviteLink = `${publicDomain}/signup?ip=${networkIP}&ref=general`;
-      
+      const networkIP = "https://credential-5ht0.onrender.com";
+      const publicDomain = "https://infera-official.vercel.app/";
+      const generalInviteLink = `${publicDomain}/signUp.html`;
+
       const mailOptions = {
         from: `"KMRL Communication System" <${EMAIL_CONFIG.auth.user}>`,
         to: recipientEmail,
         subject: `🚄 KMRL System Invitation | Team Infera`,
         html: `<h2>Welcome to KMRL Communication System</h2>
                <p>You've been invited to join the KMRL Communication System.</p>
-               <a href="${generalInviteLink}" style="background: #1976d2; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px;">Join KMRL System</a>`
+               <a href="${generalInviteLink}" style="background: #1976d2; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px;">Join KMRL System</a>`,
       };
-      
+
       await transporter.sendMail(mailOptions);
-      return res.json({ success: true, message: 'General invitation sent successfully' });
+      return res.json({
+        success: true,
+        message: "General invitation sent successfully",
+      });
     }
-    
+
     if (!recipientEmail) {
-      return res.status(400).json({ message: 'Recipient email is required' });
+      return res.status(400).json({ message: "Recipient email is required" });
     }
-    
+
     // Get channel and inviter info
-    const Channel = require('../models/channelModel');
-    const User = require('../models/userModel');
-    
+    const Channel = require("../models/channelModel");
+    const User = require("../models/userModel");
+
     const channel = await Channel.findById(channelId);
     const inviter = await User.findById(inviterUserId);
-    
+
     if (!channel) {
-      return res.status(404).json({ message: 'Channel not found' });
+      return res.status(404).json({ message: "Channel not found" });
     }
-    
+
     if (!inviter) {
-      return res.status(404).json({ message: 'Inviter not found' });
+      return res.status(404).json({ message: "Inviter not found" });
     }
-    
+
     // Check if inviter is channel member
     if (!channel.members.includes(inviterUserId)) {
-      return res.status(403).json({ message: 'You are not a member of this channel' });
+      return res
+        .status(403)
+        .json({ message: "You are not a member of this channel" });
     }
-    
+
     // Generate invitation token
-    const inviteToken = crypto.randomBytes(32).toString('hex');
+    const inviteToken = crypto.randomBytes(32).toString("hex");
     const inviteExpiry = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000); // 7 days
-    
+
     // Store invitation in database
-    const Invitation = require('../models/invitationModel');
+    const Invitation = require("../models/invitationModel");
     const invitation = new Invitation({
       channelId,
       inviterUserId,
       recipientEmail,
       inviteToken,
       expiresAt: inviteExpiry,
-      personalMessage: personalMessage || ''
+      personalMessage: personalMessage || "",
     });
-    
+
     await invitation.save();
-    
+
     // Create invitation and homepage links with redirect solution
-    const networkIP = '10.13.123.182:5000';
-    const publicDomain = 'https://kmrl-redirect.netlify.app'; // Free redirect service
+    const networkIP = "https://credential-5ht0.onrender.com";
+    const publicDomain = "https://infera-official.vercel.app/";
     const inviteLink = `${publicDomain}/join?token=${inviteToken}&ip=${networkIP}`;
-    const homepageLink = `${publicDomain}/home?ip=${networkIP}`;
-    
+    const homepageLink = `${publicDomain}/index.html`;
+
     // Professional Email Template
     const emailHtml = `
       <!DOCTYPE html>
@@ -159,15 +168,21 @@ async function sendChannelInvite(req, res) {
             
             <div class="invitation-box">
               <div class="channel-name">"${channel.name}"</div>
-              <p style="margin: 0; color: #1976d2; font-weight: 500;">Invited by <strong>${inviter.fullName}</strong></p>
+              <p style="margin: 0; color: #1976d2; font-weight: 500;">Invited by <strong>${
+                inviter.fullName
+              }</strong></p>
             </div>
             
-            ${personalMessage ? `
+            ${
+              personalMessage
+                ? `
               <div class="personal-message">
                 <h4>📝 Personal Message from ${inviter.fullName}:</h4>
                 <p style="margin: 0; font-style: italic; color: #333;">"${personalMessage}"</p>
               </div>
-            ` : ''}
+            `
+                : ""
+            }
             
             <div class="details-grid">
               <div class="detail-item">
@@ -180,11 +195,11 @@ async function sendChannelInvite(req, res) {
               </div>
               <div class="detail-item">
                 <div class="detail-label">Department</div>
-                <div class="detail-value">${inviter.department || 'KMRL'}</div>
+                <div class="detail-value">${inviter.department || "KMRL"}</div>
               </div>
               <div class="detail-item">
                 <div class="detail-label">Role</div>
-                <div class="detail-value">${inviter.role || 'Team Member'}</div>
+                <div class="detail-value">${inviter.role || "Team Member"}</div>
               </div>
             </div>
             
@@ -192,16 +207,6 @@ async function sendChannelInvite(req, res) {
               <a href="${inviteLink}" class="invite-button">🚀 Join Channel Now</a>
               <br><br>
               <a href="${homepageLink}" style="display: inline-block; background: #f8f9fa; color: #1976d2; padding: 12px 25px; text-decoration: none; border-radius: 25px; font-weight: 600; border: 2px solid #1976d2; margin: 10px;">🏠 Visit KMRL System</a>
-            </div>
-            
-            <div style="background: #fff8e1; border: 2px solid #ffcc02; padding: 20px; border-radius: 12px; margin: 25px 0;">
-              <h4 style="color: #f57c00; margin: 0 0 10px 0;">📶 WiFi Network Access Required</h4>
-              <p style="margin: 0; color: #333;"><strong>To access KMRL System:</strong></p>
-              <ol style="margin: 10px 0; color: #333; text-align: left;">
-                <li>Connect to the same WiFi network as the KMRL server</li>
-                <li>Open your browser and go to: <strong>http://10.13.123.182:5000</strong></li>
-                <li>If the buttons above don't work, copy and paste this address manually</li>
-              </ol>
             </div>
             
             <div class="security-note">
@@ -220,7 +225,9 @@ async function sendChannelInvite(req, res) {
               </ul>
             </div>
             
-            <p style="color: #666; font-size: 14px; margin-top: 30px;">If you have any questions about this invitation, please contact ${inviter.fullName} at ${inviter.email}</p>
+            <p style="color: #666; font-size: 14px; margin-top: 30px;">If you have any questions about this invitation, please contact ${
+              inviter.fullName
+            } at ${inviter.email}</p>
           </div>
           
           <div class="footer">
@@ -232,9 +239,8 @@ async function sendChannelInvite(req, res) {
               <p style="margin: 5px 0 0 0; font-size: 12px; opacity: 0.9;">Advanced Document Intelligence & Communication Solutions</p>
             </div>
             <div style="margin: 20px 0;">
-              <a href="${publicDomain}/home?ip=${networkIP}" style="display: inline-block; background: #1976d2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 20px; font-size: 14px; margin: 5px;">🏠 KMRL Home</a>
-              <a href="${publicDomain}/dashboard?ip=${networkIP}" style="display: inline-block; background: #4caf50; color: white; padding: 10px 20px; text-decoration: none; border-radius: 20px; font-size: 14px; margin: 5px;">📊 Dashboard</a>
-              <a href="${publicDomain}/scanner?ip=${networkIP}" style="display: inline-block; background: #ff9800; color: white; padding: 10px 20px; text-decoration: none; border-radius: 20px; font-size: 14px; margin: 5px;">📝 OCR Scanner</a>
+              <a href="${publicDomain}/index.html" style="display: inline-block; background: #1976d2; color: white; padding: 10px 20px; text-decoration: none; border-radius: 20px; font-size: 14px; margin: 5px;">🏠 KMRL Home</a>
+              <a href="${publicDomain}/signUp.html" style="display: inline-block; background: #ff9800; color: white; padding: 10px 20px; text-decoration: none; border-radius: 20px; font-size: 14px; margin: 5px;">📝 SignUp</a>
             </div>
             <p style="margin-top: 15px; font-size: 12px; opacity: 0.8;">This is an automated message from the KMRL Communication System. Please do not reply to this email.</p>
           </div>
@@ -242,29 +248,28 @@ async function sendChannelInvite(req, res) {
       </body>
       </html>
     `;
-    
+
     // Send email with professional formatting
     const mailOptions = {
       from: `"KMRL Communication System" <${EMAIL_CONFIG.auth.user}>`,
       to: recipientEmail,
       subject: `🚄 KMRL Channel Invitation Link - Join "${channel.name}" | Team Infera`,
-      html: emailHtml
+      html: emailHtml,
     };
-    
+
     await transporter.sendMail(mailOptions);
-    
-    res.json({ 
-      success: true, 
-      message: 'Invitation sent successfully',
+
+    res.json({
+      success: true,
+      message: "Invitation sent successfully",
       inviteToken,
-      expiresAt: inviteExpiry
+      expiresAt: inviteExpiry,
     });
-    
   } catch (error) {
-    console.error('Send invite error:', error);
-    res.status(500).json({ 
-      message: 'Failed to send invitation', 
-      error: error.message 
+    console.error("Send invite error:", error);
+    res.status(500).json({
+      message: "Failed to send invitation",
+      error: error.message,
     });
   }
 }
@@ -273,56 +278,59 @@ async function sendChannelInvite(req, res) {
 async function acceptInvitation(req, res) {
   try {
     const { token } = req.params;
-    
-    const Invitation = require('../models/invitationModel');
-    const Channel = require('../models/channelModel');
-    const User = require('../models/userModel');
-    
+
+    const Invitation = require("../models/invitationModel");
+    const Channel = require("../models/channelModel");
+    const User = require("../models/userModel");
+
     // Find invitation
-    const invitation = await Invitation.findOne({ 
+    const invitation = await Invitation.findOne({
       inviteToken: token,
       expiresAt: { $gt: new Date() },
-      used: false
+      used: false,
     });
-    
+
     if (!invitation) {
-      return res.status(404).json({ message: 'Invalid or expired invitation' });
+      return res.status(404).json({ message: "Invalid or expired invitation" });
     }
-    
+
     // Check if user exists
     let user = await User.findOne({ email: invitation.recipientEmail });
-    
+
     if (!user) {
       // Redirect to signup with pre-filled email
-      return res.redirect(`/signup.html?email=${encodeURIComponent(invitation.recipientEmail)}&invite=${token}`);
+      return res.redirect(
+        `/signup.html?email=${encodeURIComponent(
+          invitation.recipientEmail
+        )}&invite=${token}`
+      );
     }
-    
+
     // Add user to channel
     const channel = await Channel.findById(invitation.channelId);
     if (!channel) {
-      return res.status(404).json({ message: 'Channel not found' });
+      return res.status(404).json({ message: "Channel not found" });
     }
-    
+
     if (!channel.members.includes(user._id)) {
       channel.members.push(user._id);
       await channel.save();
     }
-    
+
     // Mark invitation as used
     invitation.used = true;
     invitation.usedAt = new Date();
     await invitation.save();
-    
+
     // Redirect to messaging with channel selected
     res.redirect(`/messaging.html?channel=${invitation.channelId}`);
-    
   } catch (error) {
-    console.error('Accept invitation error:', error);
-    res.status(500).json({ message: 'Failed to accept invitation' });
+    console.error("Accept invitation error:", error);
+    res.status(500).json({ message: "Failed to accept invitation" });
   }
 }
 
 module.exports = {
   sendChannelInvite,
-  acceptInvitation
+  acceptInvitation,
 };
