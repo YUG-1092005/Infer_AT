@@ -13,13 +13,15 @@ Our solution leverages **AI-powered OCR, document understanding, and validation 
 - 🧹 **Deduplication & Canonicalization** – Ensures clean, non-redundant, standardized data.  
 - 👨‍💻 **Human-in-the-Loop Validation** – Combines AI automation with expert validation for reliability.  
 - 🌐 **Hybrid Deployment** – Works both **on-premise and cloud**, ensuring flexibility and security.  
-- 📊 **Monitoring & Analytics** – Integrated with **Grafana & Prometheus** for real-time performance tracking.
+- 📊 **Monitoring & Analytics** – Integrated with **Grafana & Prometheus** for real-time performance tracking.  
+- 💬 **Inbuilt Messaging** – Secure messaging integration (like WhatsApp) for quick collaboration.  
+- 📧 **Smart Invitations** – Invite and manage team members easily through email integration.  
 
 ---
 
 ## 🛠️ Tech Stack
 
-- **Frontend** → HTML,CSS,JD  
+- **Frontend** → HTML,CSS,JS  
 - **Backend** → Node.js, Express.js, Flask
 - **AI/ML** → Python, OpenCV
 - **OCR** → Tesseract, Google Document AI  
