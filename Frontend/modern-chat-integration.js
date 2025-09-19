@@ -32,10 +32,13 @@ class ModernChatApp {
 
   async initializeServer() {
     try {
-      const testRes = await fetch('http://10.13.123.182:5000/health');
+      // const testRes = await fetch('http://10.13.123.182:5000/health');
+      const testRes = await fetch('https://credential-5ht0.onrender.com/health');
       if (testRes.ok) {
-        this.API_BASE = 'http://10.13.123.182:5000/api';
-        window.KMRL_SERVER = 'http://10.13.123.182:5000';
+        // this.API_BASE = 'http://10.13.123.182:5000/api';
+        this.API_BASE = 'https://credential-5ht0.onrender.com/api';
+        // window.KMRL_SERVER = 'http://10.13.123.182:5000';
+        window.KMRL_SERVER = 'https://credential-5ht0.onrender.com';
         console.log('Connected to network server:', this.API_BASE);
       }
     } catch (e) {
