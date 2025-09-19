@@ -362,9 +362,11 @@
       // Auto-detect server
       async function initializeServer() {
         try {
-          const testRes = await fetch("http://10.13.123.182:5000/health");
+          // const testRes = await fetch("http://10.13.123.182:5000/health");
+          const testRes = await fetch("https://credential-5ht0.onrender.com/health");
           if (testRes.ok) {
-            API_BASE = "http://10.13.123.182:5000/api";
+            // API_BASE = "http://10.13.123.182:5000/api";
+            API_BASE = "https://credential-5ht0.onrender.com/api";
             console.log("Connected to network server:", API_BASE);
           }
         } catch (e) {
