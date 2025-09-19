@@ -1233,17 +1233,20 @@
 
         try {
           // Auto-detect server (network or localhost)
-          let serverUrl = "http://localhost:7000";
+          // let serverUrl = "http://localhost:7000";
+          let serverUrl = "https://ocr-5fhg.onrender.com";
           try {
             const networkTest = await fetch(
-              "http://10.13.123.182:7000/health",
+              // "http://10.13.123.182:7000/health",
+              "https://ocr-5fhg.onrender.com/health",
               {
                 method: "GET",
                 timeout: 2000,
               }
             );
             if (networkTest.ok) {
-              serverUrl = "http://10.13.123.182:7000";
+              // serverUrl = "http://10.13.123.182:7000";
+              serverUrl = "https://ocr-5fhg.onrender.com";
               console.log("Using network OCR server:", serverUrl);
             }
           } catch (e) {
