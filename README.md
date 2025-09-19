@@ -95,14 +95,14 @@ Equip every stakeholder—from **station controllers and engineers to finance of
 
 ## 📂 Repository Structure
 SIH25/
-├── Credentials_Server/    # Secure storage of credentials
-├── Frontend/              # React-based frontend
-├── OCR_Backend/           # AI-powered OCR & extraction services
-├── node_modules/          # Dependencies (ignored in GitHub)
-├── start-local-network.bat
-├── start-system.bat
-├── package.json
-└── README.md
+├── 📁 Credentials_Server/    # Secure storage of credentials
+├── 📁 Frontend/              # React-based frontend
+├── 📁 OCR_Backend/           # AI-powered OCR & extraction services
+├── 📁 node_modules/          # Dependencies (ignored in GitHub)
+├── 📄 start-local-network.bat
+├── 📄 start-system.bat
+├── 📄 package.json
+└── 📄 README.md
 
 ---
 
