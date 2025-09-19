@@ -99,7 +99,7 @@ async function sendChannelInvite(req, res) {
     // Create invitation and homepage links with redirect solution
     const networkIP = "https://credential-5ht0.onrender.com";
     const publicDomain = "https://infera-official.vercel.app";
-    const inviteLink = `${publicDomain}/join?token=${inviteToken}&ip=${networkIP}`;
+    const inviteLink = `${publicDomain}/signUp.html`;
     const homepageLink = `${publicDomain}/index.html`;
 
     // Professional Email Template
