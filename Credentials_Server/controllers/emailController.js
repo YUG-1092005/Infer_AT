@@ -34,7 +34,7 @@ async function sendChannelInvite(req, res) {
     if (channelId === "test-channel") {
       // Send general KMRL system invitation with redirect
       const networkIP = "https://credential-5ht0.onrender.com";
-      const publicDomain = "https://infera-official.vercel.app/";
+      const publicDomain = "https://infera-official.vercel.app";
       const generalInviteLink = `${publicDomain}/signUp.html`;
 
       const mailOptions = {
@@ -98,7 +98,7 @@ async function sendChannelInvite(req, res) {
 
     // Create invitation and homepage links with redirect solution
     const networkIP = "https://credential-5ht0.onrender.com";
-    const publicDomain = "https://infera-official.vercel.app/";
+    const publicDomain = "https://infera-official.vercel.app";
     const inviteLink = `${publicDomain}/join?token=${inviteToken}&ip=${networkIP}`;
     const homepageLink = `${publicDomain}/index.html`;
 
