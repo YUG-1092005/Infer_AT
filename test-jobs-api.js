@@ -5,7 +5,8 @@ async function testJobsAPI() {
   try {
     // Test health endpoint first
     console.log('Testing server health...');
-    const healthRes = await fetch('http://10.13.123.182:5000/health');
+    // const healthRes = await fetch('http://10.13.123.182:5000/health');
+    const healthRes = await fetch('https://credential-5ht0.onrender.com/health');
     if (healthRes.ok) {
       console.log('✅ Server is running');
     } else {
@@ -15,7 +16,8 @@ async function testJobsAPI() {
 
     // Test jobs endpoint (should return 401 without token)
     console.log('Testing jobs endpoint...');
-    const jobsRes = await fetch('http://10.13.123.182:5000/api/jobs');
+    // const jobsRes = await fetch('http://10.13.123.182:5000/api/jobs');
+    const jobsRes = await fetch('https://credential-5ht0.onrender.com/api/jobs');
     console.log('Jobs endpoint status:', jobsRes.status);
     
     if (jobsRes.status === 401) {

@@ -1,6 +1,7 @@
 const fetch = require('node-fetch');
 
-const API_BASE = "http://localhost:5000/api";
+// const API_BASE = "http://localhost:5000/api";
+const API_BASE = "https://credential-5ht0.onrender.com/api";
 
 async function testMessaging() {
   try {
