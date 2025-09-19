@@ -94,6 +94,7 @@ Equip every stakeholder—from **station controllers and engineers to finance of
 ---
 
 ## 📂 Repository Structure
+```
 SIH25/
 ├── 📁 Credentials_Server/    # Secure storage of credentials
 ├── 📁 Frontend/              # React-based frontend
@@ -103,6 +104,7 @@ SIH25/
 ├── 📄 start-system.bat
 ├── 📄 package.json
 └── 📄 README.md
+```
 
 ---
 
