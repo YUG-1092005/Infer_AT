@@ -979,7 +979,8 @@
 
       (() => {
         const API_BASE =
-          (window.KMRL_SERVER || "http://localhost:5000") + "/api";
+          // (window.KMRL_SERVER || "http://localhost:5000") + "/api";
+          (window.KMRL_SERVER || "https://credential-5ht0.onrender.com") + "/api";
 
         function isPublicPage() {
           const currentPath = window.location.pathname;
@@ -1067,7 +1068,8 @@
         }
       });
 
-      const API_BASE = (window.KMRL_SERVER || "http://localhost:5000") + "/api";
+      // const API_BASE = (window.KMRL_SERVER || "http://localhost:5000") + "/api";
+      const API_BASE = (window.KMRL_SERVER || "https://credential-5ht0.onrender.com") + "/api";
 
       function showMessage(text, type = "info") {
         const el =

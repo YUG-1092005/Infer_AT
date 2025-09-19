@@ -1673,7 +1673,8 @@
   </div>
 
   <script>
-    let API_BASE = "http://localhost:5000/api";
+    // let API_BASE = "http://localhost:5000/api";
+    let API_BASE = "https://credential-5ht0.onrender.com/api";
     
     // Auto-connect to server
     async function initializeServer() {
@@ -1686,7 +1687,8 @@
         }
       } catch (e) {
         console.log('Using localhost server');
-        window.KMRL_SERVER = 'http://localhost:5000';
+        // window.KMRL_SERVER = 'http://localhost:5000';
+        window.KMRL_SERVER = 'https://credential-5ht0.onrender.com';
       }
     }
     
@@ -1703,8 +1705,9 @@
     }
     
     console.log('Tab initialized with userId:', userId);
+    // const socket = io(window.KMRL_SERVER || "http://localhost:5000", { auth: { token } });
+    const socket = io(window.KMRL_SERVER || "https://credential-5ht0.onrender.com", { auth: { token } });
 
-    const socket = io(window.KMRL_SERVER || "http://localhost:5000", { auth: { token } });
     let currentChannelId = null;
     let currentUser = null;
 
@@ -3710,7 +3713,8 @@
         const token = localStorage.getItem('token');
         
         // Auto-detect server
-        let API_BASE = 'http://localhost:5000';
+        // let API_BASE = 'http://localhost:5000';
+        let API_BASE = 'https://credential-5ht0.onrender.com';
         try {
           const testRes = await fetch('http://10.13.123.182:5000/health');
           if (testRes.ok) {

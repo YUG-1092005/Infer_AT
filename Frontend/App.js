@@ -64,7 +64,8 @@ function handleLogout() {
   
   if (confirm('Are you sure you want to logout?')) {
     if (token) {
-      fetch("http://localhost:5000/api/logout", {
+      // fetch("http://localhost:5000/api/logout", {
+      fetch("https://credential-5ht0.onrender.com/api/logout", {
         method: "POST",
         headers: { Authorization: `Bearer ${token}` },
       }).finally(() => {

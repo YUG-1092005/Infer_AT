@@ -5,7 +5,7 @@
 
 class ModernChatApp {
   constructor() {
-    this.API_BASE = "http://localhost:5000/api";
+    this.API_BASE = "https://credential-5ht0.onrender.com/api";
     this.socket = null;
     this.currentUser = null;
     this.currentChannelId = null;
@@ -40,7 +40,8 @@ class ModernChatApp {
       }
     } catch (e) {
       console.log('Using localhost server');
-      window.KMRL_SERVER = 'http://localhost:5000';
+      // window.KMRL_SERVER = 'http://localhost:5000';
+      window.KMRL_SERVER = 'https://credential-5ht0.onrender.com';
     }
   }
 
@@ -80,7 +81,10 @@ class ModernChatApp {
 
   initializeSocket() {
     const token = localStorage.getItem("token");
-    this.socket = io(window.KMRL_SERVER || "http://localhost:5000", { 
+    // this.socket = io(window.KMRL_SERVER || "http://localhost:5000", { 
+    //   auth: { token } 
+    // });
+    this.socket = io(window.KMRL_SERVER || "https://credential-5ht0.onrender.com", { 
       auth: { token } 
     });
 
