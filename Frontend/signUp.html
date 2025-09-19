@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <script src="https://cdn.jsdelivr.net/npm/toastify-js"></script>
+    <title>Infera</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background-image: radial-gradient(
+            circle at 35% 80%,
+            rgba(128, 0, 255, 0.3) 0%,
+            rgba(128, 0, 255, 0.15) 30%,
+            transparent 60%
+          ),
+          radial-gradient(
+            circle at 55% 50%,
+            rgba(0, 255, 255, 0.3) 0%,
+            rgba(0, 255, 255, 0.15) 30%,
+            transparent 60%
+          );
+        background-color: #ffffff;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-attachment: fixed;
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+      }
+
+      .signup-container {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 24px;
+        padding: 60px;
+        max-width: 600px;
+        width: 100%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+        margin: 20px 0;
+      }
+
+      .logo {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .logo h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 8px;
+      }
+
+      .logo p {
+        color: #64748b;
+        font-size: 16px;
+      }
+
+      .form-header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .form-header h2 {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 8px;
+      }
+
+      .form-header p {
+        color: #64748b;
+        font-size: 16px;
+      }
+
+      .signup-form {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .form-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 20px;
+      }
+
+      .form-group {
+        position: relative;
+      }
+
+      .form-group label {
+        display: block;
+        color: #1a1a1a;
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+
+      .form-group input,
+      .form-group select {
+        width: 100%;
+        padding: 16px 20px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 16px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+      }
+
+      .form-group input:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: #287bee;
+        background: rgba(255, 255, 255, 0.95);
+        box-shadow: 0 0 0 3px rgba(40, 123, 238, 0.1);
+      }
+
+      .form-group input::placeholder {
+        color: #94a3b8;
+      }
+
+      .form-group select {
+        cursor: pointer;
+      }
+
+      .form-group select option {
+        background: white;
+        color: #1a1a1a;
+      }
+
+      .other-input {
+        display: none;
+        margin-top: 12px;
+      }
+
+      .other-input.show {
+        display: block;
+        animation: slideIn 0.3s ease;
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(-10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .submit-btn {
+        background: linear-gradient(135deg, #287bee, #4a90e2);
+        color: white;
+        padding: 18px 32px;
+        border: none;
+        border-radius: 16px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 8px;
+      }
+
+      .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(40, 123, 238, 0.4);
+      }
+
+      .submit-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .form-footer {
+        text-align: center;
+        margin-top: 32px;
+        padding-top: 24px;
+        border-top: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .form-footer p {
+        color: #64748b;
+        margin-bottom: 16px;
+      }
+
+      .form-footer a {
+        color: #287bee;
+        text-decoration: none;
+        font-weight: 600;
+        margin: 0 8px;
+        padding: 8px 16px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .form-footer a:hover {
+        background: rgba(40, 123, 238, 0.1);
+      }
+
+      .back-link {
+        position: absolute;
+        top: 30px;
+        left: 30px;
+        color: #287bee;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 16px;
+        padding: 12px 20px;
+        transition: all 0.3s ease;
+      }
+
+      .back-link:hover {
+        transform: scale(1.1);
+      }
+
+      @media (max-width: 768px) {
+        .form-row {
+          grid-template-columns: 1fr;
+          gap: 16px;
+        }
+
+        .signup-container {
+          padding: 40px 30px;
+          margin: 20px;
+        }
+
+        .back-link {
+          top: 20px;
+          left: 20px;
+          font-size: 14px;
+          padding: 10px 16px;
+        }
+
+        .form-header h2 {
+          font-size: 24px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        body {
+          padding: 20px 10px;
+        }
+
+        .signup-container {
+          padding: 30px 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a href="index.html" class="back-link">← Back to Home</a>
+
+    <div class="signup-container">
+      <!-- <div class="logo">
+        <h1>Infera</h1>
+        <p>KMRL Document Management</p>
+      </div> -->
+
+      <div class="form-header">
+        <h2>Create Your Account</h2>
+        <p>Join the KMRL document management system</p>
+      </div>
+
+      <form class="signup-form" onsubmit="handleSignup(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="fullName">Full Name</label>
+            <input
+              type="text"
+              id="fullName"
+              name="fullName"
+              placeholder="Enter your full name"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="username">Username</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              placeholder="Choose a username"
+              required
+            />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Enter your email address"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Create a strong password"
+            required
+          />
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="department">Department</label>
+            <select
+              id="department"
+              name="department"
+              required
+              onchange="handleDepartmentChange()"
+            >
+              <option value="">Select Department</option>
+              <option value="operations">Operations</option>
+              <option value="engineering">Engineering</option>
+              <option value="safety">Safety & Security</option>
+              <option value="finance">Finance & Accounts</option>
+              <option value="hr">Human Resources</option>
+              <option value="maintenance">Maintenance</option>
+              <option value="executive">Executive</option>
+              <option value="other">Other</option>
+            </select>
+            <input
+              type="text"
+              id="otherDepartment"
+              class="other-input"
+              placeholder="Please specify department"
+              name="otherDepartment"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="role">Role</label>
+            <select
+              id="role"
+              name="role"
+              required
+              onchange="handleRoleChange()"
+            >
+              <option value="">Select Role</option>
+              <option value="manager">Manager</option>
+              <option value="officer">Officer</option>
+              <option value="supervisor">Supervisor</option>
+              <option value="executive">Executive</option>
+              <option value="director">Director</option>
+              <option value="assistant">Assistant</option>
+              <option value="other">Other</option>
+            </select>
+            <input
+              type="text"
+              id="otherRole"
+              class="other-input"
+              placeholder="Please specify role"
+              name="otherRole"
+            />
+          </div>
+        </div>
+
+        <button type="submit" class="submit-btn" id="signupBtn">
+          Create Account
+        </button>
+      </form>
+
+      <div class="form-footer">
+        <p>Already have an account?</p>
+        <a href="login.html">Sign In</a>
+      </div>
+    </div>
+
+    <script>
+      let API_BASE = "http://localhost:5000/api";
+      
+      // Auto-connect to server on load
+      window.addEventListener('load', async () => {
+        try {
+          const testRes = await fetch('http://10.13.123.182:5000/health');
+          if (testRes.ok) {
+            API_BASE = 'http://10.13.123.182:5000/api';
+            console.log('Connected to network server:', API_BASE);
+          }
+        } catch (e) {
+          console.log('Using localhost server');
+        }
+      });
+
+      function handleDepartmentChange() {
+        const departmentSelect = document.getElementById('department');
+        const otherDepartmentInput = document.getElementById('otherDepartment');
+        
+        if (departmentSelect.value === 'other') {
+          otherDepartmentInput.classList.add('show');
+          otherDepartmentInput.required = true;
+        } else {
+          otherDepartmentInput.classList.remove('show');
+          otherDepartmentInput.required = false;
+          otherDepartmentInput.value = '';
+        }
+      }
+
+      function handleRoleChange() {
+        const roleSelect = document.getElementById('role');
+        const otherRoleInput = document.getElementById('otherRole');
+        
+        if (roleSelect.value === 'other') {
+          otherRoleInput.classList.add('show');
+          otherRoleInput.required = true;
+        } else {
+          otherRoleInput.classList.remove('show');
+          otherRoleInput.required = false;
+          otherRoleInput.value = '';
+        }
+      }
+
+      async function handleSignup(event) {
+        event.preventDefault();
+
+        const submitBtn = document.getElementById("signupBtn");
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = "Creating Account...";
+        submitBtn.disabled = true;
+
+        const form = event.target;
+        const formData = new FormData(form);
+        const payload = {
+          fullName: formData.get("fullName")?.trim(),
+          username: formData.get("username")?.trim(),
+          email: formData.get("email")?.trim(),
+          password: formData.get("password"),
+          department:
+            formData.get("department") === "other"
+              ? formData.get("otherDepartment")?.trim()
+              : formData.get("department"),
+          role:
+            formData.get("role") === "other"
+              ? formData.get("otherRole")?.trim()
+              : formData.get("role"),
+        };
+
+        try {
+          const res = await fetch(`${API_BASE}/signup`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(payload),
+          });
+
+          let data = null;
+          try {
+            data = await res.json();
+          } catch (e) {
+            data = null;
+          }
+
+          if (!res.ok) {
+            const msg = data?.message || `Signup failed (${res.status})`;
+            alert("❌ " + msg);
+            return;
+          }
+          if (!data?.user) {
+            alert(
+              "⚠️ Signup succeeded but server didn't return user id. Check backend response."
+            );
+            return;
+          }
+
+          if (data.token) {
+            try {
+              localStorage.setItem("token", data.token);
+            } catch (e) {
+              console.log(e);
+            }
+          }
+
+          const userId = data.user._id || data.user.id || data.user.shortId;
+          if (!userId) {
+            alert("⚠️ Signup succeeded but no user id returned by server.");
+            return;
+          }
+
+          alert(
+            `✅ ${
+              data.message || "Account created"
+            } — Redirecting to your dashboard...`
+          );
+          setTimeout(() => {
+            window.location.href = `dashboard.html?id=${userId}`;
+          }, 900);
+        } catch (err) {
+          console.error("Signup request failed:", err);
+          alert("Network error — please try again.");
+        } finally {
+          submitBtn.textContent = originalText;
+          submitBtn.disabled = false;
+        }
+      }
+    </script>
+    <!-- Translation script -->
+    <script src="translate.js"></script>
+  </body>
+</html>

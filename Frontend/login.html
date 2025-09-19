@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Infera</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        background-image: radial-gradient(
+            circle at 35% 80%,
+            rgba(128, 0, 255, 0.3) 0%,
+            rgba(128, 0, 255, 0.15) 30%,
+            transparent 60%
+          ),
+          radial-gradient(
+            circle at 55% 50%,
+            rgba(0, 255, 255, 0.3) 0%,
+            rgba(0, 255, 255, 0.15) 30%,
+            transparent 60%
+          );
+        background-color: #ffffff;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-attachment: fixed;
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI",
+          Roboto, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 40px 20px;
+      }
+
+      .login-container {
+        background: rgba(255, 255, 255, 0.2);
+        backdrop-filter: blur(25px);
+        -webkit-backdrop-filter: blur(25px);
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        border-radius: 24px;
+        padding: 60px;
+        max-width: 600px;
+        width: 100%;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.1);
+      }
+
+      .logo {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .logo h1 {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 8px;
+      }
+
+      .logo p {
+        color: #64748b;
+        font-size: 16px;
+      }
+
+      .form-header {
+        text-align: center;
+        margin-bottom: 40px;
+      }
+
+      .form-header h2 {
+        font-size: 28px;
+        font-weight: 700;
+        color: #1a1a1a;
+        margin-bottom: 8px;
+      }
+
+      .form-header p {
+        color: #64748b;
+        font-size: 16px;
+      }
+
+      .login-form {
+        display: flex;
+        flex-direction: column;
+        gap: 24px;
+      }
+
+      .form-group {
+        position: relative;
+      }
+
+      .form-group label {
+        display: block;
+        color: #1a1a1a;
+        font-weight: 600;
+        margin-bottom: 8px;
+        font-size: 14px;
+      }
+
+      .form-group input {
+        width: 100%;
+        padding: 16px 20px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-radius: 16px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+        background: rgba(255, 255, 255, 0.8);
+        backdrop-filter: blur(10px);
+      }
+
+      .form-group input:focus {
+        outline: none;
+        border-color: #287bee;
+        background: rgba(255, 255, 255, 0.95);
+        box-shadow: 0 0 0 3px rgba(40, 123, 238, 0.1);
+      }
+
+      .form-group input::placeholder {
+        color: #94a3b8;
+      }
+
+      .submit-btn {
+        background: linear-gradient(135deg, #287bee, #4a90e2);
+        color: white;
+        padding: 18px 32px;
+        border: none;
+        border-radius: 16px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 8px;
+      }
+
+      .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(40, 123, 238, 0.4);
+      }
+
+      .submit-btn:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+        transform: none;
+      }
+
+      .form-footer {
+        text-align: center;
+        margin-top: 32px;
+        padding-top: 24px;
+        border-top: 1px solid rgba(255, 255, 255, 0.3);
+      }
+
+      .form-footer p {
+        color: #64748b;
+        margin-bottom: 16px;
+      }
+
+      .form-footer a {
+        color: #287bee;
+        text-decoration: none;
+        font-weight: 600;
+        margin: 0 8px;
+        padding: 8px 16px;
+        border-radius: 8px;
+        transition: all 0.3s ease;
+      }
+
+      .form-footer a:hover {
+        background: rgba(40, 123, 238, 0.1);
+      }
+
+      .back-link {
+        position: absolute;
+        top: 30px;
+        left: 30px;
+        color: #287bee;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 16px;
+        padding: 12px 20px;
+        transition: all 0.3s ease;
+      }
+
+      .back-link:hover {
+        transform: scale(1.1);
+      }
+
+      @media (max-width: 480px) {
+        .login-container {
+          padding: 40px 30px;
+          margin: 20px;
+        }
+
+        .back-link {
+          top: 20px;
+          left: 20px;
+          font-size: 14px;
+          padding: 10px 16px;
+        }
+
+        .form-header h2 {
+          font-size: 24px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <a href="index.html" class="back-link">← Back to Home</a>
+
+    <div class="server-selector" id="serverSelector" style="position: fixed; top: 20px; right: 20px; background: rgba(255,255,255,0.9); padding: 15px; border-radius: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); z-index: 9997;">
+      <div style="margin-bottom: 10px; font-weight: 600;">Server Connection</div>
+      <input type="text" id="serverIP" placeholder="10.13.123.140" style="width: 150px; padding: 8px; border: 1px solid #ddd; border-radius: 5px; margin-right: 10px;">
+      <button onclick="connectToServer()" style="padding: 8px 15px; background: #287bee; color: white; border: none; border-radius: 5px; cursor: pointer;">Connect</button>
+      <div id="connectionStatus" style="margin-top: 8px; font-size: 12px;"></div>
+    </div>
+
+    <div class="login-container">
+      <!-- <div class="logo">
+        <h1>Infera</h1>
+        <p>KMRL Document Management</p>
+      </div> -->
+
+      <div class="form-header">
+        <h2>Welcome Back</h2>
+        <p>Sign in to access your dashboard</p>
+      </div>
+
+      <form class="login-form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="username">Username or Employee ID</label>
+          <input
+            type="text"
+            id="username"
+            name="username"
+            placeholder="Enter your username or employee ID"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Enter your email address"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter your password"
+            required
+          />
+        </div>
+
+        <button type="submit" class="submit-btn" id="loginBtn">Sign In</button>
+      </form>
+
+      <div class="form-footer">
+        <p>Don't have an account?</p>
+        <a href="signup.html">Create Account</a>
+        <a href="#forgot">Forgot Password?</a>
+      </div>
+    </div>
+
+    <script>
+      let API_BASE = "http://localhost:5000/api";
+      
+      // Manual server connection
+      async function connectToServer() {
+        const ip = document.getElementById('serverIP').value.trim() || '10.13.123.182';
+        const status = document.getElementById('connectionStatus');
+        
+        status.textContent = 'Testing connection...';
+        status.style.color = '#666';
+        
+        try {
+          const testUrl = `http://${ip}:5000/health`;
+          const response = await fetch(testUrl, { 
+            method: 'GET',
+            mode: 'cors',
+            cache: 'no-cache'
+          });
+          
+          if (response.ok) {
+            API_BASE = `http://${ip}:5000/api`;
+            status.textContent = '✅ Connected!';
+            status.style.color = '#10b981';
+            console.log('Connected to server:', API_BASE);
+          } else {
+            throw new Error('Server responded with error');
+          }
+        } catch (error) {
+          status.textContent = '❌ Connection failed';
+          status.style.color = '#ef4444';
+          console.error('Connection failed:', error);
+        }
+      }
+      
+      // Auto-try connection on load
+      window.addEventListener('load', () => {
+        document.getElementById('serverIP').value = '10.13.123.182';
+        connectToServer();
+      });
+      
+      console.log('Initial API_BASE:', API_BASE);
+
+      function showMessage(text, type = "info") {
+        const el =
+          document.getElementById("loginMessage") ||
+          (() => {
+            const d = document.createElement("div");
+            d.id = "loginMessage";
+            d.style.minHeight = "18px";
+            d.style.margin = "8px 0";
+            document
+              .querySelector(".login-form")
+              .insertBefore(d, document.getElementById("loginBtn"));
+            return d;
+          })();
+        el.textContent = text;
+        el.style.color =
+          type === "error"
+            ? "#ef4444"
+            : type === "success"
+            ? "#10b981"
+            : "#111827";
+      }
+
+      async function handleLogin(event) {
+        event.preventDefault();
+        const btn = document.getElementById("loginBtn");
+        const orig = btn.textContent;
+        btn.textContent = "Signing In...";
+        btn.disabled = true;
+        showMessage("Signing in...", "info");
+
+        const fm = new FormData(event.target);
+        const username = fm.get("username")?.trim();
+        const email = fm.get("email")?.trim();
+        const password = fm.get("password");
+        const identifier = username || email;
+        if (!identifier || !password) {
+          showMessage("Please provide username/email and password.", "error");
+          btn.textContent = orig;
+          btn.disabled = false;
+          return;
+        }
+
+        // Test server connection first
+        try {
+          console.log('Testing connection to:', API_BASE);
+          const testRes = await fetch(`${API_BASE.replace('/api', '')}/health`);
+          if (!testRes.ok) throw new Error('Server not reachable');
+          console.log('✅ Server connection OK');
+        } catch (testError) {
+          console.error('❌ Server connection failed:', testError);
+          showMessage(`Cannot connect to server: ${API_BASE}`, "error");
+          btn.textContent = orig;
+          btn.disabled = false;
+          return;
+        }
+
+        try {
+          const res = await fetch(`${API_BASE}/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ identifier, password }),
+          });
+
+          let data = null;
+          try {
+            data = await res.json();
+          } catch (_) {
+            data = null;
+          }
+
+          if (!res.ok) {
+            showMessage(
+              data?.message || `Login failed (${res.status})`,
+              "error"
+            );
+            return;
+          }
+
+          if (data.token) localStorage.setItem("token", data.token);
+
+          const userId = data.user?._id || data.user?.id || data.user?.shortId;
+          if (!userId) {
+            showMessage("Login succeeded but no user id returned.", "error");
+            return;
+          }
+
+          localStorage.setItem("userId", userId);
+
+          console.log("Redirecting to:", `dashboard.html?id=${userId}`);
+          window.location.href = `dashboard.html?id=${userId}`;
+        } catch (err) {
+          console.error("Login error:", err);
+          showMessage("Network error — please try again.", "error");
+        } finally {
+          btn.textContent = orig;
+          btn.disabled = false;
+        }
+      }
+    </script>
+    <script src="translate.js"></script>
+  </body>
+</html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Messaging</title>
+</head>
+<body>
+    <h1>Messaging Debug</h1>
+    <div id="status"></div>
+    <div id="userInfo"></div>
+    <div id="channels"></div>
+    
+    <script>
+        const API_BASE = "http://localhost:5000/api";
+        const params = new URLSearchParams(location.search);
+        const userId = params.get("id") || localStorage.getItem("userId");
+        const token = localStorage.getItem("token");
+        
+        const statusDiv = document.getElementById('status');
+        const userDiv = document.getElementById('userInfo');
+        const channelsDiv = document.getElementById('channels');
+        
+        function log(message) {
+            console.log(message);
+            statusDiv.innerHTML += '<p>' + message + '</p>';
+        }
+        
+        async function debugMessaging() {
+            log('Starting debug...');
+            log('User ID: ' + userId);
+            log('Token: ' + (token ? 'Present' : 'Missing'));
+            
+            if (!token || !userId) {
+                log('ERROR: Missing token or userId');
+                return;
+            }
+            
+            try {
+                // Test server connection
+                log('Testing server connection...');
+                const serverRes = await fetch('http://localhost:5000/');
+                log('Server status: ' + serverRes.status);
+                
+                // Test user endpoint
+                log('Testing user endpoint...');
+                const userRes = await fetch(`${API_BASE}/users/${userId}`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                log('User endpoint status: ' + userRes.status);
+                
+                if (userRes.ok) {
+                    const userData = await userRes.json();
+                    log('User data received: ' + JSON.stringify(userData));
+                    userDiv.innerHTML = '<h3>User Info:</h3><pre>' + JSON.stringify(userData, null, 2) + '</pre>';
+                } else {
+                    const error = await userRes.text();
+                    log('User endpoint error: ' + error);
+                }
+                
+                // Test channels endpoint
+                log('Testing channels endpoint...');
+                const channelsRes = await fetch(`${API_BASE}/channels`, {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                log('Channels endpoint status: ' + channelsRes.status);
+                
+                if (channelsRes.ok) {
+                    const channelsData = await channelsRes.json();
+                    log('Channels data received: ' + JSON.stringify(channelsData));
+                    channelsDiv.innerHTML = '<h3>Channels:</h3><pre>' + JSON.stringify(channelsData, null, 2) + '</pre>';
+                } else {
+                    const error = await channelsRes.text();
+                    log('Channels endpoint error: ' + error);
+                }
+                
+            } catch (error) {
+                log('Network error: ' + error.message);
+            }
+        }
+        
+        debugMessaging();
+    </script>
+</body>
+</html>

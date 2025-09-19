@@ -1,0 +1,106 @@
+Folder Structure Example
+
+Here's what your project folder might look like:
+
+/project
+│
+├── index.html
+├── about.html
+├── navbar.html      <-- Your reusable navbar
+├── load-navbar.js   <-- Script to load the navbar
+└── /css
+    └── style.css
+
+📄 1. navbar.html — Create the Navbar Component
+
+This file contains only the HTML for the navbar.
+
+<!-- navbar.html -->
+<nav>
+  <ul>
+    <li><a href="index.html">Home</a></li>
+    <li><a href="about.html">About</a></li>
+    <li><a href="contact.html">Contact</a></li>
+  </ul>
+</nav>
+
+
+You can style this using your CSS as usual.
+
+📄 2. load-navbar.js — JavaScript Loader
+
+This script will fetch the navbar.html file and insert it into a container in your main pages.
+
+// load-navbar.js
+document.addEventListener("DOMContentLoaded", function () {
+  fetch("navbar.html")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error("Failed to load navbar: " + response.status);
+      }
+      return response.text();
+    })
+    .then((data) => {
+      document.getElementById("navbar").innerHTML = data;
+    })
+    .catch((error) => {
+      console.error("Error loading navbar:", error);
+    });
+});
+
+📄 3. index.html (and any other page)
+
+In each HTML page, you’ll create a <div id="navbar"></div> placeholder, and load the load-navbar.js script.
+
+<!-- index.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Home</title>
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- Navbar placeholder -->
+  <div id="navbar"></div>
+
+  <!-- Your page content -->
+  <main>
+    <h1>Welcome to the Home Page</h1>
+  </main>
+
+  <!-- Load the navbar via JavaScript -->
+  <script src="load-navbar.js"></script>
+</body>
+</html>
+
+
+Do the same in about.html, contact.html, etc.
+
+🎨 4. Styling the Navbar
+
+You can style the navbar in your existing CSS file (style.css), or a separate one if you prefer.
+
+/* css/style.css */
+nav {
+  background-color: #333;
+  padding: 10px;
+}
+
+nav ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+}
+
+nav ul li {
+  margin-right: 15px;
+}
+
+nav ul li a {
+  color: white;
+  text-decoration: none;
+}

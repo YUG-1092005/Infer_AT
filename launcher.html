@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Infera</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            min-height: 100vh;
+        }
+        .container {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            backdrop-filter: blur(10px);
+        }
+        h1 { text-align: center; margin-bottom: 30px; }
+        .status { 
+            padding: 15px; 
+            margin: 15px 0; 
+            border-radius: 8px; 
+            font-weight: bold;
+        }
+        .status.success { background: rgba(76, 175, 80, 0.3); }
+        .status.error { background: rgba(244, 67, 54, 0.3); }
+        .status.warning { background: rgba(255, 193, 7, 0.3); }
+        .btn {
+            display: inline-block;
+            padding: 12px 24px;
+            margin: 10px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            text-decoration: none;
+            border-radius: 8px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            transition: all 0.3s;
+        }
+        .btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+            transform: translateY(-2px);
+        }
+        .section {
+            margin: 25px 0;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 10px;
+        }
+        .code {
+            background: rgba(0, 0, 0, 0.3);
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚇 KMRL Document Management System</h1>
+        
+        <div class="section">
+            <h2>System Status</h2>
+            <div id="serverStatus" class="status warning">
+                ⏳ Checking server status...
+            </div>
+            <div id="dbStatus" class="status warning">
+                ⏳ Checking database connection...
+            </div>
+        </div>
+
+        <div class="section">
+            <h2>Quick Start</h2>
+            <p><strong>Step 1:</strong> Start the backend server</p>
+            <div class="code">cd Credentials_Server && npm start</div>
+            
+            <p><strong>Step 2:</strong> Access the application</p>
+            <a href="Frontend/index.html" class="btn" target="_blank">🏠 Open Main Application</a>
+            <a href="Frontend/login.html" class="btn" target="_blank">🔐 Direct Login</a>
+            <a href="Frontend/messaging.html" class="btn" target="_blank">💬 Messaging (Login Required)</a>
+        </div>
+
+        <div class="section">
+            <h2>System Components</h2>
+            <ul>
+                <li><strong>Backend Server:</strong> http://localhost:5000</li>
+                <li><strong>Frontend:</strong> Static HTML files</li>
+                <li><strong>Database:</strong> MongoDB Atlas</li>
+                <li><strong>Real-time:</strong> Socket.IO</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Features</h2>
+            <ul>
+                <li>✅ User Authentication & Authorization</li>
+                <li>✅ Real-time Messaging System</li>
+                <li>✅ Channel-based Communication</li>
+                <li>✅ Document Processing (OCR)</li>
+                <li>✅ Role-based Access Control</li>
+                <li>✅ Department-wise Organization</li>
+            </ul>
+        </div>
+
+        <div class="section">
+            <h2>Documentation</h2>
+            <a href="MESSAGING_GUIDE.md" class="btn">📖 Messaging Guide</a>
+            <a href="TODO.md" class="btn">📋 TODO List</a>
+        </div>
+    </div>
+
+    <script>
+        // Check server status
+        async function checkServerStatus() {
+            try {
+                const response = await fetch('http://localhost:5000/');
+                if (response.ok) {
+                    document.getElementById('serverStatus').innerHTML = '✅ Server is running on port 5000';
+                    document.getElementById('serverStatus').className = 'status success';
+                } else {
+                    throw new Error('Server responded with error');
+                }
+            } catch (error) {
+                document.getElementById('serverStatus').innerHTML = '❌ Server is not running. Please start with: npm start';
+                document.getElementById('serverStatus').className = 'status error';
+            }
+        }
+
+        // Check database status (simplified)
+        async function checkDatabaseStatus() {
+            try {
+                const response = await fetch('http://localhost:5000/api/users?limit=1');
+                if (response.ok || response.status === 401) {
+                    document.getElementById('dbStatus').innerHTML = '✅ Database connection is active';
+                    document.getElementById('dbStatus').className = 'status success';
+                } else {
+                    throw new Error('Database connection failed');
+                }
+            } catch (error) {
+                document.getElementById('dbStatus').innerHTML = '❌ Database connection failed. Check MongoDB Atlas connection.';
+                document.getElementById('dbStatus').className = 'status error';
+            }
+        }
+
+        // Run checks
+        setTimeout(() => {
+            checkServerStatus();
+            checkDatabaseStatus();
+        }, 1000);
+
+        // Refresh every 30 seconds
+        setInterval(() => {
+            checkServerStatus();
+            checkDatabaseStatus();
+        }, 30000);
+    </script>
+</body>
+</html>

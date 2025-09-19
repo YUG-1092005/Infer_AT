@@ -1,0 +1,10 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>KMRL Join Redirect</title></head>
+<body><script>
+const params = new URLSearchParams(window.location.search);
+const ip = params.get('ip') || '10.13.123.182:5000';
+const token = params.get('token');
+const url = token ? `http://${ip}/api/email/join/${token}` : `http://${ip}`;
+window.location.href = url;
+</script>
+<p>Joining KMRL Channel...</p></body></html>

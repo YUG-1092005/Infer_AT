@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Infera</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --bg: #0f1724;
+        --card: #ffffff;
+        --muted: #64748b;
+        --accent: #2563eb;
+        --glass: rgba(255, 255, 255, 0.06);
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --radius: 14px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      #google_translate_element {
+        position: fixed;
+        top: 16px;
+        right: 16px;
+        z-index: 9999;
+        background: #0858fa;
+        padding: 8px 16px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+        font-size: 16px;
+      }
+
+      /* Hide the little Google flag icon */
+      .goog-te-gadget img {
+        display: none;
+      }
+
+      /* Change text color, background, and border */
+      .goog-te-gadget-simple {
+        background: #f4f6fa !important;
+        border: none !important;
+      }
+
+      .goog-te-menu-value span {
+        color: #4caf50 !important;
+      }
+
+      .goog-te-menu-value span:hover {
+        color: #007bff !important;
+      }
+
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, sans-serif;
+        background: radial-gradient(
+            1000px 600px at 10% 10%,
+            rgba(37, 99, 235, 0.08),
+            transparent
+          ),
+          radial-gradient(
+            800px 400px at 90% 90%,
+            rgba(16, 185, 129, 0.04),
+            transparent
+          );
+        color: #0b1220;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .header {
+        background: linear-gradient(180deg, #fff, #fbfdff);
+        border-radius: var(--radius);
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 6px 30px rgba(2, 6, 23, 0.03);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .back-btn {
+        background: var(--accent);
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 24px;
+      }
+
+      .stat-card {
+        background: linear-gradient(180deg, #fff, #fbfdff);
+        border-radius: var(--radius);
+        padding: 20px;
+        box-shadow: 0 6px 30px rgba(2, 6, 23, 0.03);
+        text-align: center;
+      }
+
+      .stat-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        margin: 10px 0;
+      }
+
+      .stat-label {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .charts-grid {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 24px;
+        margin-bottom: 24px;
+      }
+
+      .chart-card {
+        background: linear-gradient(180deg, #fff, #fbfdff);
+        border-radius: var(--radius);
+        padding: 24px;
+        box-shadow: 0 6px 30px rgba(2, 6, 23, 0.03);
+        height: 400px;
+      }
+
+      .chart-container {
+        position: relative;
+        height: 320px;
+        width: 100%;
+      }
+
+      .chart-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 20px;
+      }
+
+      .departments-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 20px;
+      }
+
+      .dept-card {
+        background: linear-gradient(180deg, #fff, #fbfdff);
+        border-radius: var(--radius);
+        padding: 20px;
+        box-shadow: 0 6px 30px rgba(2, 6, 23, 0.03);
+      }
+
+      .dept-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+      }
+
+      .dept-name {
+        font-weight: 600;
+        font-size: 1.1rem;
+      }
+
+      .load-indicator {
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.8rem;
+        font-weight: 600;
+      }
+
+      .load-low {
+        background: #dcfce7;
+        color: #166534;
+      }
+      .load-medium {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .load-high {
+        background: #fecaca;
+        color: #991b1b;
+      }
+
+      .dept-stats {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .dept-stat {
+        text-align: center;
+        padding: 12px;
+        background: rgba(15, 23, 36, 0.02);
+        border-radius: 8px;
+      }
+
+      .dept-stat-value {
+        font-size: 1.5rem;
+        font-weight: 700;
+      }
+
+      .dept-stat-label {
+        font-size: 0.8rem;
+        color: var(--muted);
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: #e5e7eb;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: 8px;
+      }
+
+      .progress-fill {
+        height: 100%;
+        transition: width 0.3s ease;
+      }
+
+      .status-online {
+        color: var(--success) !important;
+      }
+      .status-offline {
+        color: var(--danger) !important;
+      }
+      .status-maintenance {
+        color: var(--warning) !important;
+      }
+
+      .server-status {
+        font-weight: 700;
+        text-transform: uppercase;
+      }
+
+      @media (max-width: 768px) {
+        .charts-grid {
+          grid-template-columns: 1fr;
+        }
+        .stats-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div id="google_translate_element"></div>
+    </header>
+    <div class="container">
+      <div class="header">
+        <div>
+          <h1 style="margin: 0">Analytics Dashboard</h1>
+          <p style="margin: 5px 0 0 0; color: var(--muted)">
+            Real-time insights and department metrics
+          </p>
+        </div>
+        <button class="back-btn" onclick="goBack()">← Back to Dashboard</button>
+      </div>
+
+      <!-- Real-time Stats -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value total-scans" style="color: var(--accent)">
+            0
+          </div>
+          <div class="stat-label">Total OCR Scans</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value today-scans" style="color: var(--success)">
+            0
+          </div>
+          <div class="stat-label">Today's Scans</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value active-users" style="color: var(--warning)">
+            0
+          </div>
+          <div class="stat-label">Active Users</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value system-load" style="color: var(--danger)">
+            0%
+          </div>
+          <div class="stat-label">System Load</div>
+        </div>
+        <div class="stat-card">
+          <div
+            class="stat-value server-status status-online"
+            style="color: var(--success)"
+          >
+            ONLINE
+          </div>
+          <div class="stat-label">Server Status</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-value monthly-scans" style="color: var(--accent)">
+            0
+          </div>
+          <div class="stat-label">Monthly Scans</div>
+        </div>
+      </div>
+
+      <!-- Charts Section -->
+      <div class="charts-grid">
+        <div class="chart-card">
+          <div class="chart-title">
+            Document Processing Trends (Last 7 Days)
+          </div>
+          <div class="chart-container">
+            <canvas id="trendChart"></canvas>
+          </div>
+        </div>
+        <div class="chart-card">
+          <div class="chart-title">Department Distribution</div>
+          <div class="chart-container">
+            <canvas id="deptChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Department Details -->
+      <h2 style="margin: 24px 0 16px 0">Department Analytics</h2>
+      <div class="departments-grid" id="departmentsGrid">
+        <!-- Department cards will be generated by JavaScript -->
+      </div>
+    </div>
+
+    <script>
+      // Real-time analytics system
+      let API_BASE = "http://localhost:5000/api";
+      const token = localStorage.getItem("token");
+      const userId = localStorage.getItem("userId");
+
+      let realTimeData = {
+        serverStatus: "online",
+        activeUsers: 0,
+        ocrScans: 0,
+        systemLoad: 0,
+      };
+
+      // Auto-detect server
+      async function initializeServer() {
+        try {
+          const testRes = await fetch("http://10.13.123.182:5000/health");
+          if (testRes.ok) {
+            API_BASE = "http://10.13.123.182:5000/api";
+            console.log("Connected to network server:", API_BASE);
+          }
+        } catch (e) {
+          console.log("Using localhost server");
+        }
+      }
+
+      // Track OCR scan
+      async function trackOCRScan(metadata = {}) {
+        try {
+          await fetch(`${API_BASE}/analytics/track`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              action: "ocr_scan",
+              metadata,
+            }),
+          });
+        } catch (error) {
+          console.error("Failed to track OCR scan:", error);
+        }
+      }
+
+      // Get real-time metrics
+      async function getRealTimeMetrics() {
+        try {
+          const response = await fetch(`${API_BASE}/analytics/realtime`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (response.ok) {
+            const data = await response.json();
+            realTimeData = data;
+            updateRealTimeDisplay();
+          } else if (response.status === 404) {
+            console.log(
+              "Analytics endpoints not available - server needs restart"
+            );
+            // Use fallback data
+            realTimeData = {
+              serverStatus: "online",
+              activeUsers: 1, // Current user
+              cpuUsage: Math.random() * 30 + 10,
+              memoryUsage: Math.random() * 50 + 20,
+              departmentStats: [],
+            };
+            updateRealTimeDisplay();
+          }
+        } catch (error) {
+          console.error("Failed to get real-time metrics:", error);
+          // Use fallback data
+          realTimeData = {
+            serverStatus: "online",
+            activeUsers: 1,
+            cpuUsage: Math.random() * 30 + 10,
+            memoryUsage: Math.random() * 50 + 20,
+            departmentStats: [],
+          };
+          updateRealTimeDisplay();
+        }
+      }
+
+      // Get OCR statistics
+      async function getOCRStats() {
+        try {
+          const response = await fetch(`${API_BASE}/analytics/ocr`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (response.ok) {
+            const data = await response.json();
+            updateOCRDisplay(data);
+          } else if (response.status === 404) {
+            console.log(
+              "Analytics endpoints not available - server needs restart"
+            );
+            // Use fallback data
+            updateOCRDisplay({
+              stats: { totalScans: 0, todayScans: 0, monthlyScans: 0 },
+              dailyActivity: [],
+            });
+          }
+        } catch (error) {
+          console.error("Failed to get OCR stats:", error);
+          // Use fallback data
+          updateOCRDisplay({
+            stats: { totalScans: 0, todayScans: 0, monthlyScans: 0 },
+            dailyActivity: [],
+          });
+        }
+      }
+
+      // Update real-time display
+      function updateRealTimeDisplay() {
+        // Update server status
+        const statusElements = document.querySelectorAll(".server-status");
+        statusElements.forEach((el) => {
+          el.textContent = realTimeData.serverStatus.toUpperCase();
+          el.className = `server-status status-${realTimeData.serverStatus}`;
+        });
+
+        // Update active users
+        const activeUsersEl = document.querySelector(".active-users");
+        if (activeUsersEl) {
+          activeUsersEl.textContent = realTimeData.activeUsers || 0;
+        }
+
+        // Update system load
+        const systemLoadEl = document.querySelector(".system-load");
+        if (systemLoadEl) {
+          systemLoadEl.textContent = `${
+            realTimeData.cpuUsage?.toFixed(1) || 0
+          }%`;
+        }
+
+        // Update department display with real data
+        if (realTimeData.departmentStats) {
+          updateDepartmentDisplay(realTimeData.departmentStats);
+          updateDepartmentChart(realTimeData.departmentStats);
+        }
+      }
+
+      // Update OCR display and charts
+      function updateOCRDisplay(data) {
+        const totalScansEl = document.querySelector(".total-scans");
+        const todayScansEl = document.querySelector(".today-scans");
+        const monthlyScansEl = document.querySelector(".monthly-scans");
+
+        if (totalScansEl) totalScansEl.textContent = data.stats.totalScans;
+        if (todayScansEl) todayScansEl.textContent = data.stats.todayScans;
+        if (monthlyScansEl)
+          monthlyScansEl.textContent = data.stats.monthlyScans;
+
+        // Update trend chart with daily activity
+        if (window.trendChart && data.dailyActivity) {
+          const chartData = new Array(7).fill(0);
+          data.dailyActivity.forEach((day) => {
+            const dayIndex = new Date(day._id).getDay();
+            const adjustedIndex = dayIndex === 0 ? 6 : dayIndex - 1; // Adjust Sunday to end
+            if (adjustedIndex >= 0 && adjustedIndex < 7) {
+              chartData[adjustedIndex] = day.count;
+            }
+          });
+
+          window.trendChart.data.datasets[0].data = chartData;
+          window.trendChart.update();
+        }
+      }
+
+      // Update department chart
+      function updateDepartmentChart(departmentStats) {
+        if (window.deptChart && departmentStats && departmentStats.length > 0) {
+          const labels = departmentStats.map((dept) => dept._id || "Unknown");
+          const data = departmentStats.map((dept) => dept.totalUsers);
+          const colors = [
+            "#2563eb",
+            "#10b981",
+            "#f59e0b",
+            "#ef4444",
+            "#8b5cf6",
+            "#06b6d4",
+            "#f97316",
+            "#84cc16",
+          ];
+
+          window.deptChart.data.labels = labels;
+          window.deptChart.data.datasets[0].data = data;
+          window.deptChart.data.datasets[0].backgroundColor = colors.slice(
+            0,
+            data.length
+          );
+          window.deptChart.update();
+        }
+      }
+
+      // Dummy data for departments (keeping for demo)
+      const departments = [
+        {
+          name: "Station Control",
+          load: "high",
+          docsPerSecond: 4.2,
+          totalDocs: 589,
+          importantDocs: 89,
+          workload: 87,
+          avgProcessingTime: "2.1s",
+        },
+        {
+          name: "Train Operations",
+          load: "high",
+          docsPerSecond: 3.8,
+          totalDocs: 523,
+          importantDocs: 76,
+          workload: 82,
+          avgProcessingTime: "2.3s",
+        },
+        {
+          name: "Maintenance",
+          load: "medium",
+          docsPerSecond: 2.1,
+          totalDocs: 342,
+          importantDocs: 45,
+          workload: 65,
+          avgProcessingTime: "3.2s",
+        },
+        {
+          name: "Safety & Security",
+          load: "medium",
+          docsPerSecond: 1.9,
+          totalDocs: 298,
+          importantDocs: 67,
+          workload: 58,
+          avgProcessingTime: "3.8s",
+        },
+        {
+          name: "Engineering",
+          load: "low",
+          docsPerSecond: 1.2,
+          totalDocs: 156,
+          importantDocs: 32,
+          workload: 34,
+          avgProcessingTime: "4.1s",
+        },
+        {
+          name: "Administration",
+          load: "low",
+          docsPerSecond: 0.8,
+          totalDocs: 89,
+          importantDocs: 12,
+          workload: 28,
+          avgProcessingTime: "4.5s",
+        },
+      ];
+
+      // Generate department cards
+      function generateDepartmentCards() {
+        const grid = document.getElementById("departmentsGrid");
+
+        departments.forEach((dept) => {
+          const card = document.createElement("div");
+          card.className = "dept-card";
+          card.innerHTML = `
+                    <div class="dept-header">
+                        <div class="dept-name">${dept.name}</div>
+                        <div class="load-indicator load-${dept.load}">
+                            ${dept.load.toUpperCase()} LOAD
+                        </div>
+                    </div>
+                    <div class="dept-stats">
+                        <div class="dept-stat">
+                            <div class="dept-stat-value">${
+                              dept.docsPerSecond
+                            }</div>
+                            <div class="dept-stat-label">Docs/Second</div>
+                        </div>
+                        <div class="dept-stat">
+                            <div class="dept-stat-value">${dept.totalDocs}</div>
+                            <div class="dept-stat-label">Total Docs</div>
+                        </div>
+                        <div class="dept-stat">
+                            <div class="dept-stat-value">${
+                              dept.importantDocs
+                            }</div>
+                            <div class="dept-stat-label">Important Docs</div>
+                        </div>
+                        <div class="dept-stat">
+                            <div class="dept-stat-value">${
+                              dept.avgProcessingTime
+                            }</div>
+                            <div class="dept-stat-label">Avg Time</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                            <span style="font-size: 0.9rem;">Workload</span>
+                            <span style="font-size: 0.9rem; font-weight: 600;">${
+                              dept.workload
+                            }%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${
+                              dept.workload
+                            }%; background: ${getProgressColor(
+            dept.workload
+          )};"></div>
+                        </div>
+                    </div>
+                `;
+          grid.appendChild(card);
+        });
+      }
+
+      function getProgressColor(percentage) {
+        if (percentage < 40) return "#10b981";
+        if (percentage < 70) return "#f59e0b";
+        return "#ef4444";
+      }
+
+      // Initialize charts with real data
+      function initCharts() {
+        // Get last 7 days for trend chart
+        const last7Days = [];
+        const today = new Date();
+        for (let i = 6; i >= 0; i--) {
+          const date = new Date(today);
+          date.setDate(date.getDate() - i);
+          last7Days.push(date.toLocaleDateString("en", { weekday: "short" }));
+        }
+
+        // Trend Chart with real OCR data
+        const trendCtx = document.getElementById("trendChart").getContext("2d");
+        window.trendChart = new Chart(trendCtx, {
+          type: "line",
+          data: {
+            labels: last7Days,
+            datasets: [
+              {
+                label: "OCR Scans",
+                data: [0, 0, 0, 0, 0, 0, 0], // Will be updated with real data
+                borderColor: "#2563eb",
+                backgroundColor: "rgba(37, 99, 235, 0.1)",
+                tension: 0.4,
+                fill: true,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                display: false,
+              },
+            },
+            scales: {
+              y: {
+                beginAtZero: true,
+                grid: {
+                  color: "rgba(0,0,0,0.1)",
+                },
+              },
+              x: {
+                grid: {
+                  display: false,
+                },
+              },
+            },
+            layout: {
+              padding: 0,
+            },
+          },
+        });
+
+        // Department Distribution Chart
+        const deptCtx = document.getElementById("deptChart").getContext("2d");
+        window.deptChart = new Chart(deptCtx, {
+          type: "doughnut",
+          data: {
+            labels: ["Loading..."],
+            datasets: [
+              {
+                data: [1],
+                backgroundColor: ["#e5e7eb"],
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: {
+                position: "bottom",
+                labels: {
+                  padding: 15,
+                  usePointStyle: true,
+                  font: {
+                    size: 11,
+                  },
+                },
+              },
+            },
+            layout: {
+              padding: 10,
+            },
+          },
+        });
+      }
+
+      // Track user activity
+      async function trackActivity() {
+        try {
+          await fetch(`${API_BASE}/analytics/track`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              action: "page_view",
+              metadata: { page: "analytics" },
+            }),
+          });
+        } catch (error) {
+          console.error("Failed to track activity:", error);
+        }
+      }
+
+      // Update department display with real data
+      function updateDepartmentDisplay(departmentStats) {
+        const grid = document.getElementById("departmentsGrid");
+        grid.innerHTML = "";
+
+        if (!departmentStats || departmentStats.length === 0) {
+          generateDepartmentCards(); // Fallback to dummy data
+          return;
+        }
+
+        departmentStats.forEach((dept) => {
+          const workload =
+            dept.activeUsers > 0
+              ? Math.min((dept.activeUsers / dept.totalUsers) * 100, 100)
+              : 0;
+          const load =
+            workload > 70 ? "high" : workload > 40 ? "medium" : "low";
+
+          const card = document.createElement("div");
+          card.className = "dept-card";
+          card.innerHTML = `
+                    <div class="dept-header">
+                        <div class="dept-name">${dept._id || "Unknown"}</div>
+                        <div class="load-indicator load-${load}">
+                            ${load.toUpperCase()} LOAD
+                        </div>
+                    </div>
+                    <div class="dept-stats">
+                        <div class="dept-stat">
+                            <div class="dept-stat-value">${
+                              dept.activeUsers
+                            }</div>
+                            <div class="dept-stat-label">Active Users</div>
+                        </div>
+                        <div class="dept-stat">
+                            <div class="dept-stat-value">${
+                              dept.totalUsers
+                            }</div>
+                            <div class="dept-stat-label">Total Users</div>
+                        </div>
+                        <div class="dept-stat">
+                            <div class="dept-stat-value">${Math.round(
+                              workload
+                            )}%</div>
+                            <div class="dept-stat-label">Activity Rate</div>
+                        </div>
+                        <div class="dept-stat">
+                            <div class="dept-stat-value">${
+                              dept.activeUsers > 0 ? "Online" : "Idle"
+                            }</div>
+                            <div class="dept-stat-label">Status</div>
+                        </div>
+                    </div>
+                    <div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                            <span style="font-size: 0.9rem;">Department Load</span>
+                            <span style="font-size: 0.9rem; font-weight: 600;">${Math.round(
+                              workload
+                            )}%</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" style="width: ${workload}%; background: ${getProgressColor(
+            workload
+          )};"></div>
+                        </div>
+                    </div>
+                `;
+          grid.appendChild(card);
+        });
+      }
+
+      // Real-time updates
+      function startRealTimeUpdates() {
+        // Track initial activity
+        trackActivity();
+
+        // Initial load
+        getRealTimeMetrics();
+        getOCRStats();
+
+        // Update every 5 seconds
+        setInterval(() => {
+          getRealTimeMetrics();
+        }, 5000);
+
+        // Update OCR stats every 30 seconds
+        setInterval(() => {
+          getOCRStats();
+        }, 30000);
+
+        // Track activity every 2 minutes to keep user active
+        setInterval(() => {
+          trackActivity();
+        }, 120000);
+      }
+
+      function goBack() {
+        const userId = localStorage.getItem("userId");
+        if (userId) {
+          window.location.href = `dashboard.html?id=${encodeURIComponent(
+            userId
+          )}`;
+        } else {
+          window.location.href = "dashboard.html";
+        }
+      }
+
+      // Initialize everything
+      document.addEventListener("DOMContentLoaded", async () => {
+        if (!token || !userId) {
+          alert("Please login to view analytics");
+          window.location.href = "login.html";
+          return;
+        }
+
+        await initializeServer();
+        generateDepartmentCards();
+        initCharts();
+        startRealTimeUpdates();
+      });
+
+      // Make trackOCRScan globally available for other pages
+      window.trackOCRScan = trackOCRScan;
+    </script>
+    <script type="text/javascript">
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement(
+          {
+            pageLanguage: "en",
+            includedLanguages: "en,hi,ml",
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+          },
+          "google_translate_element"
+        );
+      }
+    </script>
+    <script
+      type="text/javascript"
+      src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+    ></script>
+  </body>
+</html>

@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KMRL Document Flow Management</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #06b6d4;
+      --light: #f8fafc;
+      --dark: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: var(--dark);
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .header {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+    
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .btn-secondary {
+      background: var(--light);
+      color: var(--dark);
+      border: 1px solid var(--border);
+    }
+    
+    .real-time-stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+    }
+    
+    .stat-card.live::before {
+      background: var(--success);
+      animation: pulse 2s infinite;
+    }
+    
+    .stat-card.total::before {
+      background: var(--primary);
+    }
+    
+    .stat-card.pending::before {
+      background: var(--warning);
+    }
+    
+    .stat-card.completed::before {
+      background: var(--info);
+    }
+    
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    
+    .stat-label {
+      color: var(--muted);
+      font-size: 14px;
+    }
+    
+    .live-indicator {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 8px;
+      height: 8px;
+      background: var(--success);
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+    }
+    
+    .main-content {
+      display: grid;
+      grid-template-columns: 1fr 350px;
+      gap: 24px;
+    }
+    
+    .documents-section {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .filters-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    
+    .filter-select {
+      padding: 8px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    
+    .search-box {
+      flex: 1;
+      min-width: 200px;
+      position: relative;
+    }
+    
+    .search-box input {
+      width: 100%;
+      padding: 8px 12px 8px 36px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    
+    .search-box i {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+    }
+    
+    .documents-list {
+      max-height: 600px;
+      overflow-y: auto;
+    }
+    
+    .document-item {
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 12px;
+      transition: all 0.2s;
+      cursor: pointer;
+    }
+    
+    .document-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+    
+    .document-item.new {
+      border-left: 4px solid var(--success);
+      background: rgba(16, 185, 129, 0.05);
+    }
+    
+    .document-item.urgent {
+      border-left: 4px solid var(--danger);
+      background: rgba(239, 68, 68, 0.05);
+    }
+    
+    .doc-header {
+      display: flex;
+      justify-content: between;
+      align-items: flex-start;
+      margin-bottom: 12px;
+    }
+    
+    .doc-subject {
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 4px;
+    }
+    
+    .doc-meta {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+    
+    .doc-status {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    
+    .status-sent {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+    
+    .status-received {
+      background: #dcfce7;
+      color: #166534;
+    }
+    
+    .status-pending {
+      background: #fef3c7;
+      color: #92400e;
+    }
+    
+    .status-overdue {
+      background: #fecaca;
+      color: #991b1b;
+    }
+    
+    .sidebar {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+    
+    .dept-flow-card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .dept-flow-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+    }
+    
+    .dept-name {
+      font-weight: 600;
+      color: var(--dark);
+    }
+    
+    .flow-rate {
+      font-size: 12px;
+      color: var(--success);
+      font-weight: 600;
+    }
+    
+    .flow-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    
+    .flow-stat {
+      text-align: center;
+      padding: 8px;
+      background: var(--light);
+      border-radius: 8px;
+    }
+    
+    .flow-stat-value {
+      font-size: 18px;
+      font-weight: 700;
+      color: var(--primary);
+    }
+    
+    .flow-stat-label {
+      font-size: 11px;
+      color: var(--muted);
+    }
+    
+    .personal-section {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      color: white;
+      border-radius: 16px;
+      padding: 20px;
+    }
+    
+    .personal-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    
+    .personal-avatar {
+      width: 40px;
+      height: 40px;
+      background: rgba(255, 255, 255, 0.2);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+    }
+    
+    .personal-stats {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+    
+    .personal-stat {
+      text-align: center;
+      padding: 12px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+    }
+    
+    .personal-stat-value {
+      font-size: 20px;
+      font-weight: 700;
+    }
+    
+    .personal-stat-label {
+      font-size: 12px;
+      opacity: 0.8;
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .modal-content {
+      background: white;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 600px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+    
+    .modal-header {
+      padding: 24px 24px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-body {
+      padding: 24px;
+    }
+    
+    @media (max-width: 768px) {
+      .main-content {
+        grid-template-columns: 1fr;
+      }
+      
+      .filters-bar {
+        flex-direction: column;
+      }
+      
+      .doc-meta {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div>
+        <h1><i class="fas fa-file-invoice"></i> Document Flow Management</h1>
+        <p style="margin-top: 8px; color: var(--muted);">Real-time document tracking across all departments</p>
+      </div>
+      <div style="display: flex; gap: 12px;">
+        <button class="btn btn-secondary" onclick="goBack()">
+          <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <button class="btn btn-primary" onclick="showPersonalDocs()">
+          <i class="fas fa-user"></i> My Documents
+        </button>
+      </div>
+    </div>
+
+    <!-- Real-time Statistics -->
+    <div class="real-time-stats">
+      <div class="stat-card live">
+        <div class="live-indicator"></div>
+        <div class="stat-value" style="color: var(--success);" id="docsPerSecond">2.3</div>
+        <div class="stat-label">Docs/Second</div>
+      </div>
+      <div class="stat-card total">
+        <div class="stat-value" style="color: var(--primary);" id="totalDocs">1,247</div>
+        <div class="stat-label">Total Today</div>
+      </div>
+      <div class="stat-card pending">
+        <div class="stat-value" style="color: var(--warning);" id="pendingDocs">89</div>
+        <div class="stat-label">Pending Review</div>
+      </div>
+      <div class="stat-card completed">
+        <div class="stat-value" style="color: var(--info);" id="completedDocs">1,158</div>
+        <div class="stat-label">Processed</div>
+      </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+      <!-- Documents List -->
+      <div class="documents-section">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h2>Document Flow <span style="color: var(--success); font-size: 14px;">● LIVE</span></h2>
+          <button class="btn btn-secondary" onclick="refreshDocs()">
+            <i class="fas fa-sync-alt"></i> Refresh
+          </button>
+        </div>
+        
+        <div class="filters-bar">
+          <div class="search-box">
+            <input type="text" id="searchInput" placeholder="Search by subject, sender, or department...">
+            <i class="fas fa-search"></i>
+          </div>
+          <select class="filter-select" id="deptFilter">
+            <option value="">All Departments</option>
+          </select>
+          <select class="filter-select" id="statusFilter">
+            <option value="">All Status</option>
+            <option value="sent">Sent</option>
+            <option value="received">Received</option>
+            <option value="pending">Pending</option>
+            <option value="overdue">Overdue</option>
+          </select>
+          <select class="filter-select" id="priorityFilter">
+            <option value="">All Priority</option>
+            <option value="urgent">Urgent</option>
+            <option value="normal">Normal</option>
+          </select>
+        </div>
+        
+        <div class="documents-list" id="documentsList">
+          <!-- Documents will be populated by JavaScript -->
+        </div>
+      </div>
+
+      <!-- Sidebar -->
+      <div class="sidebar">
+        <!-- Department Flow Cards -->
+        <div id="departmentFlows">
+          <!-- Department flow cards will be populated by JavaScript -->
+        </div>
+        
+        <!-- Personal Section -->
+        <div class="personal-section">
+          <div class="personal-header">
+            <div class="personal-avatar">MP</div>
+            <div>
+              <h3 style="margin: 0;">Dr. Maulika Patel</h3>
+              <p style="margin: 0; opacity: 0.8; font-size: 14px;">Station Control</p>
+            </div>
+          </div>
+          
+          <div class="personal-stats">
+            <div class="personal-stat">
+              <div class="personal-stat-value" id="personalSent">23</div>
+              <div class="personal-stat-label">Sent Today</div>
+            </div>
+            <div class="personal-stat">
+              <div class="personal-stat-value" id="personalReceived">31</div>
+              <div class="personal-stat-label">Received</div>
+            </div>
+            <div class="personal-stat">
+              <div class="personal-stat-value" id="personalPending">7</div>
+              <div class="personal-stat-label">Pending</div>
+            </div>
+            <div class="personal-stat">
+              <div class="personal-stat-value" id="personalUrgent">2</div>
+              <div class="personal-stat-label">Urgent</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Document Detail Modal -->
+  <div class="modal" id="documentModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">Document Details</h2>
+        <button class="btn btn-secondary" onclick="closeModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="modalContent">
+          <!-- Content will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Dummy data
+    const departments = [
+      'Station Control',
+      'Train Operations', 
+      'Maintenance',
+      'Safety & Security',
+      'Engineering',
+      'Administration'
+    ];
+
+    const subjects = [
+      'Daily Operations Report',
+      'Safety Inspection Results',
+      'Maintenance Schedule Update',
+      'Emergency Protocol Review',
+      'Staff Training Notice',
+      'Equipment Status Report',
+      'Route Optimization Plan',
+      'Passenger Flow Analysis',
+      'Security Audit Report',
+      'Infrastructure Assessment',
+      'Budget Approval Request',
+      'Policy Update Notification'
+    ];
+
+    const employees = [
+      'Dr. Maulika Patel', 'Dr. Gopi Bhatt', 'Dr. Nirali Pandya', 'Mr. Keyur Prajapati',
+      'Mr. Sunit Parmar', 'Mr. Sneh Vyas', 'Ms. Ankita Chauhan', 'Dr. Jayna Donga',
+      'Ms. Dipti Mathpal', 'Mr. Atmiya Patel', 'Dr. Akash Dave', 'Ms. Shraddha Korvadiya',
+      'Mr. Shyam Viththalani', 'Mr. Mihir Rajyaguru', 'Mr. Dhruv Dalwadi', 'Mr. Jitendrasinh Raulji',
+      'Ms. Jignasha Lakhtaria', 'Ms. Jaina Patel', 'Mr. Vaibhav Gandhi', 'Ms. Anjali Suthar',
+      'Ms. Sreeja P', 'Mr. Shaikh Amin Farooqbhai', 'Dr. Kishori Sudhir Shekokar', 'Mr. Manav Bhavinkumar Patel',
+      'Ms. Jagruti Prajapati', 'Dr. Pritesh Pandey', 'Ms. Priyanka Panchal', 'Mr. Pratik Soni',
+      'Dr. Mehul Thakkar', 'Dr. Sunayana Domadia', 'Ms. Tejal Tandel', 'Ms. Palak Dave',
+      'Mr. Jimesh Rana', 'Ms. Bhumika Prajapati', 'Ms. Roma Barot', 'Ms. Dhruval Kachhiya',
+      'Mr. Chetan Kumar Verma', 'Mr. Mayur Parmar', 'Ms. Komal Yadav', 'Ms. Jayshri Patil',
+      'Mr. Mehulkumar Amin', 'Mr. Nitin Patel', 'Mr. Piyush Suthar', 'Mr. Harsh Goswami',
+      'Dr. Darshana Prajapati', 'Dr Foram Milind Joshi', 'Ms. Khushboo Patel', 'Ms. Sejal Patel',
+      'Dr. Jay Raval', 'Mr. Tapankumar Patel', 'Mr. Sagar Jani', 'Mr. Hitesh Thakwani',
+      'Dr. Bhavesh Pithadiya', 'Mr. Jeet Panchal', 'Dr. Parvin Sodagar', 'Dr. Shreekant Pathak',
+      'Ms. Jigisha Kachhia', 'Ms. Riddhi Sondagar', 'Ms. Sujan Diwan', 'Mr. Walsh Christian',
+      'Ms. Darshana Patel', 'Mr. Himanshu C Mevada'
+    ];
+
+    let documents = [];
+    let filteredDocuments = [];
+
+    // Generate dummy documents
+    function generateDocuments() {
+      documents = [];
+      
+      for (let i = 0; i < 50; i++) {
+        const fromDept = departments[Math.floor(Math.random() * departments.length)];
+        const toDept = departments[Math.floor(Math.random() * departments.length)];
+        const subject = subjects[Math.floor(Math.random() * subjects.length)];
+        const sender = employees[Math.floor(Math.random() * employees.length)];
+        const receiver = employees[Math.floor(Math.random() * employees.length)];
+        
+        const sentTime = new Date();
+        sentTime.setMinutes(sentTime.getMinutes() - Math.floor(Math.random() * 480)); // Last 8 hours
+        
+        const deadline = new Date(sentTime);
+        deadline.setHours(deadline.getHours() + Math.floor(Math.random() * 72) + 1); // 1-72 hours
+        
+        const isUrgent = Math.random() < 0.2; // 20% urgent
+        const statuses = ['sent', 'received', 'pending', 'overdue'];
+        let status = statuses[Math.floor(Math.random() * statuses.length)];
+        
+        // Make overdue if deadline passed
+        if (deadline < new Date() && status !== 'received') {
+          status = 'overdue';
+        }
+
+        documents.push({
+          id: `DOC-${String(i + 1).padStart(4, '0')}`,
+          subject: subject,
+          from: sender,
+          to: receiver,
+          fromDept: fromDept,
+          toDept: toDept,
+          sentTime: sentTime,
+          deadline: deadline,
+          status: status,
+          priority: isUrgent ? 'urgent' : 'normal',
+          purpose: `${subject} for ${toDept} department review and action`,
+          description: `This document contains important information regarding ${subject.toLowerCase()} that requires immediate attention from the ${toDept} team.`
+        });
+      }
+      
+      // Sort by sent time (newest first)
+      documents.sort((a, b) => b.sentTime - a.sentTime);
+      filteredDocuments = [...documents];
+    }
+
+    // Initialize page
+    function init() {
+      generateDocuments();
+      populateFilters();
+      renderDocuments();
+      renderDepartmentFlows();
+      setupEventListeners();
+      startRealTimeUpdates();
+    }
+
+    // Populate filters
+    function populateFilters() {
+      const deptFilter = document.getElementById('deptFilter');
+      
+      departments.forEach(dept => {
+        const option = document.createElement('option');
+        option.value = dept;
+        option.textContent = dept;
+        deptFilter.appendChild(option);
+      });
+    }
+
+    // Setup event listeners
+    function setupEventListeners() {
+      document.getElementById('searchInput').addEventListener('input', applyFilters);
+      document.getElementById('deptFilter').addEventListener('change', applyFilters);
+      document.getElementById('statusFilter').addEventListener('change', applyFilters);
+      document.getElementById('priorityFilter').addEventListener('change', applyFilters);
+    }
+
+    // Apply filters
+    function applyFilters() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const dept = document.getElementById('deptFilter').value;
+      const status = document.getElementById('statusFilter').value;
+      const priority = document.getElementById('priorityFilter').value;
+      
+      filteredDocuments = documents.filter(doc => {
+        const matchesSearch = !search || 
+          doc.subject.toLowerCase().includes(search) ||
+          doc.from.toLowerCase().includes(search) ||
+          doc.fromDept.toLowerCase().includes(search) ||
+          doc.toDept.toLowerCase().includes(search);
+        
+        const matchesDept = !dept || doc.fromDept === dept || doc.toDept === dept;
+        const matchesStatus = !status || doc.status === status;
+        const matchesPriority = !priority || doc.priority === priority;
+        
+        return matchesSearch && matchesDept && matchesStatus && matchesPriority;
+      });
+      
+      renderDocuments();
+    }
+
+    // Render documents
+    function renderDocuments() {
+      const list = document.getElementById('documentsList');
+      
+      if (filteredDocuments.length === 0) {
+        list.innerHTML = `
+          <div style="text-align: center; padding: 40px; color: var(--muted);">
+            <i class="fas fa-search" style="font-size: 48px; margin-bottom: 16px; opacity: 0.5;"></i>
+            <h3>No documents found</h3>
+            <p>Try adjusting your filters</p>
+          </div>
+        `;
+        return;
+      }
+      
+      list.innerHTML = filteredDocuments.map(doc => `
+        <div class="document-item ${doc.priority === 'urgent' ? 'urgent' : ''} ${isRecent(doc.sentTime) ? 'new' : ''}" onclick="openDocument('${doc.id}')">
+          <div class="doc-header">
+            <div style="flex: 1;">
+              <div class="doc-subject">${doc.subject}</div>
+              <div style="font-size: 12px; color: var(--muted);">${doc.id}</div>
+            </div>
+            <span class="doc-status status-${doc.status}">${doc.status}</span>
+          </div>
+          
+          <div class="doc-meta">
+            <div><strong>From:</strong> ${doc.from} (${doc.fromDept})</div>
+            <div><strong>To:</strong> ${doc.to} (${doc.toDept})</div>
+            <div><strong>Sent:</strong> ${formatTime(doc.sentTime)}</div>
+            <div><strong>Deadline:</strong> ${formatTime(doc.deadline)}</div>
+          </div>
+          
+          <div style="margin-top: 8px; font-size: 14px; color: var(--muted);">
+            ${doc.purpose}
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Render department flows
+    function renderDepartmentFlows() {
+      const container = document.getElementById('departmentFlows');
+      
+      container.innerHTML = departments.map(dept => {
+        const deptDocs = documents.filter(doc => doc.fromDept === dept || doc.toDept === dept);
+        const sent = documents.filter(doc => doc.fromDept === dept).length;
+        const received = documents.filter(doc => doc.toDept === dept).length;
+        const rate = (Math.random() * 3 + 0.5).toFixed(1);
+        
+        return `
+          <div class="dept-flow-card">
+            <div class="dept-flow-header">
+              <div class="dept-name">${dept}</div>
+              <div class="flow-rate">${rate}/min</div>
+            </div>
+            
+            <div class="flow-stats">
+              <div class="flow-stat">
+                <div class="flow-stat-value">${sent}</div>
+                <div class="flow-stat-label">Sent</div>
+              </div>
+              <div class="flow-stat">
+                <div class="flow-stat-value">${received}</div>
+                <div class="flow-stat-label">Received</div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Utility functions
+    function isRecent(time) {
+      return (new Date() - time) < 300000; // 5 minutes
+    }
+
+    function formatTime(date) {
+      const now = new Date();
+      const diff = now - date;
+      const minutes = Math.floor(diff / 60000);
+      const hours = Math.floor(minutes / 60);
+      
+      if (minutes < 1) return 'Just now';
+      if (minutes < 60) return `${minutes}m ago`;
+      if (hours < 24) return `${hours}h ago`;
+      return date.toLocaleDateString();
+    }
+
+    // Document actions
+    function openDocument(docId) {
+      const doc = documents.find(d => d.id === docId);
+      if (!doc) return;
+      
+      document.getElementById('modalTitle').textContent = doc.subject;
+      document.getElementById('modalContent').innerHTML = `
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; margin-bottom: 20px;">
+          <div style="background: var(--light); padding: 12px; border-radius: 8px;">
+            <div style="font-size: 12px; color: var(--muted); margin-bottom: 4px;">Document ID</div>
+            <div style="font-weight: 600;">${doc.id}</div>
+          </div>
+          <div style="background: var(--light); padding: 12px; border-radius: 8px;">
+            <div style="font-size: 12px; color: var(--muted); margin-bottom: 4px;">Status</div>
+            <div style="font-weight: 600; text-transform: uppercase;">${doc.status}</div>
+          </div>
+          <div style="background: var(--light); padding: 12px; border-radius: 8px;">
+            <div style="font-size: 12px; color: var(--muted); margin-bottom: 4px;">From</div>
+            <div style="font-weight: 600;">${doc.from}</div>
+            <div style="font-size: 12px; color: var(--muted);">${doc.fromDept}</div>
+          </div>
+          <div style="background: var(--light); padding: 12px; border-radius: 8px;">
+            <div style="font-size: 12px; color: var(--muted); margin-bottom: 4px;">To</div>
+            <div style="font-weight: 600;">${doc.to}</div>
+            <div style="font-size: 12px; color: var(--muted);">${doc.toDept}</div>
+          </div>
+          <div style="background: var(--light); padding: 12px; border-radius: 8px;">
+            <div style="font-size: 12px; color: var(--muted); margin-bottom: 4px;">Sent Time</div>
+            <div style="font-weight: 600;">${doc.sentTime.toLocaleString()}</div>
+          </div>
+          <div style="background: var(--light); padding: 12px; border-radius: 8px;">
+            <div style="font-size: 12px; color: var(--muted); margin-bottom: 4px;">Deadline</div>
+            <div style="font-weight: 600;">${doc.deadline.toLocaleString()}</div>
+          </div>
+        </div>
+        
+        <div style="background: var(--light); padding: 16px; border-radius: 8px; margin-bottom: 16px;">
+          <h4 style="margin-bottom: 8px;">Purpose</h4>
+          <p>${doc.purpose}</p>
+        </div>
+        
+        <div style="background: var(--light); padding: 16px; border-radius: 8px;">
+          <h4 style="margin-bottom: 8px;">Description</h4>
+          <p>${doc.description}</p>
+        </div>
+      `;
+      
+      document.getElementById('documentModal').style.display = 'flex';
+    }
+
+    function closeModal() {
+      document.getElementById('documentModal').style.display = 'none';
+    }
+
+    function showPersonalDocs() {
+      document.getElementById('searchInput').value = 'Dr. Maulika Patel';
+      applyFilters();
+    }
+
+    function refreshDocs() {
+      generateDocuments();
+      renderDocuments();
+      renderDepartmentFlows();
+    }
+
+    function goBack() {
+      const userId = localStorage.getItem('userId');
+      window.location.href = `dashboard.html?id=${encodeURIComponent(userId)}`;
+    }
+
+    // Real-time updates
+    function startRealTimeUpdates() {
+      setInterval(() => {
+        // Update docs per second
+        const newRate = (Math.random() * 2 + 1.5).toFixed(1);
+        document.getElementById('docsPerSecond').textContent = newRate;
+        
+        // Update totals
+        const currentTotal = parseInt(document.getElementById('totalDocs').textContent);
+        document.getElementById('totalDocs').textContent = currentTotal + Math.floor(Math.random() * 3);
+        
+        // Simulate new document
+        if (Math.random() < 0.3) {
+          const newDoc = {
+            id: `DOC-${String(documents.length + 1).padStart(4, '0')}`,
+            subject: subjects[Math.floor(Math.random() * subjects.length)],
+            from: employees[Math.floor(Math.random() * employees.length)],
+            to: employees[Math.floor(Math.random() * employees.length)],
+            fromDept: departments[Math.floor(Math.random() * departments.length)],
+            toDept: departments[Math.floor(Math.random() * departments.length)],
+            sentTime: new Date(),
+            deadline: new Date(Date.now() + Math.random() * 72 * 60 * 60 * 1000),
+            status: 'sent',
+            priority: Math.random() < 0.2 ? 'urgent' : 'normal',
+            purpose: 'New document for review',
+            description: 'Recently generated document'
+          };
+          
+          documents.unshift(newDoc);
+          applyFilters();
+        }
+      }, 5000);
+    }
+
+    // Close modal when clicking outside
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('modal')) {
+        e.target.style.display = 'none';
+      }
+    });
+
+    // Initialize
+    init();
+  </script>
+</body>
+</html>

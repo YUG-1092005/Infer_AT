@@ -1,0 +1,1186 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Infera</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="blob blob1"></div>
+    <div class="blob blob2"></div>
+    <div class="blob blob3"></div>
+    <!-- Header -->
+    <header class="header">
+      <div class="container">
+        <nav class="navbar">
+          <div class="nav-container">
+            <a href="#" class="logo">
+              <img
+                src="20250914_234002.png"
+                alt="Infera Logo"
+                style="height: 180px; width: auto"
+              />
+            </a>
+
+            <ul class="nav-menu">
+              <li class="nav-item">
+                <a href="#" class="nav-link">About</a>
+                <div class="dropdown">
+                  <h6>About</h6>
+                  <ul>
+                    <li><a href="#mission">Mission & Vision</a></li>
+                    <li><a href="#why-trust">Why Trust Us</a></li>
+                    <li><a href="#team">Our Team</a></li>
+                  </ul>
+                </div>
+              </li>
+
+              <li class="nav-item">
+                <a
+                  href="#"
+                  id="dashboardLink"
+                  class="nav-link"
+                  onclick="redirectToDashboard()"
+                  >Dashboard</a
+                >
+                <div class="dropdown">
+                  <h6>Dashboards</h6>
+                  <ul>
+                    <li>
+                      <a href="#" onclick="redirectToDashboard()"
+                        >User Dashboard</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </li>
+
+              <li class="nav-item">
+                <a href="#" id="summaryLink" class="nav-link">Scanning</a>
+                <div class="dropdown">
+                  <h6>Summary</h6>
+                  <ul>
+                    <li class="nav-item">
+                      <a id="openScanningLink" class="nav-link"
+                        >Open Scanning</a
+                      >
+                    </li>
+                  </ul>
+                </div>
+              </li>
+
+              <li class="nav-item">
+                <a href="#" class="nav-link">Resources</a>
+                <div class="dropdown">
+                  <h6>Resources</h6>
+                  <ul>
+                    <li><a href="news.html">News & Updates</a></li>
+
+                  </ul>
+                </div>
+              </li>
+
+              <li class="nav-item">
+                <a href="#" class="nav-link">Translate</a>
+                <div class="dropdown">
+                  <ul>
+                    <li class="nav-item">
+                      <div id="google_translate_element"></div>
+                    </li>
+                  </ul>
+                </div>
+              </li>
+            </ul>
+
+            <div class="auth-buttons">
+              <!-- Profile section (shown when logged in) -->
+              <div
+                class="profile-section"
+                id="profileSection"
+                style="display: none"
+              >
+                <button
+                  class="btn btn-profile"
+                  id="profileBtn"
+                  onclick="redirectToDashboard()"
+                >
+                  <i class="fas fa-user"></i>
+                  <span id="profileName">Profile</span>
+                </button>
+                <button
+                  class="btn btn-logout"
+                  id="logoutBtn"
+                  onclick="handleLogout()"
+                >
+                  <i class="fas fa-sign-out-alt"></i>
+                  Logout
+                </button>
+              </div>
+              <!-- Login/Register section (shown when not logged in) -->
+              <div class="login-section" id="loginSection">
+                <a href="./login.html" class="btn btn-login">Login</a>
+                <a href="./signUp.html" class="btn btn-register">Register</a>
+              </div>
+            </div>
+
+            <div class="mobile-toggle">
+              <span></span>
+              <span></span>
+              <span></span>
+            </div>
+          </div>
+        </nav>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main>
+      <div class="container">
+        <!-- Hero Section -->
+        <section class="hero">
+          <div class="hero-content">
+            <div class="hero-badge">Future of Document Management</div>
+            <h1 class="hero-title">
+              <span id="typewriter-text"></span>
+              <span class="cursor">|</span>
+            </h1>
+            <p class="hero-subtitle">
+              At Infera, we are dedicated to transforming the way individuals
+              and organizations interact with document services — making them
+              more intuitive, accessible, and secure.
+            </p>
+          </div>
+
+          <div class="cards-container">
+            <!-- Card 1: Document Ingestion & Processing -->
+            <div class="mobile-card" id="card1">
+              <div class="screen-content">
+                <div class="app-header">
+                  <div class="logo">
+                    <!-- <div class="logo-icon">K</div> -->
+                    Infera
+                  </div>
+                </div>
+                <div class="scrollable-content" id="scroll1">
+                  <div class="content-pages">
+                    <!-- Page 1 -->
+                    <div class="content-page" style="transform: translateY(0%)">
+                      <h2 class="main-title">Document Ingestion Hub</h2>
+                      <p class="main-description">
+                        Multi-channel document processing for emails,
+                        SharePoint, Maximo exports, WhatsApp PDFs with real-time
+                        OCR.
+                      </p>
+                      <button class="cta-button">Process Documents</button>
+
+                      <div class="document-grid">
+                        <div class="document-item">
+                          <div class="doc-icon" style="background: #ef4444">
+                            📧
+                          </div>
+                          <div class="doc-title">Email Intake</div>
+                          <div class="doc-count">347 processed</div>
+                        </div>
+                        <div class="document-item">
+                          <div class="doc-icon" style="background: #10b981">
+                            📊
+                          </div>
+                          <div class="doc-title">Maximo Reports</div>
+                          <div class="doc-count">156 imported</div>
+                        </div>
+                        <div class="document-item">
+                          <div class="doc-icon" style="background: #3b82f6">
+                            💬
+                          </div>
+                          <div class="doc-title">WhatsApp PDFs</div>
+                          <div class="doc-count">89 extracted</div>
+                        </div>
+                        <div class="document-item">
+                          <div class="doc-icon" style="background: #f59e0b">
+                            🔍
+                          </div>
+                          <div class="doc-title">OCR Scans</div>
+                          <div class="doc-count">234 digitized</div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Page 2 -->
+                    <div
+                      class="content-page"
+                      style="transform: translateY(100%)"
+                    >
+                      <h2 class="main-title">Processing Analytics</h2>
+                      <p class="main-description">
+                        Real-time processing statistics with multilingual
+                        support for English and Malayalam documents.
+                      </p>
+
+                      <div class="stats-section">
+                        <div class="stat-item">
+                          <span class="stat-label">Processing Speed</span>
+                          <span class="stat-value">1.8s avg</span>
+                        </div>
+                        <div class="stat-item">
+                          <span class="stat-label">OCR Accuracy</span>
+                          <span class="stat-value">98.7%</span>
+                        </div>
+                        <div class="stat-item">
+                          <span class="stat-label">Languages</span>
+                          <span class="stat-value">English + Malayalam</span>
+                        </div>
+                        <div class="stat-item">
+                          <span class="stat-label">Daily Volume</span>
+                          <span class="stat-value">1,200+ docs</span>
+                        </div>
+                      </div>
+
+                      <div class="document-grid">
+                        <div class="document-item">
+                          <div class="doc-icon" style="background: #8b5cf6">
+                            ⚙️
+                          </div>
+                          <div class="doc-title">Engineering</div>
+                          <div class="doc-count">124 classified</div>
+                        </div>
+                        <div class="document-item">
+                          <div class="doc-icon" style="background: #ec4899">
+                            🛡️
+                          </div>
+                          <div class="doc-title">Safety</div>
+                          <div class="doc-count">67 flagged</div>
+                        </div>
+                        <div class="document-item">
+                          <div class="doc-icon" style="background: #059669">
+                            💼
+                          </div>
+                          <div class="doc-title">Financial</div>
+                          <div class="doc-count">89 processed</div>
+                        </div>
+                        <div class="document-item">
+                          <div class="doc-icon" style="background: #dc2626">
+                            ⚖️
+                          </div>
+                          <div class="doc-title">Legal</div>
+                          <div class="doc-count">34 reviewed</div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 2: AI Summarization & Analytics -->
+            <div class="mobile-card" id="card2">
+              <div class="screen-content">
+                <div class="app-header">
+                  <div class="logo">
+                    <!-- <div class="logo-icon">K</div> -->
+                    Infera
+                  </div>
+                </div>
+                <div class="scrollable-content" id="scroll2">
+                  <div class="content-pages">
+                    <!-- Page 1 -->
+                    <div class="content-page" style="transform: translateY(0%)">
+                      <h2 class="main-title">AI Summarization</h2>
+                      <p class="main-description">
+                        Context-aware summaries with key action items, critical
+                        deadlines, and stakeholder impacts.
+                      </p>
+                      <button class="cta-button">Generate Summary</button>
+
+                      <div class="analytics-overview">
+                        <div class="metric-row">
+                          <span class="metric-label">Today's Summaries</span>
+                          <span class="metric-value">847</span>
+                        </div>
+                        <div class="metric-row">
+                          <span class="metric-label">Avg Summary Time</span>
+                          <span class="metric-value">0.8s</span>
+                        </div>
+                        <div class="metric-row">
+                          <span class="metric-label">Action Items</span>
+                          <span class="metric-value">234</span>
+                        </div>
+                      </div>
+
+                      <div class="chart-container">
+                        <div class="chart-bars">
+                          <div class="chart-bar" data-value="60"></div>
+                          <div class="chart-bar" data-value="80"></div>
+                          <div class="chart-bar" data-value="45"></div>
+                          <div class="chart-bar" data-value="90"></div>
+                          <div class="chart-bar" data-value="70"></div>
+                          <div class="chart-bar" data-value="95"></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Page 2 -->
+                    <div
+                      class="content-page"
+                      style="transform: translateY(100%)"
+                    >
+                      <h2 class="main-title">Compliance & Alerts</h2>
+                      <p class="main-description">
+                        Automated regulatory compliance tracking with
+                        intelligent alert system for critical updates.
+                      </p>
+
+                      <div class="document-grid">
+                        <div class="document-item">
+                          <div class="doc-icon" style="background: #dc2626">
+                            ⚠️
+                          </div>
+                          <div class="doc-title">Critical Alerts</div>
+                          <div class="doc-count">12 pending</div>
+                        </div>
+                        <div class="document-item">
+                          <div class="doc-icon" style="background: #059669">
+                            ✅
+                          </div>
+                          <div class="doc-title">Completed</div>
+                          <div class="doc-count">789 resolved</div>
+                        </div>
+                        <div class="document-item">
+                          <div class="doc-icon" style="background: #7c3aed">
+                            📋
+                          </div>
+                          <div class="doc-title">Regulatory</div>
+                          <div class="doc-count">23 flagged</div>
+                        </div>
+                        <div class="document-item">
+                          <div class="doc-icon" style="background: #0891b2">
+                            🏛️
+                          </div>
+                          <div class="doc-title">Ministry Updates</div>
+                          <div class="doc-count">8 received</div>
+                        </div>
+                      </div>
+
+                      <div class="analytics-overview">
+                        <div class="metric-row">
+                          <span class="metric-label">Compliance Score</span>
+                          <span class="metric-value">96.2%</span>
+                        </div>
+                        <div class="metric-row">
+                          <span class="metric-label">Multilingual Docs</span>
+                          <span class="metric-value">342</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Card 3: Role-based Dashboards -->
+            <div class="mobile-card" id="card3">
+              <div class="screen-content">
+                <div class="app-header">
+                  <div class="logo">
+                    <!-- <div class="logo-icon">K</div> -->
+                    Infera
+                  </div>
+                </div>
+                <div class="scrollable-content" id="scroll3">
+                  <div class="content-pages">
+                    <!-- Page 1 -->
+                    <div class="content-page" style="transform: translateY(0%)">
+                      <h2 class="main-title">Smart Routing Hub</h2>
+                      <p class="main-description">
+                        Personalized dashboards with role-based content routing
+                        and intelligent alerts.
+                      </p>
+                      <button class="cta-button">Access Dashboard</button>
+
+                      <div class="team-overview">
+                        <div class="team-stats">
+                          <div class="team-stat">
+                            <div class="team-stat-number">8</div>
+                            <div class="team-stat-label">Active Roles</div>
+                          </div>
+                          <div class="team-stat">
+                            <div class="team-stat-number">247</div>
+                            <div class="team-stat-label">Users</div>
+                          </div>
+                          <div class="team-stat">
+                            <div class="team-stat-number">1.4s</div>
+                            <div class="team-stat-label">Search Time</div>
+                          </div>
+                          <div class="team-stat">
+                            <div class="team-stat-number">98%</div>
+                            <div class="team-stat-label">Routing Acc.</div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="employee-list">
+                        <div class="employee-item">
+                          <div class="employee-info">
+                            <div class="employee-avatar">AR</div>
+                            <div class="employee-details">
+                              <div class="employee-name">Arjun Raj</div>
+                              <div class="employee-role">Station Manager</div>
+                            </div>
+                          </div>
+                          <span class="employee-status">34 alerts</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Page 2 -->
+                    <div
+                      class="content-page"
+                      style="transform: translateY(100%)"
+                    >
+                      <h2 class="main-title">Search & Analytics</h2>
+                      <p class="main-description">
+                        Semantic search across all documents with advanced
+                        filtering and real-time analytics.
+                      </p>
+
+                      <div class="document-grid">
+                        <div class="document-item">
+                          <div class="doc-icon" style="background: #7c3aed">
+                            🔍
+                          </div>
+                          <div class="doc-title">Smart Search</div>
+                          <div class="doc-count">1,247 queries</div>
+                        </div>
+                        <div class="document-item">
+                          <div class="doc-icon" style="background: #0891b2">
+                            📱
+                          </div>
+                          <div class="doc-title">Mobile Alerts</div>
+                          <div class="doc-count">456 sent</div>
+                        </div>
+                        <div class="document-item">
+                          <div class="doc-icon" style="background: #059669">
+                            📈
+                          </div>
+                          <div class="doc-title">Analytics</div>
+                          <div class="doc-count">Real-time</div>
+                        </div>
+                        <div class="document-item">
+                          <div class="doc-icon" style="background: #dc2626">
+                            🚨
+                          </div>
+                          <div class="doc-title">Priority Routing</div>
+                          <div class="doc-count">89 urgent</div>
+                        </div>
+                      </div>
+
+                      <div class="team-overview">
+                        <div class="team-stats">
+                          <div class="team-stat">
+                            <div class="team-stat-number">12k+</div>
+                            <div class="team-stat-label">Documents</div>
+                          </div>
+                          <div class="team-stat">
+                            <div class="team-stat-number">8</div>
+                            <div class="team-stat-label">Categories</div>
+                          </div>
+                          <div class="team-stat">
+                            <div class="team-stat-number">24/7</div>
+                            <div class="team-stat-label">Processing</div>
+                          </div>
+                          <div class="team-stat">
+                            <div class="team-stat-number">99.1%</div>
+                            <div class="team-stat-label">Uptime</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Mission & Vision Section -->
+        <section id="mission" class="mission-section">
+          <div class="container">
+            <div class="mission-content">
+              <div class="mission-card">
+                <div class="mission-icon">🎯</div>
+                <h2>Our Mission</h2>
+                <p>
+                  Our mission is to eliminate document overload at KMRL by
+                  providing an automated, intelligent system that ensures every
+                  stakeholder can access information instantly, make faster and
+                  smarter decisions, and reduce repetitive manual work. INFERA
+                  is not just software - it's a productivity multiplier that
+                  allows KMRL to focus on its core mission of delivering safe,
+                  reliable, and passenger-centric metro services.
+                </p>
+              </div>
+              <div class="vision-card">
+                <div class="mission-icon">👁️</div>
+                <h2>Our Vision</h2>
+                <p>
+                  Our vision is to become the benchmark in intelligent document
+                  automation across metro rail systems in India and beyond. We
+                  envision a future where document handling is seamless and
+                  automated, regulatory compliance happens automatically,
+                  institutional knowledge is preserved forever, and metro
+                  systems are digitally empowered for real-time decision-making.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Why Trust Us Section -->
+        <section id="why-trust" class="trust-section">
+          <div class="container">
+            <h2 class="section-title">Why Trust INFERA?</h2>
+            <div class="trust-grid">
+              <div class="trust-card">
+                <div class="trust-icon">🏗️</div>
+                <h3>Domain Expertise</h3>
+                <p>
+                  Built specifically for metro rail and transport enterprises
+                  with understanding of engineering drawings, safety circulars,
+                  and regulatory documents.
+                </p>
+              </div>
+              <div class="trust-card">
+                <div class="trust-icon">📊</div>
+                <h3>Proven Accuracy</h3>
+                <p>
+                  85%+ accuracy in classification and summarization, tested on
+                  real KMRL archives with consistent, reliable performance.
+                </p>
+              </div>
+              <div class="trust-card">
+                <div class="trust-icon">🌍</div>
+                <h3>Multilingual Support</h3>
+                <p>
+                  Supports English, Malayalam, and bilingual hybrids with OCR +
+                  NLP, providing cross-department clarity.
+                </p>
+              </div>
+              <div class="trust-card">
+                <div class="trust-icon">⚖️</div>
+                <h3>Regulatory Compliance</h3>
+                <p>
+                  Flags deadlines, compliance clauses, and directives
+                  automatically with traceable audit trails.
+                </p>
+              </div>
+              <div class="trust-card">
+                <div class="trust-icon">🔒</div>
+                <h3>Enterprise Security</h3>
+                <p>
+                  End-to-end encryption, role-based access, and digital
+                  signatures ensure mission-critical data protection.
+                </p>
+              </div>
+              <div class="trust-card">
+                <div class="trust-icon">⚡</div>
+                <h3>Scalable Architecture</h3>
+                <p>
+                  Processes 1000+ documents daily in real-time with modular,
+                  extensible design for future growth.
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Team Section -->
+        <section id="team" class="team-section">
+          <div class="container">
+            <h2 class="section-title">Our Team</h2>
+            <p class="section-subtitle">
+              Meet the talented individuals behind INFERA, bringing expertise
+              and innovation to solve document overload.
+            </p>
+            <div class="team-grid">
+              <div class="team-card">
+                <div class="team-avatar">VP</div>
+                <h3>Vrajkumar Shaileshbhai Parekh</h3>
+                <p class="team-role">Team Leader & Full Stack Developer</p>
+                <p class="team-desc">
+                  Backend + Frontend + Socket.io Integration
+                </p>
+              </div>
+              <div class="team-card">
+                <div class="team-avatar">YT</div>
+                <h3>Yug Nimesh Trivedi</h3>
+                <p class="team-role">
+                  Backend Developer & OCR Integration Engineer
+                </p>
+                <p class="team-desc">
+                  Specialized in document processing and AI integration
+                </p>
+              </div>
+              <div class="team-card">
+                <div class="team-avatar">VR</div>
+                <h3>Vraj Ashokbhai Parekh</h3>
+                <p class="team-role">Frontend Developer & UI/UX Designer</p>
+                <p class="team-desc">
+                  User interface design and data collection
+                </p>
+              </div>
+              <div class="team-card">
+                <div class="team-avatar">YP</div>
+                <h3>Yug Satishbhai Patel</h3>
+                <p class="team-role">Frontend Developer & Visual Designer</p>
+                <p class="team-desc">
+                  Visual design and data collection specialist
+                </p>
+              </div>
+              <div class="team-card">
+                <div class="team-avatar">UP</div>
+                <h3>Utsav Gaurangkumar Patel</h3>
+                <p class="team-role">Content Designer & Policy Coordinator</p>
+                <p class="team-desc">
+                  Content strategy and team policy coordination
+                </p>
+              </div>
+              <div class="team-card">
+                <div class="team-avatar">TP</div>
+                <h3>Tia Jayesh Patel</h3>
+                <p class="team-role">Data Analyst & Collection Engineer</p>
+                <p class="team-desc">
+                  Data analysis and collection engineering
+                </p>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Contact Section -->
+        <section id="contact" class="contact-section">
+          <div class="container">
+            <h2 class="section-title">Contact & Support</h2>
+            <div class="contact-grid">
+              <div class="contact-info">
+                <div class="contact-item">
+                  <div class="contact-icon">📧</div>
+                  <h3>General Inquiries</h3>
+                  <p>inferadoc@gmail.com</p>
+                </div>
+                <div class="contact-item">
+                  <div class="contact-icon">📱</div>
+                  <h3>Phone Support</h3>
+                  <p>+91 484 1234 5678</p>
+                  <span>Mon-Fri, 9:00 AM - 6:00 PM IST</span>
+                </div>
+                <div class="contact-item">
+                  <div class="contact-icon">🛠️</div>
+                  <h3>Technical Support</h3>
+                  <p>techinferadoc@gmail.com</p>
+                  <span>Response within 24 hours</span>
+                </div>
+                <div class="contact-item">
+                  <div class="contact-icon">📍</div>
+                  <h3>Office Address</h3>
+                  <p>
+                    INFERA Solutions Pvt. Ltd.<br />123 Metro Tech Park<br />Kochi,
+                    Kerala - 682030
+                  </p>
+                </div>
+              </div>
+              <div class="contact-form-container">
+                <form class="contact-form">
+                  <div class="form-group">
+                    <label for="contactName">Name</label>
+                    <input type="text" id="contactName" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="contactEmail">Email</label>
+                    <input type="email" id="contactEmail" required />
+                  </div>
+                  <div class="form-group">
+                    <label for="contactSubject">Subject</label>
+                    <select id="contactSubject" required>
+                      <option value="">Select a Subject</option>
+                      <option value="info">Information Request</option>
+                      <option value="processing">
+                        Document Processing Issue
+                      </option>
+                      <option value="dashboard">
+                        Dashboard / Analytics Query
+                      </option>
+                      <option value="security">Security / Access Issue</option>
+                      <option value="technical">Technical Support</option>
+                      <option value="feedback">Feedback / Suggestions</option>
+                      <option value="other">Other</option>
+                    </select>
+                  </div>
+                  <div class="form-group">
+                    <label for="contactMessage">Message</label>
+                    <textarea id="contactMessage" rows="5" required></textarea>
+                  </div>
+                  <button type="submit" class="submit-btn">Send Message</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section id="faq" class="faq-section">
+          <div class="container">
+            <h2 class="section-title">Frequently Asked Questions</h2>
+            <div class="faq-container">
+              <div class="faq-item">
+                <div class="faq-question">
+                  <h3>What is INFERA?</h3>
+                  <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                  <p>
+                    INFERA is an AI-powered document automation and management
+                    system that transforms unstructured, multilingual documents
+                    into clear, actionable insights using OCR, NLP, and
+                    AI-driven summarization.
+                  </p>
+                </div>
+              </div>
+              <div class="faq-item">
+                <div class="faq-question">
+                  <h3>Why does KMRL need INFERA?</h3>
+                  <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                  <p>
+                    KMRL processes thousands of documents daily. Without INFERA,
+                    manual processing leads to delays, compliance risks, and
+                    knowledge gaps. With INFERA, automated processing ensures
+                    faster decisions and improved compliance.
+                  </p>
+                </div>
+              </div>
+              <div class="faq-item">
+                <div class="faq-question">
+                  <h3>Can INFERA handle Malayalam documents?</h3>
+                  <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                  <p>
+                    Yes, INFERA supports multilingual OCR and NLP for English,
+                    Malayalam, and mixed-format documents, generating English
+                    summaries for universal understanding across departments.
+                  </p>
+                </div>
+              </div>
+              <div class="faq-item">
+                <div class="faq-question">
+                  <h3>How secure is INFERA?</h3>
+                  <span class="faq-toggle">+</span>
+                </div>
+                <div class="faq-answer">
+                  <p>
+                    INFERA uses enterprise-grade security with end-to-end
+                    encryption, role-based access controls, audit trails for
+                    regulatory compliance, and regular security audits.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="cta-section">
+          <div class="cta-card">
+            <h2 class="cta-title">Ready to Transform Your Workflow?</h2>
+            <p class="cta-subtitle">
+              Join hundreds of KMRL employees already using our intelligent
+              document management system to streamline their daily operations.
+            </p>
+            <div class="cta-form">
+              <input
+                type="email"
+                class="cta-input"
+                placeholder="Enter your employee email"
+              />
+              <button class="cta-button" onclick="openLoginModal()">
+                Get Started
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer">
+      <div class="container">
+        <div class="footer-content">
+          <div class="footer-brand">
+            <h3>KMRL Smart Document System</h3>
+            <p>
+              Revolutionizing document management for Kochi Metro Rail Limited
+              with AI-powered intelligence, multilingual support, and seamless
+              workflow automation.
+            </p>
+            <div class="footer-stats">
+              <span style="color: #287bee; font-weight: 600">500+ Users</span> •
+              <span style="color: #287bee; font-weight: 600"
+                >10,000+ Documents</span
+              >
+              •
+              <span style="color: #287bee; font-weight: 600">98.5% Uptime</span>
+            </div>
+          </div>
+          <div class="footer-section">
+            <h4>Platform</h4>
+            <ul>
+              <li><a href="#features">Features</a></li>
+              <li><a href="#ai">AI Processing</a></li>
+              <li><a href="#security">Security</a></li>
+              <li><a href="#integration">Integrations</a></li>
+              <li><a href="#mobile">Mobile App</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h4>Departments</h4>
+            <ul>
+              <li><a href="#operations">Operations</a></li>
+              <li><a href="#engineering">Engineering</a></li>
+              <li><a href="#safety">Safety</a></li>
+              <li><a href="#finance">Finance</a></li>
+              <li><a href="#hr">Human Resources</a></li>
+            </ul>
+          </div>
+          <div class="footer-section">
+            <h4>Support</h4>
+            <ul>
+              <li><a href="#help">Help Center</a></li>
+              <li><a href="#training">Training</a></li>
+              <li><a href="#api">API Docs</a></li>
+              <li><a href="#status">System Status</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="footer-bottom">
+          <div>
+            <p>&copy; 2025 Kochi Metro Rail Limited. All rights reserved.</p>
+          </div>
+          <div>
+            <span>Government of Kerala Initiative</span> •
+            <a href="#privacy">Privacy Policy</a> •
+            <a href="#terms">Terms of Service</a>
+          </div>
+        </div>
+      </div>
+    </footer>
+
+    <!-- Login Modal -->
+    <div class="modal-overlay" id="loginModal">
+      <div class="login-modal">
+        <button class="close-btn" onclick="closeLoginModal()">&times;</button>
+        <div class="modal-header">
+          <h2>Welcome to KMRL</h2>
+          <p>Access your personalized document dashboard</p>
+        </div>
+
+        <form class="login-form" onsubmit="handleLogin(event)">
+          <div class="form-group">
+            <label for="employeeId">Employee ID</label>
+            <input
+              type="text"
+              id="employeeId"
+              name="employeeId"
+              placeholder="Enter your Employee ID"
+              required
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Enter your password"
+              required
+            />
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="department">Department</label>
+              <select id="department" name="department" required>
+                <option value="">Select Department</option>
+                <option value="operations">Operations</option>
+                <option value="engineering">Engineering</option>
+                <option value="safety">Safety & Security</option>
+                <option value="finance">Finance & Accounts</option>
+                <option value="hr">Human Resources</option>
+                <option value="maintenance">Maintenance</option>
+                <option value="executive">Executive</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="role">Role</label>
+              <select id="role" name="role" required>
+                <option value="">Select Role</option>
+                <option value="manager">Manager</option>
+                <option value="officer">Officer</option>
+                <option value="supervisor">Supervisor</option>
+                <option value="executive">Executive</option>
+                <option value="director">Director</option>
+                <option value="assistant">Assistant</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="submit-btn" id="loginBtn">
+            Access Dashboard
+          </button>
+        </form>
+
+        <div class="modal-footer">
+          <a href="#forgot">Forgot Password?</a>
+          <a href="#help">Need Help?</a>
+          <a href="#register">New Employee?</a>
+        </div>
+      </div>
+    </div>
+    <!-- Auto-discovery script -->
+    <script src="auto-discover.js"></script>
+    <!-- Main App script -->
+    <script src="App.js"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        const scanningLink = document.getElementById("openScanningLink");
+        if (scanningLink) {
+          scanningLink.addEventListener("click", function (e) {
+            e.preventDefault();
+
+            const token = localStorage.getItem("token");
+            const userId = localStorage.getItem("userId");
+            if (!token || !userId) {
+              // Not logged in, redirect to login
+              window.location.href = "login.html";
+              return;
+            }
+
+            // Redirect to scanning page
+            window.location.href = `scanning.html?id=${encodeURIComponent(
+              userId
+            )}`;
+          });
+        }
+      });
+
+      (() => {
+        const API_BASE =
+          (window.KMRL_SERVER || "http://localhost:5000") + "/api";
+
+        function isPublicPage() {
+          const currentPath = window.location.pathname;
+          const currentPage = currentPath.split("/").pop() || "index.html";
+
+          // More explicit public page checking
+          const publicPages = ["index.html", "login.html", "signUp.html"];
+
+          // Also check for root path
+          if (currentPath === "/" || currentPath === "") {
+            return true;
+          }
+
+          return publicPages.includes(currentPage);
+        }
+
+        async function loadUser() {
+          // Early exit for public pages
+          if (isPublicPage()) {
+            console.log("Public page detected - no authentication needed");
+            return;
+          }
+
+          const token = localStorage.getItem("token");
+          if (!token) {
+            console.warn("No token found. Redirecting to login.");
+            window.location.href = "login.html";
+            return;
+          }
+
+          try {
+            const userIdFromURL = new URLSearchParams(
+              window.location.search
+            ).get("id");
+            const userIdToUse =
+              userIdFromURL || localStorage.getItem("userId") || "";
+
+            const res = await fetch(`${API_BASE}/users/${userIdToUse}`, {
+              headers: { Authorization: `Bearer ${token}` },
+            });
+
+            if (!res.ok) {
+              console.warn("User validation failed. Redirecting to login.");
+              window.location.href = "login.html";
+              return;
+            }
+
+            const user = await res.json();
+            localStorage.setItem("userId", user.id);
+            console.log("User validated:", user);
+          } catch (err) {
+            console.error("Error validating user:", err);
+            window.location.href = "login.html";
+          }
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+          loadUser();
+        });
+      })();
+
+      // Functions moved to App.js
+
+      function openLoginModal() {
+        document.getElementById("loginModal").classList.add("active");
+        document.body.style.overflow = "hidden";
+      }
+
+      function closeLoginModal() {
+        document.getElementById("loginModal").classList.remove("active");
+        document.body.style.overflow = "";
+      }
+
+      document
+        .getElementById("loginModal")
+        .addEventListener("click", function (e) {
+          if (e.target === this) {
+            closeLoginModal();
+          }
+        });
+
+      document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+          closeLoginModal();
+        }
+      });
+
+      const API_BASE = (window.KMRL_SERVER || "http://localhost:5000") + "/api";
+
+      function showMessage(text, type = "info") {
+        const el =
+          document.getElementById("loginMessage") ||
+          (() => {
+            const d = document.createElement("div");
+            d.id = "loginMessage";
+            d.style.minHeight = "18px";
+            d.style.margin = "8px 0";
+            document
+              .querySelector(".login-form")
+              .insertBefore(d, document.getElementById("loginBtn"));
+            return d;
+          })();
+        el.textContent = text;
+        el.style.color =
+          type === "error"
+            ? "#ef4444"
+            : type === "success"
+            ? "#10b981"
+            : "#111827";
+      }
+
+      async function handleLogin(event) {
+        event.preventDefault();
+        const btn = document.getElementById("loginBtn");
+        const orig = btn.textContent;
+        btn.textContent = "Signing In...";
+        btn.disabled = true;
+        showMessage("Signing in...", "info");
+
+        const fm = new FormData(event.target);
+        const employeeId = fm.get("employeeId")?.trim();
+        const password = fm.get("password");
+        const identifier = employeeId;
+        if (!identifier || !password) {
+          showMessage("Please provide employee ID and password.", "error");
+          btn.textContent = orig;
+          btn.disabled = false;
+          return;
+        }
+
+        try {
+          const res = await fetch(`${API_BASE}/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ identifier, password }),
+          });
+
+          let data = null;
+          try {
+            data = await res.json();
+          } catch (_) {
+            data = null;
+          }
+
+          if (!res.ok) {
+            showMessage(
+              data?.message || `Login failed (${res.status})`,
+              "error"
+            );
+            return;
+          }
+
+          if (data.token) localStorage.setItem("token", data.token);
+
+          const userId = data.user?._id || data.user?.id || data.user?.shortId;
+          if (!userId) {
+            showMessage("Login succeeded but no user id returned.", "error");
+            return;
+          }
+
+          localStorage.setItem("userId", userId);
+
+          // Store user name if available
+          if (data.user?.fullName) {
+            localStorage.setItem("userName", data.user.fullName);
+            localStorage.setItem("fullName", data.user.fullName);
+          } else if (data.user?.name) {
+            localStorage.setItem("userName", data.user.name);
+            localStorage.setItem("fullName", data.user.name);
+          }
+
+          // Update navbar to show profile section
+          updateNavbar();
+
+          console.log("Redirecting to:", `dashboard.html?id=${userId}`);
+          closeLoginModal();
+          window.location.href = `dashboard.html?id=${userId}`;
+        } catch (err) {
+          console.error("Login error:", err);
+          showMessage("Network error — please try again.", "error");
+        } finally {
+          btn.textContent = orig;
+          btn.disabled = false;
+        }
+      }
+    </script>
+    <script type="text/javascript">
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement(
+          {
+            pageLanguage: "en",
+            includedLanguages: "en,hi,ml",
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+          },
+          "google_translate_element"
+        );
+      }
+    </script>
+    <script
+      type="text/javascript"
+      src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+    ></script>
+  </body>
+</html>

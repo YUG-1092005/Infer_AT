@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KMRL System Redirect</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #1976d2, #1565c0);
+            color: white;
+            text-align: center;
+            padding: 50px 20px;
+            margin: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            background: rgba(255,255,255,0.1);
+            padding: 40px;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .logo { font-size: 3em; margin-bottom: 20px; }
+        h1 { margin-bottom: 20px; }
+        .redirect-info {
+            background: rgba(255,255,255,0.2);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .btn {
+            display: inline-block;
+            background: #4caf50;
+            color: white;
+            padding: 15px 30px;
+            text-decoration: none;
+            border-radius: 25px;
+            font-weight: bold;
+            margin: 10px;
+            transition: all 0.3s ease;
+        }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.3); }
+        .manual-link {
+            background: rgba(255,255,255,0.9);
+            color: #1976d2;
+            padding: 10px;
+            border-radius: 5px;
+            font-family: monospace;
+            margin: 20px 0;
+            word-break: break-all;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="logo">🚄</div>
+        <h1>KMRL Communication System</h1>
+        <p>Redirecting to your local KMRL server...</p>
+        
+        <div class="redirect-info">
+            <p><strong>📡 Connecting to WiFi Network</strong></p>
+            <p>Make sure you're connected to the same WiFi network as the KMRL server</p>
+        </div>
+        
+        <div id="redirectTarget" class="manual-link"></div>
+        
+        <a href="#" id="redirectBtn" class="btn">🚀 Access KMRL System</a>
+        
+        <div style="margin-top: 30px; font-size: 14px; opacity: 0.8;">
+            <p>If automatic redirect doesn't work, copy the link above and paste it in your browser</p>
+            <p>💻 Powered by Team Infera</p>
+        </div>
+    </div>
+
+    <script>
+        // Get URL parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const ip = urlParams.get('ip') || '10.13.123.182:5000';
+        const token = urlParams.get('token');
+        const page = window.location.pathname.split('/').pop().replace('.html', '');
+        
+        // Build target URL
+        let targetUrl = `http://${ip}`;
+        
+        // Add specific page routes
+        switch(page) {
+            case 'join':
+                if (token) {
+                    targetUrl += `/api/email/join/${token}`;
+                }
+                break;
+            case 'dashboard':
+                targetUrl += '/dashboard.html';
+                break;
+            case 'scanner':
+                targetUrl += '/scanning.html';
+                break;
+            case 'signup':
+                targetUrl += '/signup.html';
+                if (urlParams.get('ref')) {
+                    targetUrl += `?ref=${urlParams.get('ref')}`;
+                }
+                break;
+            default:
+                // home or default
+                break;
+        }
+        
+        // Display the target URL
+        document.getElementById('redirectTarget').textContent = targetUrl;
+        document.getElementById('redirectBtn').href = targetUrl;
+        
+        // Auto-redirect after 3 seconds
+        setTimeout(() => {
+            window.location.href = targetUrl;
+        }, 3000);
+        
+        // Show countdown
+        let countdown = 3;
+        const countdownInterval = setInterval(() => {
+            document.querySelector('p').textContent = `Redirecting in ${countdown} seconds...`;
+            countdown--;
+            if (countdown < 0) {
+                clearInterval(countdownInterval);
+                document.querySelector('p').textContent = 'Redirecting now...';
+            }
+        }, 1000);
+    </script>
+</body>
+</html>

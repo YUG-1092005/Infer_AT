@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Infera</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --bg: #0f1724;
+        --card: #ffffff;
+        --muted: #64748b;
+        --accent: #2563eb;
+        --glass: rgba(255, 255, 255, 0.06);
+        --glass-2: rgba(255, 255, 255, 0.03);
+        --success: #10b981;
+        --danger: #ef4444;
+        --radius: 14px;
+        --maxw: 1100px;
+      }
+      * {
+        box-sizing: border-box;
+      }
+
+      #google_translate_element {
+        position: fixed;
+        top: 16px;
+        right: 16px;
+        z-index: 9999;
+        background: #3e86f4;
+        padding: 8px 16px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+        font-size: 16px;
+      }
+
+      /* Hide the little Google flag icon */
+      .goog-te-gadget img {
+        display: none;
+      }
+
+      /* Change text color, background, and border */
+      .goog-te-gadget-simple {
+        border: none !important;
+      }
+
+      .goog-te-menu-value span {
+        color: #4caf50 !important;
+      }
+
+      .goog-te-menu-value span:hover {
+        color: #007bff !important;
+      }
+
+      body {
+        margin: 0;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+          Roboto, "Helvetica Neue", Arial;
+        background: radial-gradient(
+            1000px 600px at 10% 10%,
+            rgba(37, 99, 235, 0.08),
+            transparent
+          ),
+          radial-gradient(
+            800px 400px at 90% 90%,
+            rgba(16, 185, 129, 0.04),
+            transparent
+          );
+        color: #0b1220;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 28px;
+      }
+      .wrap {
+        width: 100%;
+        max-width: var(--maxw);
+        display: grid;
+        grid-template-columns: 320px 1fr;
+        gap: 24px;
+        align-items: start;
+      }
+
+      /* Sidebar */
+      .sidebar {
+        background: linear-gradient(180deg, var(--glass), var(--glass-2));
+        border-radius: var(--radius);
+        padding: 22px;
+        border: 1px solid rgba(15, 23, 36, 0.06);
+        min-height: 420px;
+        box-shadow: 0 8px 30px rgba(2, 6, 23, 0.08);
+      }
+      .brand {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+      .logo {
+        width: 54px;
+        height: 54px;
+        border-radius: 12px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: linear-gradient(135deg, var(--accent), #06b6d4);
+        color: white;
+        font-weight: 700;
+        font-size: 18px;
+        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.12);
+      }
+      .brand h3 {
+        margin: 0;
+        font-size: 18px;
+      }
+      .brand p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .profile {
+        margin-top: 18px;
+        display: flex;
+        gap: 12px;
+        align-items: center;
+        padding: 12px;
+        border-radius: 12px;
+        background: rgba(255, 255, 255, 0.03);
+      }
+      .avatar {
+        width: 58px;
+        height: 58px;
+        border-radius: 12px;
+        background: #eef2ff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        color: #0b1220;
+      }
+      .pinfo small {
+        color: var(--muted);
+        display: block;
+      }
+
+      .nav {
+        margin-top: 18px;
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+      .nav a {
+        display: block;
+        padding: 10px 12px;
+        border-radius: 10px;
+        color: #0b1220;
+        text-decoration: none;
+        font-weight: 600;
+      }
+      .nav a.active {
+        background: linear-gradient(
+          90deg,
+          rgba(37, 99, 235, 0.12),
+          rgba(6, 182, 212, 0.03)
+        );
+      }
+
+      .card {
+        background: linear-gradient(180deg, #fff, #fbfdff);
+        border-radius: 14px;
+        padding: 18px;
+        border: 1px solid rgba(2, 6, 23, 0.05);
+        box-shadow: 0 6px 30px rgba(2, 6, 23, 0.03);
+      }
+
+      /* Main area */
+      .main {
+        min-height: 420px;
+        display: flex;
+        flex-direction: column;
+        gap: 18px;
+      }
+      .top {
+        display: flex;
+        justify-content: space-between;
+        gap: 12px;
+        align-items: center;
+      }
+      .greet {
+        display: flex;
+        flex-direction: column;
+      }
+      .greet h1 {
+        font-size: 20px;
+        margin: 0;
+      }
+      .greet p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .actions {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+      .btn {
+        padding: 10px 14px;
+        border-radius: 10px;
+        border: none;
+        font-weight: 700;
+        cursor: pointer;
+      }
+      .btn.primary {
+        background: var(--accent);
+        color: white;
+      }
+      .btn.ghost {
+        background: transparent;
+        border: 1px solid rgba(2, 6, 23, 0.06);
+      }
+
+      .grid-3 {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+      .stat {
+        padding: 14px;
+        border-radius: 10px;
+        background: linear-gradient(180deg, #ffffff, #fbfdff);
+        text-align: center;
+      }
+      .stat h3 {
+        margin: 0;
+        font-size: 18px;
+      }
+      .stat p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      .content {
+        display: grid;
+        grid-template-columns: 2fr 1fr;
+        gap: 12px;
+      }
+      .recent {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      #activityList {
+        max-height: 300px;
+        overflow-y: auto;
+        padding-right: 8px;
+      }
+
+      #activityList::-webkit-scrollbar {
+        width: 6px;
+      }
+
+      #activityList::-webkit-scrollbar-track {
+        background: #f1f5f9;
+        border-radius: 3px;
+      }
+
+      #activityList::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 3px;
+      }
+
+      #activityList::-webkit-scrollbar-thumb:hover {
+        background: #94a3b8;
+      }
+      .item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 12px;
+        border-radius: 10px;
+        background: rgba(15, 23, 36, 0.02);
+      }
+      .item small {
+        color: var(--muted);
+      }
+
+      .right-column {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      .card.small {
+        padding: 12px;
+      }
+
+      .footer {
+        margin-top: auto;
+        color: var(--muted);
+        font-size: 13px;
+      }
+
+      /* responsive */
+      @media (max-width: 980px) {
+        .wrap {
+          grid-template-columns: 1fr;
+          max-width: 900px;
+        }
+        .content {
+          grid-template-columns: 1fr;
+        }
+        .grid-3 {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div id="google_translate_element"></div>
+    </header>
+    <div class="wrap">
+      <aside class="sidebar card">
+        <div class="brand">
+          <div class="logo">IF</div>
+          <div>
+            <h3>Infera</h3>
+            <p>Document Insights</p>
+          </div>
+        </div>
+
+        <div class="profile">
+          <div class="avatar" id="avatar">U</div>
+          <div class="pinfo">
+            <strong id="userFull">Loading...</strong>
+            <small id="userRole">—</small>
+            <small id="userShort">ID: —</small>
+          </div>
+        </div>
+
+        <nav class="nav">
+          <a href="#" class="active">Overview</a>
+          <a href="#" id="jobCardsLink">Job Cards</a>
+          <a href="#" id="analyticsLink">Analytics</a>
+          <a href="#">Settings</a>
+        </nav>
+
+        <div style="margin-top: 18px">
+          <button class="btn primary" id="logoutBtn">Logout</button>
+          <button class="btn primary" id="scanning-btn">Summary</button>
+          <button class="btn primary" id="home-btn">Home</button>
+        </div>
+
+        <div class="footer">Running on <strong>http://localhost</strong></div>
+      </aside>
+
+      <main class="main">
+        <div class="top card">
+          <div class="greet">
+            <h1 id="welcome">Welcome —</h1>
+            <p id="sub">Your personalized workspace</p>
+          </div>
+          <div class="actions">
+            <button class="btn ghost" id="refreshBtn">Refresh</button>
+            <button class="btn primary" id="newDocBtn">
+              + New Communication
+            </button>
+          </div>
+        </div>
+
+        <section class="card">
+          <div class="grid-3">
+            <div class="stat">
+              <h3 id="stat1">—</h3>
+              <p>Processed Docs</p>
+            </div>
+            <div class="stat">
+              <h3 id="stat2">—</h3>
+              <p>Active Projects</p>
+            </div>
+            <div class="stat">
+              <h3 id="stat3">—</h3>
+              <p>Pending Reviews</p>
+            </div>
+          </div>
+        </section>
+
+        <div class="content">
+          <div class="recent card">
+            <h3 style="margin: 0 0 8px 0">Recent Activity</h3>
+            <div id="activityList">
+              <div class="item">
+                <div>
+                  <strong>No activity yet</strong><br /><small class="muted"
+                    >Nothing to show</small
+                  >
+                </div>
+                <div><small>—</small></div>
+              </div>
+            </div>
+          </div>
+
+          <aside class="right-column">
+            <div class="card small">
+              <h4 style="margin: 0 0 8px 0">Profile Summary</h4>
+              <p id="profileSummary">Loading profile...</p>
+            </div>
+
+            <div class="card small">
+              <h4 style="margin: 0 0 8px 0">Quick Links</h4>
+              <div style="display: flex; flex-direction: column; gap: 8px">
+                <a href="#" class="btn ghost" id="teamLink">Team</a>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </main>
+    </div>
+
+    <script>
+      let API_BASE = "http://localhost:5000/api";
+
+      // Auto-connect to server on load
+      async function initializeServer() {
+        try {
+          const testRes = await fetch("http://10.13.123.182:5000/health");
+          if (testRes.ok) {
+            API_BASE = "http://10.13.123.182:5000/api";
+            console.log("Connected to network server:", API_BASE);
+          }
+        } catch (e) {
+          console.log("Using localhost server");
+        }
+      }
+
+      // Helpers
+      function el(id) {
+        return document.getElementById(id);
+      }
+
+      // read id from URL or from localStorage fallback
+      const params = new URLSearchParams(location.search);
+      const userId = params.get("id") || localStorage.getItem("userId");
+
+      // quick UI setters
+      function setProfile(user) {
+        el("userFull").textContent = user.fullName || user.name || "User";
+        el("userRole").textContent = user.role || "—";
+        el("userShort").textContent = "ID: " + (user._id || user.id || "—");
+        el("welcome").textContent = `Welcome, ${
+          user.fullName || user.name || "User"
+        }!`;
+        el("avatar").textContent = (user.fullName || "U")
+          .split(" ")
+          .map((s) => s[0])
+          .slice(0, 2)
+          .join("")
+          .toUpperCase();
+        el("profileSummary").textContent =
+          user.about || `Employee: ${user.employeeId || user.shortId || "—"}`;
+      }
+
+      function setStats(s) {
+        el("stat1").textContent = s.processed || 0;
+        el("stat2").textContent = s.projects || 0;
+        el("stat3").textContent = s.reviews || 0;
+      }
+
+      function setActivity(items) {
+        const c = el("activityList");
+        c.innerHTML = "";
+        if (!items || items.length === 0) {
+          c.innerHTML = `<div class="item"><div><strong>No activity yet</strong><br><small class="muted">Nothing to show</small></div><div><small>—</small></div></div>`;
+          return;
+        }
+        for (const it of items) {
+          const d = document.createElement("div");
+          d.className = "item";
+          d.innerHTML = `<div><strong>${it.title}</strong><br><small>${
+            it.subtitle || ""
+          }</small></div><div><small>${it.time || ""}</small></div>`;
+          c.appendChild(d);
+        }
+      }
+
+      // Fetch user
+      async function loadUser() {
+        const token = localStorage.getItem("token");
+        if (!token) {
+          alert("Not logged in — redirecting");
+          location.href = "index.html";
+          return;
+        }
+        if (!userId) {
+          alert("No user id found in URL");
+          location.href = "index.html";
+          return;
+        }
+
+        try {
+          const res = await fetch(`${API_BASE}/users/${userId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          if (!res.ok) {
+            const txt = await res.text();
+            console.error("User fetch failed", res.status, txt);
+            alert("Failed to load profile. Redirecting to login.");
+            location.href = "index.html";
+            return;
+          }
+          const data = await res.json();
+          const user = data.user || data;
+          setProfile(user);
+
+          // Load real stats and activity
+          loadRealStats();
+          loadRealActivity();
+        } catch (err) {
+          console.error(err);
+          alert("Network error when loading profile");
+          location.href = "index.html";
+        }
+      }
+
+      // Logout
+      document
+        .getElementById("logoutBtn")
+        .addEventListener("click", async () => {
+          localStorage.removeItem("token");
+          localStorage.removeItem("userId");
+          // optional: call backend logout
+          try {
+            await fetch(`${API_BASE}/logout`, { method: "POST" });
+          } catch (e) {}
+          location.href = "index.html";
+        });
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const btn = document.getElementById("scanning-btn");
+
+        btn?.addEventListener("click", () => {
+          const token = localStorage.getItem("token");
+          const userId = localStorage.getItem("userId");
+
+          if (!token || !userId) {
+            console.warn(
+              "User not logged in or userId missing. Redirecting to index.html"
+            );
+            window.location.href = "index.html";
+            return;
+          }
+
+          // Redirect to scanning page
+          window.location.href = `scanning.html?id=${encodeURIComponent(
+            userId
+          )}`;
+        });
+      });
+
+      document.addEventListener("DOMContentLoaded", () => {
+        const homeBtn = document.getElementById("home-btn");
+
+        homeBtn?.addEventListener("click", () => {
+          const token = localStorage.getItem("token");
+          const userId = localStorage.getItem("userId");
+
+          if (!token || !userId) {
+            console.warn(
+              "User not logged in or userId missing. Redirecting to index.html"
+            );
+            window.location.href = "index.html";
+            return;
+          }
+
+          // Redirect to home page
+          window.location.href = "index.html";
+        });
+      });
+
+      document
+        .getElementById("logoutBtn")
+        .addEventListener("click", async () => {
+          localStorage.removeItem("token");
+          localStorage.removeItem("userId");
+          // optional: call backend logout
+          try {
+            await fetch(`${API_BASE}/logout`, { method: "POST" });
+          } catch (e) {}
+          location.href = "index.html";
+        });
+
+      document.getElementById("refreshBtn").addEventListener("click", loadUser);
+      document.getElementById("newDocBtn").addEventListener("click", () => {
+        const token = localStorage.getItem("token");
+
+        if (!token || !userId) {
+          alert("Not logged in");
+          return;
+        }
+
+        // Redirect to messaging page
+        window.location.href = `messaging.html?id=${encodeURIComponent(
+          userId
+        )}`;
+      });
+
+      // Job Cards navigation
+      document.getElementById("jobCardsLink").addEventListener("click", () => {
+        const token = localStorage.getItem("token");
+        const userId = localStorage.getItem("userId");
+
+        if (!token || !userId) {
+          alert("Not logged in");
+          return;
+        }
+
+        // Redirect to job cards page
+        window.location.href = `jobcard.html?id=${encodeURIComponent(userId)}`;
+      });
+
+      // Analytics navigation
+      document.getElementById("analyticsLink").addEventListener("click", () => {
+        const token = localStorage.getItem("token");
+        const userId = localStorage.getItem("userId");
+
+        if (!token || !userId) {
+          alert("Not logged in");
+          return;
+        }
+
+        // Redirect to analytics page
+        window.location.href = `analytics.html?id=${encodeURIComponent(
+          userId
+        )}`;
+      });
+
+      // Team navigation
+      document.getElementById("teamLink").addEventListener("click", () => {
+        const token = localStorage.getItem("token");
+        const userId = localStorage.getItem("userId");
+
+        if (!token || !userId) {
+          alert("Not logged in");
+          return;
+        }
+
+        // Redirect to team page
+        window.location.href = `team.html?id=${encodeURIComponent(userId)}`;
+      });
+
+      // Load real statistics
+      async function loadRealStats() {
+        try {
+          const token = localStorage.getItem("token");
+          const response = await fetch(`${API_BASE}/analytics/dashboard`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            setStats({
+              processed: data.processedDocs || 0,
+              projects: data.activeProjects || 0,
+              reviews: data.pendingReviews || 0,
+            });
+          } else {
+            setStats({ processed: 0, projects: 0, reviews: 0 });
+          }
+        } catch (error) {
+          console.error("Failed to load stats:", error);
+          setStats({ processed: 0, projects: 0, reviews: 0 });
+        }
+      }
+
+      // Load real activity
+      async function loadRealActivity() {
+        try {
+          const token = localStorage.getItem("token");
+          const response = await fetch(`${API_BASE}/analytics/activity`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          if (response.ok) {
+            const data = await response.json();
+            setActivity(data.activities || []);
+          } else {
+            setActivity([]);
+          }
+        } catch (error) {
+          console.error("Failed to load activity:", error);
+          setActivity([]);
+        }
+      }
+
+      //init - wait for server connection first
+      (async () => {
+        await initializeServer();
+        loadUser();
+      })();
+    </script>
+    <script type="text/javascript">
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement(
+          {
+            pageLanguage: "en",
+            includedLanguages: "en,hi,ml",
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+          },
+          "google_translate_element"
+        );
+      }
+    </script>
+    <script
+      type="text/javascript"
+      src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+    ></script>
+  </body>
+</html>

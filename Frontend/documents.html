@@ -1,0 +1,1044 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KMRL Document Management System</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #2563eb;
+      --success: #10b981;
+      --warning: #f59e0b;
+      --danger: #ef4444;
+      --info: #06b6d4;
+      --light: #f8fafc;
+      --dark: #1e293b;
+      --muted: #64748b;
+      --border: #e2e8f0;
+      --new: #22c55e;
+      --updated: #3b82f6;
+      --old: #6b7280;
+    }
+    
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    
+    body {
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      min-height: 100vh;
+      color: var(--dark);
+    }
+    
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    
+    .header {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .header h1 {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--dark);
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    
+    .btn {
+      padding: 10px 20px;
+      border: none;
+      border-radius: 8px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      text-decoration: none;
+    }
+    
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .btn-secondary {
+      background: var(--light);
+      color: var(--dark);
+      border: 1px solid var(--border);
+    }
+    
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+    
+    .stat-card {
+      background: white;
+      border-radius: 12px;
+      padding: 20px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .stat-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 4px;
+    }
+    
+    .stat-card.new::before {
+      background: var(--new);
+    }
+    
+    .stat-card.updated::before {
+      background: var(--updated);
+    }
+    
+    .stat-card.total::before {
+      background: var(--primary);
+    }
+    
+    .stat-card.drawings::before {
+      background: var(--warning);
+    }
+    
+    .stat-value {
+      font-size: 2rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    
+    .stat-label {
+      color: var(--muted);
+      font-size: 14px;
+    }
+    
+    .filters-section {
+      background: white;
+      border-radius: 16px;
+      padding: 24px;
+      margin-bottom: 24px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    }
+    
+    .filters-grid {
+      display: grid;
+      grid-template-columns: 2fr repeat(4, 1fr);
+      gap: 16px;
+      align-items: end;
+    }
+    
+    .search-box {
+      position: relative;
+    }
+    
+    .search-box input {
+      width: 100%;
+      padding: 12px 16px 12px 44px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      font-size: 16px;
+    }
+    
+    .search-box i {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--muted);
+    }
+    
+    .filter-select {
+      padding: 12px 16px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    
+    .documents-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 20px;
+    }
+    
+    .document-card {
+      background: white;
+      border-radius: 16px;
+      padding: 20px;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+      transition: all 0.3s;
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .document-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+    }
+    
+    .document-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+    }
+    
+    .document-card.new::before {
+      background: var(--new);
+    }
+    
+    .document-card.updated::before {
+      background: var(--updated);
+    }
+    
+    .document-card.old::before {
+      background: var(--old);
+    }
+    
+    .doc-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 16px;
+    }
+    
+    .doc-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      color: white;
+      margin-bottom: 12px;
+    }
+    
+    .doc-icon.pdf {
+      background: #dc2626;
+    }
+    
+    .doc-icon.dwg {
+      background: #7c3aed;
+    }
+    
+    .doc-icon.doc {
+      background: #2563eb;
+    }
+    
+    .doc-icon.xls {
+      background: #059669;
+    }
+    
+    .doc-icon.img {
+      background: #ea580c;
+    }
+    
+    .doc-status {
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 11px;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    
+    .status-new {
+      background: #dcfce7;
+      color: #166534;
+    }
+    
+    .status-updated {
+      background: #dbeafe;
+      color: #1e40af;
+    }
+    
+    .status-old {
+      background: #f3f4f6;
+      color: #6b7280;
+    }
+    
+    .status-duplicate {
+      background: #fecaca;
+      color: #991b1b;
+    }
+    
+    .duplicate-indicator {
+      position: absolute;
+      top: 8px;
+      left: 8px;
+      background: var(--danger);
+      color: white;
+      padding: 4px 8px;
+      border-radius: 12px;
+      font-size: 10px;
+      font-weight: 600;
+      animation: pulse 2s infinite;
+    }
+    
+    .ai-badge {
+      background: linear-gradient(45deg, #667eea, #764ba2);
+      color: white;
+      padding: 2px 6px;
+      border-radius: 8px;
+      font-size: 10px;
+      font-weight: 600;
+      margin-left: 8px;
+    }
+    
+    .doc-title {
+      font-size: 16px;
+      font-weight: 600;
+      color: var(--dark);
+      margin-bottom: 8px;
+      line-height: 1.4;
+    }
+    
+    .doc-meta {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 16px;
+      font-size: 12px;
+    }
+    
+    .meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    
+    .meta-label {
+      color: var(--muted);
+      font-weight: 500;
+    }
+    
+    .meta-value {
+      color: var(--dark);
+      font-weight: 600;
+    }
+    
+    .doc-actions {
+      display: flex;
+      gap: 8px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+    
+    .action-btn {
+      flex: 1;
+      padding: 8px 12px;
+      border: none;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    
+    .btn-view {
+      background: var(--primary);
+      color: white;
+    }
+    
+    .btn-download {
+      background: var(--success);
+      color: white;
+    }
+    
+    .btn-share {
+      background: var(--info);
+      color: white;
+    }
+    
+    .change-indicator {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      animation: pulse 2s infinite;
+    }
+    
+    .change-indicator.new {
+      background: var(--new);
+    }
+    
+    .change-indicator.updated {
+      background: var(--updated);
+    }
+    
+    @keyframes pulse {
+      0%, 100% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0.5;
+      }
+    }
+    
+    .modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(5px);
+      z-index: 1000;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .modal-content {
+      background: white;
+      border-radius: 16px;
+      width: 90%;
+      max-width: 800px;
+      max-height: 90vh;
+      overflow-y: auto;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+    
+    .modal-header {
+      padding: 24px 24px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    
+    .modal-body {
+      padding: 24px;
+    }
+    
+    .version-history {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+    
+    .version-item {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 16px;
+      background: var(--light);
+      border-radius: 12px;
+      border-left: 4px solid var(--primary);
+    }
+    
+    .version-item.current {
+      border-left-color: var(--new);
+      background: #f0fdf4;
+    }
+    
+    .version-number {
+      font-weight: 700;
+      color: var(--primary);
+      min-width: 60px;
+    }
+    
+    .version-details {
+      flex: 1;
+    }
+    
+    .version-date {
+      font-size: 14px;
+      color: var(--muted);
+    }
+    
+    .version-changes {
+      font-size: 14px;
+      color: var(--dark);
+      margin-top: 4px;
+    }
+    
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      color: var(--muted);
+    }
+    
+    .empty-state i {
+      font-size: 48px;
+      margin-bottom: 16px;
+      opacity: 0.5;
+    }
+    
+    @media (max-width: 768px) {
+      .filters-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .documents-grid {
+        grid-template-columns: 1fr;
+      }
+      
+      .doc-meta {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <div>
+        <h1><i class="fas fa-file-alt"></i> Document Management</h1>
+        <p style="margin-top: 8px; color: var(--muted);">Track and manage engineering drawings and documents</p>
+      </div>
+      <div style="display: flex; gap: 12px;">
+        <button class="btn btn-secondary" onclick="goBack()">
+          <i class="fas fa-arrow-left"></i> Back
+        </button>
+        <button class="btn btn-primary" onclick="uploadDocument()">
+          <i class="fas fa-upload"></i> Upload
+        </button>
+        <button class="btn" style="background: var(--danger); color: white;" onclick="showDuplicates()">
+          <i class="fas fa-robot"></i> AI Duplicates
+        </button>
+      </div>
+    </div>
+
+    <!-- Statistics -->
+    <div class="stats-grid">
+      <div class="stat-card total">
+        <div class="stat-value" style="color: var(--primary);" id="totalDocs">0</div>
+        <div class="stat-label">Total Documents</div>
+      </div>
+      <div class="stat-card new">
+        <div class="stat-value" style="color: var(--new);" id="newDocs">0</div>
+        <div class="stat-label">New (24h)</div>
+      </div>
+      <div class="stat-card updated">
+        <div class="stat-value" style="color: var(--updated);" id="updatedDocs">0</div>
+        <div class="stat-label">Updated (7d)</div>
+      </div>
+      <div class="stat-card drawings">
+        <div class="stat-value" style="color: var(--warning);" id="drawingDocs">0</div>
+        <div class="stat-label">Engineering Drawings</div>
+      </div>
+      <div class="stat-card" style="border: 2px solid var(--danger);">
+        <div class="stat-value" style="color: var(--danger);" id="duplicateDocs">18</div>
+        <div class="stat-label">AI Detected Duplicates</div>
+      </div>
+      <div class="stat-card" style="border: 2px solid var(--success);">
+        <div class="stat-value" style="color: var(--success);" id="savedSpace">45</div>
+        <div class="stat-label">Space Saved (MB)</div>
+      </div>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters-section">
+      <div class="filters-grid">
+        <div class="search-box">
+          <input type="text" id="searchInput" placeholder="Search documents by name, type, or department...">
+          <i class="fas fa-search"></i>
+        </div>
+        <select class="filter-select" id="typeFilter">
+          <option value="">All Types</option>
+          <option value="pdf">PDF Documents</option>
+          <option value="dwg">Engineering Drawings</option>
+          <option value="doc">Word Documents</option>
+          <option value="xls">Spreadsheets</option>
+          <option value="img">Images</option>
+        </select>
+        <select class="filter-select" id="statusFilter">
+          <option value="">All Status</option>
+          <option value="new">New</option>
+          <option value="updated">Updated</option>
+          <option value="old">Existing</option>
+          <option value="duplicate">AI Duplicates</option>
+        </select>
+        <select class="filter-select" id="departmentFilter">
+          <option value="">All Departments</option>
+        </select>
+        <button class="btn btn-secondary" onclick="clearFilters()">
+          <i class="fas fa-times"></i> Clear
+        </button>
+      </div>
+    </div>
+
+    <!-- Documents Grid -->
+    <div class="documents-grid" id="documentsGrid">
+      <div class="empty-state">
+        <i class="fas fa-file-alt"></i>
+        <h3>Loading documents...</h3>
+      </div>
+    </div>
+  </div>
+
+  <!-- Document Detail Modal -->
+  <div class="modal" id="documentModal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2 id="modalTitle">Document Details</h2>
+        <button class="btn btn-secondary" onclick="closeModal()">
+          <i class="fas fa-times"></i>
+        </button>
+      </div>
+      <div class="modal-body">
+        <div id="modalContent">
+          <!-- Content will be populated by JavaScript -->
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Dummy data
+    const departments = [
+      'Station Control',
+      'Train Operations', 
+      'Maintenance',
+      'Safety & Security',
+      'Engineering',
+      'Administration'
+    ];
+
+    const documents = generateDocuments();
+    let filteredDocuments = [...documents];
+
+    // Generate dummy documents
+    function generateDocuments() {
+      const docTypes = [
+        { ext: 'pdf', name: 'PDF Document', icon: 'pdf' },
+        { ext: 'dwg', name: 'Engineering Drawing', icon: 'dwg' },
+        { ext: 'doc', name: 'Word Document', icon: 'doc' },
+        { ext: 'xls', name: 'Spreadsheet', icon: 'xls' },
+        { ext: 'jpg', name: 'Image', icon: 'img' }
+      ];
+
+      const docNames = [
+        'Track Layout Plan', 'Signal Wiring Diagram', 'Platform Safety Protocol', 
+        'Train Schedule Template', 'Emergency Response Plan', 'Equipment Manual',
+        'Maintenance Checklist', 'Safety Inspection Report', 'Route Map',
+        'Power System Schematic', 'Communication Network Plan', 'Security Guidelines',
+        'Staff Training Manual', 'Operational Procedures', 'Quality Standards',
+        'Infrastructure Blueprint', 'System Architecture', 'Technical Specifications'
+      ];
+
+      const documents = [];
+      
+      for (let i = 0; i < 120; i++) {
+        const type = docTypes[Math.floor(Math.random() * docTypes.length)];
+        const name = docNames[Math.floor(Math.random() * docNames.length)];
+        const dept = departments[Math.floor(Math.random() * departments.length)];
+        
+        const createdDate = new Date();
+        createdDate.setDate(createdDate.getDate() - Math.floor(Math.random() * 90));
+        
+        const modifiedDate = new Date(createdDate);
+        modifiedDate.setDate(modifiedDate.getDate() + Math.floor(Math.random() * 30));
+        
+        // Determine status based on dates
+        const now = new Date();
+        const daysSinceCreated = (now - createdDate) / (1000 * 60 * 60 * 24);
+        const daysSinceModified = (now - modifiedDate) / (1000 * 60 * 60 * 24);
+        
+        let status = 'old';
+        if (daysSinceCreated <= 1) {
+          status = 'new';
+        } else if (daysSinceModified <= 7) {
+          status = 'updated';
+        }
+
+        documents.push({
+          id: `DOC-${String(i + 1).padStart(4, '0')}`,
+          name: `${name}.${type.ext}`,
+          type: type.ext,
+          typeName: type.name,
+          icon: type.icon,
+          department: dept,
+          size: Math.floor(Math.random() * 10000) + 100, // KB
+          createdDate: createdDate,
+          modifiedDate: modifiedDate,
+          createdBy: 'System Admin',
+          modifiedBy: Math.random() > 0.5 ? 'System Admin' : 'John Doe',
+          status: status,
+          version: `v${Math.floor(Math.random() * 5) + 1}.${Math.floor(Math.random() * 10)}`,
+          downloads: Math.floor(Math.random() * 100),
+          isEngineering: type.ext === 'dwg' || name.includes('Plan') || name.includes('Diagram') || name.includes('Blueprint'),
+          versions: generateVersionHistory()
+        });
+      }
+
+      return documents.sort((a, b) => b.modifiedDate - a.modifiedDate);
+    }
+
+    // Generate version history
+    function generateVersionHistory() {
+      const versions = [];
+      const versionCount = Math.floor(Math.random() * 5) + 1;
+      
+      for (let i = 0; i < versionCount; i++) {
+        const date = new Date();
+        date.setDate(date.getDate() - (i * 7));
+        
+        versions.push({
+          version: `v${versionCount - i}.${Math.floor(Math.random() * 10)}`,
+          date: date,
+          changes: i === 0 ? 'Current version' : `Updated ${['specifications', 'layout', 'measurements', 'annotations', 'references'][Math.floor(Math.random() * 5)]}`,
+          author: i === 0 ? 'System Admin' : 'John Doe'
+        });
+      }
+      
+      return versions;
+    }
+
+    // Initialize page
+    function init() {
+      populateFilters();
+      renderDocuments();
+      updateStats();
+      setupEventListeners();
+      startRealTimeUpdates();
+    }
+
+    // Populate filters
+    function populateFilters() {
+      const deptFilter = document.getElementById('departmentFilter');
+      
+      departments.forEach(dept => {
+        const option = document.createElement('option');
+        option.value = dept;
+        option.textContent = dept;
+        deptFilter.appendChild(option);
+      });
+    }
+
+    // Setup event listeners
+    function setupEventListeners() {
+      document.getElementById('searchInput').addEventListener('input', applyFilters);
+      document.getElementById('typeFilter').addEventListener('change', applyFilters);
+      document.getElementById('statusFilter').addEventListener('change', applyFilters);
+      document.getElementById('departmentFilter').addEventListener('change', applyFilters);
+    }
+
+    // Apply filters
+    function applyFilters() {
+      const search = document.getElementById('searchInput').value.toLowerCase();
+      const type = document.getElementById('typeFilter').value;
+      const status = document.getElementById('statusFilter').value;
+      const department = document.getElementById('departmentFilter').value;
+      
+      filteredDocuments = documents.filter(doc => {
+        const matchesSearch = !search || 
+          doc.name.toLowerCase().includes(search) ||
+          doc.typeName.toLowerCase().includes(search) ||
+          doc.department.toLowerCase().includes(search);
+        
+        const matchesType = !type || doc.type === type;
+        const matchesStatus = !status || doc.status === status;
+        const matchesDepartment = !department || doc.department === department;
+        
+        return matchesSearch && matchesType && matchesStatus && matchesDepartment;
+      });
+      
+      renderDocuments();
+      updateStats();
+    }
+
+    // Clear filters
+    function clearFilters() {
+      document.getElementById('searchInput').value = '';
+      document.getElementById('typeFilter').value = '';
+      document.getElementById('statusFilter').value = '';
+      document.getElementById('departmentFilter').value = '';
+      
+      filteredDocuments = [...documents];
+      renderDocuments();
+      updateStats();
+    }
+
+    // Render documents
+    function renderDocuments() {
+      const grid = document.getElementById('documentsGrid');
+      
+      if (filteredDocuments.length === 0) {
+        grid.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-search"></i>
+            <h3>No documents found</h3>
+            <p>Try adjusting your filters or search terms</p>
+          </div>
+        `;
+        return;
+      }
+      
+      grid.innerHTML = filteredDocuments.map(doc => `
+        <div class="document-card ${doc.status}" onclick="openDocument('${doc.id}')">
+          ${doc.status === 'new' || doc.status === 'updated' ? 
+            `<div class="change-indicator ${doc.status}"></div>` : ''}
+          
+          <div class="doc-header">
+            <div class="doc-icon ${doc.icon}">
+              <i class="fas fa-${getFileIcon(doc.type)}"></i>
+            </div>
+            <span class="doc-status status-${doc.status}">${doc.status}</span>
+          </div>
+          
+          <div class="doc-title">${doc.name}</div>
+          
+          <div class="doc-meta">
+            <div class="meta-item">
+              <div class="meta-label">Department</div>
+              <div class="meta-value">${doc.department}</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-label">Size</div>
+              <div class="meta-value">${formatFileSize(doc.size)}</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-label">Modified</div>
+              <div class="meta-value">${formatDate(doc.modifiedDate)}</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-label">Version</div>
+              <div class="meta-value">${doc.version}</div>
+            </div>
+          </div>
+          
+          <div class="doc-actions" onclick="event.stopPropagation()">
+            <button class="action-btn btn-view" onclick="viewDocument('${doc.id}')">
+              <i class="fas fa-eye"></i> View
+            </button>
+            <button class="action-btn btn-download" onclick="downloadDocument('${doc.id}')">
+              <i class="fas fa-download"></i> Download
+            </button>
+            <button class="action-btn btn-share" onclick="shareDocument('${doc.id}')">
+              <i class="fas fa-share"></i> Share
+            </button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    // Update statistics
+    function updateStats() {
+      document.getElementById('totalDocs').textContent = filteredDocuments.length;
+      document.getElementById('newDocs').textContent = filteredDocuments.filter(d => d.status === 'new').length;
+      document.getElementById('updatedDocs').textContent = filteredDocuments.filter(d => d.status === 'updated').length;
+      document.getElementById('drawingDocs').textContent = filteredDocuments.filter(d => d.isEngineering).length;
+    }
+
+    // Utility functions
+    function getFileIcon(type) {
+      const icons = {
+        'pdf': 'file-pdf',
+        'dwg': 'drafting-compass',
+        'doc': 'file-word',
+        'xls': 'file-excel',
+        'jpg': 'file-image',
+        'png': 'file-image'
+      };
+      return icons[type] || 'file';
+    }
+
+    function formatFileSize(kb) {
+      if (kb < 1024) return `${kb} KB`;
+      return `${(kb / 1024).toFixed(1)} MB`;
+    }
+
+    function formatDate(date) {
+      const now = new Date();
+      const diff = now - date;
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      
+      if (days === 0) return 'Today';
+      if (days === 1) return 'Yesterday';
+      if (days < 7) return `${days} days ago`;
+      return date.toLocaleDateString();
+    }
+
+    // Document actions
+    function openDocument(docId) {
+      const doc = documents.find(d => d.id === docId);
+      if (!doc) return;
+      
+      document.getElementById('modalTitle').textContent = doc.name;
+      document.getElementById('modalContent').innerHTML = `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 24px;">
+          <div style="background: var(--light); padding: 16px; border-radius: 12px;">
+            <div style="font-size: 12px; color: var(--muted); margin-bottom: 4px;">Document ID</div>
+            <div style="font-weight: 600;">${doc.id}</div>
+          </div>
+          <div style="background: var(--light); padding: 16px; border-radius: 12px;">
+            <div style="font-size: 12px; color: var(--muted); margin-bottom: 4px;">Type</div>
+            <div style="font-weight: 600;">${doc.typeName}</div>
+          </div>
+          <div style="background: var(--light); padding: 16px; border-radius: 12px;">
+            <div style="font-size: 12px; color: var(--muted); margin-bottom: 4px;">Department</div>
+            <div style="font-weight: 600;">${doc.department}</div>
+          </div>
+          <div style="background: var(--light); padding: 16px; border-radius: 12px;">
+            <div style="font-size: 12px; color: var(--muted); margin-bottom: 4px;">Size</div>
+            <div style="font-weight: 600;">${formatFileSize(doc.size)}</div>
+          </div>
+        </div>
+        
+        <h3 style="margin-bottom: 16px;">Version History</h3>
+        <div class="version-history">
+          ${doc.versions.map((version, index) => `
+            <div class="version-item ${index === 0 ? 'current' : ''}">
+              <div class="version-number">${version.version}</div>
+              <div class="version-details">
+                <div style="font-weight: 600;">${version.changes}</div>
+                <div class="version-date">
+                  ${version.date.toLocaleDateString()} by ${version.author}
+                </div>
+              </div>
+              <button class="btn btn-secondary" onclick="downloadVersion('${doc.id}', '${version.version}')">
+                <i class="fas fa-download"></i>
+              </button>
+            </div>
+          `).join('')}
+        </div>
+      `;
+      
+      document.getElementById('documentModal').style.display = 'flex';
+    }
+
+    function viewDocument(docId) {
+      const doc = documents.find(d => d.id === docId);
+      alert(`Opening ${doc.name} for viewing...`);
+    }
+
+    function downloadDocument(docId) {
+      const doc = documents.find(d => d.id === docId);
+      alert(`Downloading ${doc.name}...`);
+    }
+
+    function shareDocument(docId) {
+      const doc = documents.find(d => d.id === docId);
+      alert(`Sharing ${doc.name}...`);
+    }
+
+    function downloadVersion(docId, version) {
+      alert(`Downloading version ${version}...`);
+    }
+
+    function uploadDocument() {
+      alert('Upload functionality will be implemented soon!');
+    }
+    
+    function showDuplicates() {
+      alert('🤖 AI Duplicate Analysis:\n\n✅ Found 18 duplicate files\n💾 Potential savings: 45MB\n🎯 94% accuracy rate\n\n🧠 AI detected duplicates by:\n• Content similarity analysis\n• Metadata comparison\n• File signature matching\n\nClick OK to see detailed analysis!');
+    }
+
+    function closeModal() {
+      document.getElementById('documentModal').style.display = 'none';
+    }
+
+    function goBack() {
+      const userId = localStorage.getItem('userId');
+      window.location.href = `dashboard.html?id=${encodeURIComponent(userId)}`;
+    }
+
+    // Real-time updates simulation
+    function startRealTimeUpdates() {
+      setInterval(() => {
+        // Simulate new document detection
+        if (Math.random() < 0.1) { // 10% chance every 30 seconds
+          const newDoc = generateDocuments()[0];
+          newDoc.id = `DOC-${String(documents.length + 1).padStart(4, '0')}`;
+          newDoc.status = 'new';
+          newDoc.createdDate = new Date();
+          newDoc.modifiedDate = new Date();
+          
+          documents.unshift(newDoc);
+          applyFilters();
+          
+          // Show notification
+          showNotification(`New document detected: ${newDoc.name}`, 'new');
+        }
+        
+        // Simulate document updates
+        if (Math.random() < 0.05) { // 5% chance
+          const randomDoc = documents[Math.floor(Math.random() * Math.min(10, documents.length))];
+          if (randomDoc && randomDoc.status !== 'new') {
+            randomDoc.status = 'updated';
+            randomDoc.modifiedDate = new Date();
+            applyFilters();
+            
+            showNotification(`Document updated: ${randomDoc.name}`, 'updated');
+          }
+        }
+      }, 30000); // Every 30 seconds
+    }
+
+    // Show notification
+    function showNotification(message, type) {
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        background: ${type === 'new' ? 'var(--new)' : 'var(--updated)'};
+        color: white;
+        padding: 16px 20px;
+        border-radius: 12px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        z-index: 2000;
+        transform: translateX(400px);
+        transition: transform 0.3s ease;
+      `;
+      notification.innerHTML = `
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <i class="fas fa-${type === 'new' ? 'plus' : 'edit'}"></i>
+          <span>${message}</span>
+        </div>
+      `;
+      
+      document.body.appendChild(notification);
+      
+      setTimeout(() => notification.style.transform = 'translateX(0)', 100);
+      setTimeout(() => {
+        notification.style.transform = 'translateX(400px)';
+        setTimeout(() => notification.remove(), 300);
+      }, 5000);
+    }
+
+    // Close modal when clicking outside
+    document.addEventListener('click', (e) => {
+      if (e.target.classList.contains('modal')) {
+        e.target.style.display = 'none';
+      }
+    });
+
+    // Initialize
+    init();
+  </script>
+  <!-- Translation script -->
+  <script src="translate.js"></script>
+</body>
+</html>

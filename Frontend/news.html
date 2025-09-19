@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Infera</title>
+
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <style>
+      :root {
+        --bg: #f6f8fb;
+        --card: #ffffff;
+        --muted: #6b7a95;
+        --accent: #1f6fb7;
+        --accent-600: #155a9b;
+        --radius: 12px;
+        --glass: rgba(29, 52, 92, 0.04);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto,
+          "Helvetica Neue", Arial;
+        background: linear-gradient(180deg, var(--bg), #ffffff 60%);
+        color: #20314a;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        padding: 28px 20px;
+      }
+
+      .news-wrap {
+        max-width: 1100px;
+        margin: 0 auto;
+      }
+
+      .news-header {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 18px;
+      }
+
+      .title-block {
+        display: flex;
+        gap: 12px;
+        align-items: center;
+      }
+
+      .title-emoji {
+        width: 48px;
+        height: 48px;
+        display: grid;
+        place-items: center;
+        border-radius: 10px;
+        background: linear-gradient(
+          135deg,
+          rgba(31, 111, 183, 0.12),
+          rgba(31, 111, 183, 0.06)
+        );
+        font-size: 22px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 20px;
+        letter-spacing: 0.2px;
+        color: var(--accent-600);
+      }
+      p.sub {
+        margin: 0;
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      /* search */
+      .controls {
+        display: flex;
+        gap: 10px;
+        align-items: center;
+      }
+
+      .search {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--card);
+        padding: 8px 10px;
+        border-radius: 999px;
+        box-shadow: 0 2px 8px var(--glass);
+        min-width: 220px;
+      }
+      .search input {
+        border: 0;
+        outline: 0;
+        font-size: 14px;
+        min-width: 120px;
+      }
+      .search svg {
+        opacity: 0.7;
+      }
+
+      /* container */
+      .news-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 16px;
+        margin-top: 18px;
+      }
+
+      @media (min-width: 700px) {
+        .news-grid {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+      @media (min-width: 1000px) {
+        .news-grid {
+          grid-template-columns: repeat(3, 1fr);
+        }
+      }
+
+      .card {
+        background: var(--card);
+        border-radius: var(--radius);
+        box-shadow: 0 6px 20px rgba(30, 50, 90, 0.06);
+        overflow: hidden;
+        border: 1px solid rgba(16, 24, 40, 0.04);
+        display: flex;
+        flex-direction: column;
+        transition: transform 0.18s ease, box-shadow 0.18s ease;
+      }
+      .card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 10px 30px rgba(30, 50, 90, 0.08);
+      }
+
+      .card-head {
+        padding: 14px 14px 10px 14px;
+        display: flex;
+        gap: 12px;
+        align-items: flex-start;
+        position: relative;
+      }
+
+      .date-pill {
+        position: absolute;
+        right: 12px;
+        top: 12px;
+        background: linear-gradient(180deg, #eef6ff, #f5fbff);
+        color: var(--accent-600);
+        font-weight: 600;
+        font-size: 12px;
+        padding: 6px 10px;
+        border-radius: 999px;
+        border: 1px solid rgba(31, 111, 183, 0.08);
+      }
+
+      .headline {
+        font-size: 15px;
+        font-weight: 600;
+        color: #16325c;
+        margin: 0 0 6px 0;
+        line-height: 1.25;
+        cursor: pointer;
+      }
+
+      .meta {
+        font-size: 13px;
+        color: var(--muted);
+      }
+
+      .card-body {
+        padding: 0 14px;
+      }
+
+      /* animated details */
+      .details-wrap {
+        overflow: hidden;
+        transition: max-height 0.28s cubic-bezier(0.2, 0.9, 0.2, 1),
+          padding 0.18s ease;
+        max-height: 0;
+        padding: 0 0;
+      }
+      .card.open .details-wrap {
+        max-height: 420px; /* big enough for details */
+        padding: 12px 0 14px 0;
+      }
+
+      .details {
+        font-size: 14px;
+        color: #364454;
+        line-height: 1.45;
+        padding: 0 0 8px 0;
+      }
+
+      .card-foot {
+        display: flex;
+        gap: 8px;
+        padding: 10px 14px 14px 14px;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .actions {
+        display: flex;
+        gap: 8px;
+      }
+
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 10px;
+        font-size: 13px;
+        border: 1px solid transparent;
+        cursor: pointer;
+        text-decoration: none;
+      }
+
+      .btn.primary {
+        background: linear-gradient(180deg, var(--accent), var(--accent-600));
+        color: #fff;
+        box-shadow: 0 6px 18px rgba(31, 111, 183, 0.14);
+      }
+
+      .btn.ghost {
+        background: transparent;
+        border: 1px solid rgba(16, 24, 40, 0.06);
+        color: var(--muted);
+      }
+
+      .chev {
+        width: 18px;
+        height: 18px;
+        transition: transform 0.22s ease;
+        opacity: 0.9;
+      }
+      .card.open .chev {
+        transform: rotate(180deg);
+      }
+
+      /* source domain */
+      .source {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      /* no-results */
+      .no-results {
+        text-align: center;
+        padding: 40px;
+        color: var(--muted);
+        background: linear-gradient(
+          180deg,
+          rgba(31, 111, 183, 0.03),
+          transparent
+        );
+        border-radius: 10px;
+        font-size: 15px;
+      }
+
+      /* Blue Home button — no SVGs */
+      .home-btn-blue {
+        display: inline-block;
+        padding: 10px 16px;
+        font-size: 14px;
+        font-weight: 600;
+        line-height: 1;
+        color: #ffffff;
+        background: linear-gradient(
+          180deg,
+          var(--accent, #1f6fb7),
+          var(--accent-600, #155a9b)
+        );
+        border: none;
+        border-radius: 10px;
+        cursor: pointer;
+        box-shadow: 0 6px 18px rgba(31, 111, 183, 0.14);
+        transition: transform 0.14s ease, box-shadow 0.14s ease,
+          opacity 0.12s ease;
+        text-decoration: none;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      /* Hover / focus */
+      .home-btn-blue:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 12px 30px rgba(31, 111, 183, 0.18);
+      }
+      .home-btn-blue:focus {
+        outline: 3px solid rgba(21, 90, 155, 0.12);
+        outline-offset: 3px;
+        box-shadow: 0 12px 30px rgba(31, 111, 183, 0.18);
+      }
+
+      /* Active / pressed */
+      .home-btn-blue:active {
+        transform: translateY(-1px);
+        opacity: 0.97;
+      }
+
+      /* Disabled state */
+      .home-btn-blue:disabled {
+        background: linear-gradient(180deg, #9bbfe0, #86a9d6);
+        cursor: not-allowed;
+        box-shadow: none;
+        opacity: 0.85;
+      }
+
+      /* Compact variant */
+      .home-btn-blue.small {
+        padding: 6px 10px;
+        font-size: 13px;
+        border-radius: 8px;
+      }
+
+      /* Full-width utility for mobile/menus */
+      .home-btn-blue.full {
+        display: block;
+        width: 100%;
+        text-align: center;
+      }
+
+      #google_translate_element {
+        position: fixed;
+        top: 16px;
+        right: 16px;
+        z-index: 9999;
+        background: #3e86f4;
+        padding: 8px 16px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+        font-size: 16px;
+      }
+
+      /* Hide the little Google flag icon */
+      .goog-te-gadget img {
+        display: none;
+      }
+
+      /* Change text color, background, and border */
+      .goog-te-gadget-simple {
+        border: none !important;
+      }
+
+      .goog-te-menu-value span {
+        color: #4caf50 !important;
+      }
+
+      .goog-te-menu-value span:hover {
+        color: #007bff !important;
+      }
+
+      /* small screens adjustments */
+      @media (max-width: 420px) {
+        .news-header {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 12px;
+        }
+        .controls {
+          width: 100%;
+        }
+        .search {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <header>
+      <div id="google_translate_element"></div>
+    </header>
+    <main class="news-wrap" aria-labelledby="newsTitle">
+      <header class="news-header">
+        <div class="title-block">
+          <div class="title-emoji" aria-hidden="true">📰</div>
+          <div>
+            <h1 id="newsTitle">News & Updates — KMRL</h1>
+            <p class="sub">
+              Latest coverage on documentation, digital transformation and key
+              projects.
+            </p>
+          </div>
+        </div>
+
+        <div class="controls" role="region" aria-label="News controls">
+          <label class="search" for="searchInput">
+            <svg
+              width="16"
+              height="16"
+              viewBox="0 0 24 24"
+              fill="none"
+              aria-hidden="true"
+            >
+              <path
+                d="M21 21l-4.35-4.35"
+                stroke="#44526A"
+                stroke-width="1.6"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+              />
+              <circle
+                cx="11"
+                cy="11"
+                r="6"
+                stroke="#44526A"
+                stroke-width="1.6"
+              />
+            </svg>
+            <input
+              id="searchInput"
+              type="search"
+              placeholder="Search headlines..."
+              aria-label="Search headlines"
+            />
+          </label>
+          <button class="home-btn-blue">Home</button>
+        </div>
+      </header>
+
+      <section
+        id="newsGrid"
+        class="news-grid"
+        aria-live="polite"
+        aria-busy="false"
+      ></section>
+
+      <div id="empty" class="no-results" style="display: none">
+        No articles match your search.
+      </div>
+    </main>
+
+    <script>
+      const newsData = [
+        {
+          date: "2024-08-01",
+          title:
+            "AIIB — Kochi Metro Rail Project (Phase II) — Project documents",
+          details:
+            "AIIB project page for Kochi Metro Phase II collects multiple technical documents (project summary, environmental and social due diligence, EIA/SDDR) — a good indicator of the volume of documents KMRL manages for major projects.",
+          link: "https://www.aiib.org/en/projects/details/2024/approved/India-Kochi-Metro-Rail-Project-Phase-II.html",
+        },
+        {
+          date: "2024-01-01",
+          title: "Kochi Metro — Detailed Project Report (DPR)",
+          details:
+            "The Detailed Project Report (DPR) hosted by Kochi Metro is an extensive technical and planning document covering engineering, land, environment, social impact and cost — the kind of large reports that add to KMRL's documentation load.",
+          link: "https://kochimetro.org/wp-content/uploads/dpr.pdf",
+        },
+        {
+          date: "2025-01-01",
+          title:
+            "KMRL Tenders — printing, reports and documentation-related services",
+          details:
+            "KMRL’s official tender portal lists recurring documentation-related services such as printing annual reports and supplying technical manuals, reflecting ongoing documentation operational needs.",
+          link: "https://kochimetro.org/tender/",
+        },
+        {
+          date: "2025-03-18",
+          title: "KMRL to prepare DPR for Mumbai Water Metro project",
+          details:
+            "News coverage of KMRL taking on consultancy work (preparing a DPR for another major project) — consultancy assignments increase the number of formal documents and reports KMRL produces and manages.",
+          link: "https://timesofindia.indiatimes.com/city/kochi/kmrl-to-prepare-dpr-for-mumbai-water-metro-project/articleshow/123858567.cms",
+        },
+        {
+          date: "2025-08-10",
+          title:
+            "Kochi Metro Phase 2 — open bid for third rail traction system",
+          details:
+            "Project update on Phase-II procurement; such large-scale procurements generate voluminous tender documents, technical clarifications and compliance paperwork.",
+          link: "https://www.newindianexpress.com/cities/kochi/2025/Aug/10/kochi-metro-phase-2-kmrl-floats-open-bid-for-third-rail-traction-system-xxxxxx.html",
+        },
+        {
+          date: "2025-02-10",
+          title:
+            "Kochi Metro records operating profit for third consecutive year",
+          details:
+            "Operational growth and increased services often come with additional audits, reporting and administrative documentation which add to institutional record-keeping workloads.",
+          link: "https://timesofindia.indiatimes.com/city/kochi/kochi-metro-records-operating-profit-for-third-consecutive-year/articleshow/123172560.cms",
+        },
+        {
+          date: "2025-01-01",
+          title: "Kochi Metro clocks record footfall in December",
+          details:
+            "Ridership surges and expanded operations increase the volume of operational logs, incident reports and compliance documents that KMRL must manage.",
+          link: "https://www.onmanorama.com/news/business/2025/01/01/kochi-metro-clocks-record-footfall-in-december-2024.html",
+        },
+        {
+          date: "2025-09-06",
+          title:
+            "Presentation — Addressing Document Overload at Kochi Metro Rail Limited",
+          details:
+            "A focused presentation (slides) that directly discusses 'document overload' at KMRL and suggests potential remediation approaches — one of the strongest direct references to the phrase.",
+          link: "https://prezi.com/p/kwbzcnaozmbv/addressing-document-overload-at-kochi-metro-rail-limited/",
+        },
+        {
+          date: "2015-01-01",
+          title: "Kochi Metro Rail — project overview slide deck",
+          details:
+            "A public slide deck and overview materials describing station planning, environmental studies and project phases — useful context for understanding large-scale documentation needs.",
+          link: "https://www.slideshare.net/slideshow/kochi-metro-rail-projectdoc/32623672",
+        },
+        {
+          date: "2024-06-15",
+          title:
+            "Kochi Metro to lease land near Kaloor station for commercial development",
+          details:
+            "Commercial and land-lease initiatives require legal, financial and contractual documentation; such activities add to KMRL's documentation and administrative workload.",
+          link: "https://timesofindia.indiatimes.com/city/kochi/kochi-metro-to-lease-land-near-kaloor-station-for-commercial-development/articleshow/121761438.cms",
+        },
+      ];
+
+      const grid = document.getElementById("newsGrid");
+      const empty = document.getElementById("empty");
+      const searchInput = document.getElementById("searchInput");
+
+      // Utility: format date (YYYY-MM-DD -> DD MMM)
+      function formatDate(iso) {
+        try {
+          const d = new Date(iso + "T00:00:00");
+          return d.toLocaleDateString(undefined, {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          });
+        } catch (e) {
+          return iso;
+        }
+      }
+
+      function extractDomain(url) {
+        try {
+          const u = new URL(url);
+          return u.hostname.replace("www.", "");
+        } catch (e) {
+          return "";
+        }
+      }
+
+      // render cards
+      function render(list) {
+        grid.innerHTML = "";
+        if (!list.length) {
+          empty.style.display = "block";
+          return;
+        } else empty.style.display = "none";
+
+        list.forEach((item) => {
+          const card = document.createElement("article");
+          card.className = "card";
+          card.setAttribute("tabindex", "0");
+
+          const domain = extractDomain(item.link);
+
+          card.innerHTML = `
+            <div class="card-head">
+              <div style="flex:1">
+                <h3 class="headline" role="button">${item.title}</h3>
+                <div class="meta">KMRL • Projects & Data</div>
+              </div>
+              <div class="date-pill" aria-hidden="true">${formatDate(
+                item.date
+              )}</div>
+            </div>
+
+            <div class="card-body">
+              <div class="details-wrap" aria-hidden="true">
+                <div class="details">${item.details}</div>
+              </div>
+            </div>
+
+            <div class="card-foot">
+              <div class="actions">
+                <a class="btn primary" href="${
+                  item.link
+                }" target="_blank" rel="noopener noreferrer">Read More
+                  <svg style="opacity:.95" width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M5 12h14" stroke="white" stroke-width="1.6" stroke-linecap="round"></path>
+                    <path d="M12 5l7 7-7 7" stroke="white" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"></path>
+                  </svg>
+                </a>
+
+                <button class="btn ghost toggle-btn" aria-expanded="false" aria-label="Toggle details">
+                  <svg class="chev" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                    <path d="M6 9l6 6 6-6" stroke="#44526A" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                </button>
+              </div>
+
+              <div class="source">${domain}</div>
+            </div>
+          `;
+
+          // toggle logic
+          const toggleBtn = card.querySelector(".toggle-btn");
+          const detailsWrap = card.querySelector(".details-wrap");
+          const headline = card.querySelector(".headline");
+          const readMore = card.querySelector(".btn.primary");
+
+          function openClose(e) {
+            const open = card.classList.toggle("open");
+            toggleBtn.setAttribute("aria-expanded", open ? "true" : "false");
+            detailsWrap.setAttribute("aria-hidden", !open);
+          }
+
+          // clicking headline toggles too
+          headline.addEventListener("click", openClose);
+          // keyboard toggle when focused card + Enter/Space
+          card.addEventListener("keydown", (ev) => {
+            if (ev.key === "Enter" || ev.key === " ") {
+              ev.preventDefault();
+              openClose();
+            }
+          });
+
+          toggleBtn.addEventListener("click", (ev) => {
+            ev.stopPropagation(); // prevent card click
+            openClose();
+          });
+
+          // ensure clicking Read More doesn't toggle details (stop propagation)
+          readMore.addEventListener("click", (ev) => ev.stopPropagation());
+
+          grid.appendChild(card);
+        });
+      }
+
+      // initial render (sorted newest first by date string)
+      const sorted = newsData
+        .slice()
+        .sort((a, b) => b.date.localeCompare(a.date));
+      render(sorted);
+
+      // search filter
+      searchInput.addEventListener("input", (e) => {
+        const q = e.target.value.trim().toLowerCase();
+        const filtered = sorted.filter((it) =>
+          (it.title + " " + it.details + " " + (it.link || ""))
+            .toLowerCase()
+            .includes(q)
+        );
+        render(filtered);
+      });
+    </script>
+    <script type="text/javascript">
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement(
+          {
+            pageLanguage: "en",
+            includedLanguages: "en,hi,ml",
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+          },
+          "google_translate_element"
+        );
+      }
+        document.addEventListener('DOMContentLoaded', () => {
+    const btn = document.querySelector('.home-btn-blue');
+    if (btn) {
+      btn.addEventListener('click', () => {
+        window.location.href = 'index.html';
+      });
+    }
+  });
+    </script>
+    <script
+      type="text/javascript"
+      src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+    ></script>
+  </body>
+</html>

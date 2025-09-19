@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Team Management - Infera</title>
+    <style>
+      :root {
+        --bg: #0f1724;
+        --card: #ffffff;
+        --muted: #64748b;
+        --accent: #2563eb;
+        --glass: rgba(255, 255, 255, 0.06);
+        --success: #10b981;
+        --danger: #ef4444;
+        --warning: #f59e0b;
+        --radius: 14px;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      #google_translate_element {
+        position: fixed;
+        top: 16px;
+        right: 16px;
+        z-index: 9999;
+        background: #0858fa;
+        padding: 8px 16px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+        font-size: 16px;
+      }
+
+      /* Hide the little Google flag icon */
+      .goog-te-gadget img {
+        display: none;
+      }
+
+      /* Change text color, background, and border */
+      .goog-te-gadget-simple {
+        background: #f4f6fa !important;
+        border: none !important;
+      }
+
+      .goog-te-menu-value span {
+        color: #4caf50 !important;
+      }
+
+      .goog-te-menu-value span:hover {
+        color: #007bff !important;
+      }
+
+      body {
+        margin: 0;
+        font-family: Inter, system-ui, sans-serif;
+        background: radial-gradient(
+            1000px 600px at 10% 10%,
+            rgba(37, 99, 235, 0.08),
+            transparent
+          ),
+          radial-gradient(
+            800px 400px at 90% 90%,
+            rgba(16, 185, 129, 0.04),
+            transparent
+          );
+        color: #0b1220;
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+      }
+
+      .header {
+        background: linear-gradient(180deg, #fff, #fbfdff);
+        border-radius: var(--radius);
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: 0 6px 30px rgba(2, 6, 23, 0.03);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .back-btn {
+        background: var(--accent);
+        color: white;
+        border: none;
+        padding: 10px 16px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 600;
+      }
+
+      .filters {
+        background: linear-gradient(180deg, #fff, #fbfdff);
+        border-radius: var(--radius);
+        padding: 20px;
+        margin-bottom: 24px;
+        box-shadow: 0 6px 30px rgba(2, 6, 23, 0.03);
+        display: flex;
+        gap: 16px;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .filter-btn {
+        padding: 8px 16px;
+        border: 1px solid #e5e7eb;
+        background: white;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+        transition: all 0.2s;
+      }
+
+      .filter-btn.active {
+        background: var(--accent);
+        color: white;
+        border-color: var(--accent);
+      }
+
+      .search-box {
+        flex: 1;
+        min-width: 200px;
+        padding: 10px 16px;
+        border: 1px solid #e5e7eb;
+        border-radius: 8px;
+        font-size: 14px;
+      }
+
+      .team-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+        gap: 20px;
+      }
+
+      .member-card {
+        background: linear-gradient(180deg, #fff, #fbfdff);
+        border-radius: var(--radius);
+        padding: 20px;
+        box-shadow: 0 6px 30px rgba(2, 6, 23, 0.03);
+        transition: transform 0.2s;
+      }
+
+      .member-card:hover {
+        transform: translateY(-2px);
+      }
+
+      .member-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 12px;
+        background: var(--accent);
+        color: white;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-weight: 700;
+        font-size: 18px;
+      }
+
+      .member-info h3 {
+        margin: 0;
+        font-size: 1.1rem;
+        font-weight: 600;
+      }
+
+      .member-info p {
+        margin: 4px 0 0 0;
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      .member-details {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 16px;
+      }
+
+      .detail-item {
+        font-size: 0.85rem;
+      }
+
+      .detail-label {
+        color: var(--muted);
+        font-weight: 500;
+      }
+
+      .detail-value {
+        font-weight: 600;
+        margin-top: 2px;
+      }
+
+      .role-badge {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      .role-director {
+        background: #fecaca;
+        color: #991b1b;
+      }
+      .role-executive {
+        background: #fed7aa;
+        color: #9a3412;
+      }
+      .role-manager {
+        background: #fef3c7;
+        color: #92400e;
+      }
+      .role-senior {
+        background: #dcfce7;
+        color: #166534;
+      }
+      .role-junior {
+        background: #dbeafe;
+        color: #1e40af;
+      }
+
+      .status-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 12px;
+        font-size: 0.75rem;
+        font-weight: 600;
+      }
+
+      .status-online {
+        background: #dcfce7;
+        color: #166534;
+      }
+      .status-busy {
+        background: #fed7aa;
+        color: #9a3412;
+      }
+      .status-offline {
+        background: #f3f4f6;
+        color: #6b7280;
+      }
+
+      .stats-summary {
+        background: linear-gradient(180deg, #fff, #fbfdff);
+        border-radius: var(--radius);
+        padding: 20px;
+        margin-bottom: 24px;
+        box-shadow: 0 6px 30px rgba(2, 6, 23, 0.03);
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+        gap: 20px;
+      }
+
+      .stat-item {
+        text-align: center;
+      }
+
+      .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--accent);
+      }
+
+      .stat-label {
+        color: var(--muted);
+        font-size: 0.9rem;
+      }
+
+      @media (max-width: 768px) {
+        .filters {
+          flex-direction: column;
+          align-items: stretch;
+        }
+        .team-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div id="google_translate_element"></div>
+    </header>
+    <div class="container">
+      <div class="header">
+        <div>
+          <h1 style="margin: 0">Team Management</h1>
+          <p style="margin: 5px 0 0 0; color: var(--muted)">
+            Manage and view team members across departments
+          </p>
+        </div>
+        <button class="back-btn" onclick="goBack()">← Back to Dashboard</button>
+      </div>
+
+      <div class="stats-summary">
+        <div class="stat-item">
+          <div class="stat-value" id="totalMembers">300</div>
+          <div class="stat-label">Total Members</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="onlineMembers">245</div>
+          <div class="stat-label">Online</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="departments">6</div>
+          <div class="stat-label">Departments</div>
+        </div>
+        <div class="stat-item">
+          <div class="stat-value" id="executives">18</div>
+          <div class="stat-label">Executives</div>
+        </div>
+      </div>
+
+      <div class="filters">
+        <button class="filter-btn active" data-dept="all">
+          All Departments
+        </button>
+        <button class="filter-btn" data-dept="Station Control">
+          Station Control
+        </button>
+        <button class="filter-btn" data-dept="Train Operations">
+          Train Operations
+        </button>
+        <button class="filter-btn" data-dept="Maintenance">Maintenance</button>
+        <button class="filter-btn" data-dept="Safety & Security">
+          Safety & Security
+        </button>
+        <button class="filter-btn" data-dept="Engineering">Engineering</button>
+        <button class="filter-btn" data-dept="Administration">
+          Administration
+        </button>
+        <input
+          type="text"
+          class="search-box"
+          placeholder="Search team members..."
+          id="searchBox"
+        />
+      </div>
+
+      <div class="team-grid" id="teamGrid">
+        <!-- Team members will be generated by JavaScript -->
+      </div>
+    </div>
+
+    <script>
+      // Generate dummy team data
+      const realNames = [
+        "Dr. Maulika Patel",
+        "Dr. Gopi Bhatt",
+        "Dr. Nirali Pandya",
+        "Mr. Keyur Prajapati",
+        "Mr. Sunit Parmar",
+        "Mr. Sneh Vyas",
+        "Ms. Ankita Chauhan",
+        "Dr. Jayna Donga",
+        "Ms. Dipti Mathpal",
+        "Mr. Atmiya Patel",
+        "Dr. Akash Dave",
+        "Ms. Shraddha Korvadiya",
+        "Mr. Shyam Viththalani",
+        "Mr. Mihir Rajyaguru",
+        "Mr. Dhruv Dalwadi",
+        "Mr. Jitendrasinh Raulji",
+        "Ms. Jignasha Lakhtaria",
+        "Ms. Jaina Patel",
+        "Mr. Vaibhav Gandhi",
+        "Ms. Anjali Suthar",
+        "Ms. Sreeja P",
+        "Mr. Shaikh Amin Farooqbhai",
+        "Dr. Kishori Sudhir Shekokar",
+        "Mr. Manav Bhavinkumar Patel",
+        "Ms. Jagruti Prajapati",
+        "Dr. Pritesh Pandey",
+        "Ms. Priyanka Panchal",
+        "Mr. Pratik Soni",
+        "Dr. Mehul Thakkar",
+        "Dr. Sunayana Domadia",
+        "Ms. Tejal Tandel",
+        "Ms. Palak Dave",
+        "Mr. Jimesh Rana",
+        "Ms. Bhumika Prajapati",
+        "Ms. Roma Barot",
+        "Ms. Dhruval Kachhiya",
+        "Mr. Chetan Kumar Verma",
+        "Mr. Mayur Parmar",
+        "Ms. Komal Yadav",
+        "Ms. Jayshri Patil",
+        "Mr. Mehulkumar Amin",
+        "Mr. Nitin Patel",
+        "Mr. Piyush Suthar",
+        "Mr. Harsh Goswami",
+        "Dr. Darshana Prajapati",
+        "Dr Foram Milind Joshi",
+        "Ms. Khushboo Patel",
+        "Ms. Sejal Patel",
+        "Dr. Jay Raval",
+        "Mr. Tapankumar Patel",
+        "Mr. Sagar Jani",
+        "Mr. Hitesh Thakwani",
+        "Dr. Bhavesh Pithadiya",
+        "Mr. Jeet Panchal",
+        "Dr. Parvin Sodagar",
+        "Dr. Shreekant Pathak",
+        "Ms. Jigisha Kachhia",
+        "Ms. Riddhi Sondagar",
+        "Ms. Sujan Diwan",
+        "Mr. Walsh Christian",
+        "Ms. Darshana Patel",
+        "Mr. Himanshu C Mevada",
+      ];
+
+      const departments = [
+        "Station Control",
+        "Train Operations",
+        "Maintenance",
+        "Safety & Security",
+        "Engineering",
+        "Administration",
+      ];
+
+      const roles = [
+        { name: "Director", level: 5, class: "role-director" },
+        { name: "Executive", level: 4, class: "role-executive" },
+        { name: "Manager", level: 3, class: "role-manager" },
+        { name: "Senior Officer", level: 2, class: "role-senior" },
+        { name: "Junior Officer", level: 1, class: "role-junior" },
+      ];
+
+      const statuses = ["online", "busy", "offline"];
+
+      let teamMembers = [];
+      let currentUserRole = "Executive"; // Simulating executive level access
+
+      // Generate team members
+      function generateTeamMembers() {
+        teamMembers = [];
+        let memberId = 1001;
+
+        // Distribute real names across departments
+        let nameIndex = 0;
+        departments.forEach((dept) => {
+          const membersPerDept = Math.ceil(
+            realNames.length / departments.length
+          );
+
+          for (
+            let i = 0;
+            i < membersPerDept && nameIndex < realNames.length;
+            i++
+          ) {
+            const fullName = realNames[nameIndex++];
+            const role = roles[Math.floor(Math.random() * roles.length)];
+            const status =
+              statuses[Math.floor(Math.random() * statuses.length)];
+
+            // Extract initials and email from full name
+            const nameParts = fullName
+              .replace(/^(Dr\.|Mr\.|Ms\.)\s/, "")
+              .split(" ");
+            const initials = nameParts
+              .map((part) => part.charAt(0))
+              .join("")
+              .toUpperCase();
+            const emailName = fullName
+              .replace(/^(Dr\.|Mr\.|Ms\.)\s/, "")
+              .toLowerCase()
+              .replace(/\s+/g, ".");
+
+            teamMembers.push({
+              id: memberId++,
+              name: fullName,
+              department: dept,
+              role: role.name,
+              roleLevel: role.level,
+              roleClass: role.class,
+              status: status,
+              email: `${emailName}@kmrl.com`,
+              phone: `+91 ${
+                Math.floor(Math.random() * 9000000000) + 1000000000
+              }`,
+              experience: Math.floor(Math.random() * 15) + 1,
+              joinDate: new Date(
+                2020 + Math.floor(Math.random() * 4),
+                Math.floor(Math.random() * 12),
+                Math.floor(Math.random() * 28) + 1
+              ).toLocaleDateString(),
+              avatar: initials.substring(0, 2),
+            });
+          }
+        });
+      }
+
+      // Check access permissions
+      function canViewMember(member) {
+        // Directors and Executives can see all
+        if (currentUserRole === "Director" || currentUserRole === "Executive") {
+          return true;
+        }
+        // Others can only see same or lower level
+        const userLevel =
+          roles.find((r) => r.name === currentUserRole)?.level || 1;
+        return member.roleLevel <= userLevel;
+      }
+
+      // Render team members
+      function renderTeamMembers(members = teamMembers) {
+        const grid = document.getElementById("teamGrid");
+        grid.innerHTML = "";
+
+        const filteredMembers = members.filter(canViewMember);
+
+        filteredMembers.forEach((member) => {
+          const card = document.createElement("div");
+          card.className = "member-card";
+          card.innerHTML = `
+                    <div class="member-header">
+                        <div class="avatar">${member.avatar}</div>
+                        <div class="member-info">
+                            <h3>${member.name}</h3>
+                            <p>${member.department}</p>
+                        </div>
+                    </div>
+                    <div class="member-details">
+                        <div class="detail-item">
+                            <div class="detail-label">Role</div>
+                            <div class="detail-value">
+                                <span class="role-badge ${member.roleClass}">${
+            member.role
+          }</span>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Status</div>
+                            <div class="detail-value">
+                                <span class="status-badge status-${
+                                  member.status
+                                }">${member.status.toUpperCase()}</span>
+                            </div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Experience</div>
+                            <div class="detail-value">${
+                              member.experience
+                            } years</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Joined</div>
+                            <div class="detail-value">${member.joinDate}</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Email</div>
+                            <div class="detail-value" style="font-size: 0.8rem;">${
+                              member.email
+                            }</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-label">Phone</div>
+                            <div class="detail-value" style="font-size: 0.8rem;">${
+                              member.phone
+                            }</div>
+                        </div>
+                    </div>
+                `;
+          grid.appendChild(card);
+        });
+
+        // Update stats
+        updateStats(filteredMembers);
+      }
+
+      // Update statistics
+      function updateStats(members) {
+        document.getElementById("totalMembers").textContent = members.length;
+        document.getElementById("onlineMembers").textContent = members.filter(
+          (m) => m.status === "online"
+        ).length;
+        document.getElementById("departments").textContent = new Set(
+          members.map((m) => m.department)
+        ).size;
+        document.getElementById("executives").textContent = members.filter(
+          (m) => m.role === "Executive" || m.role === "Director"
+        ).length;
+      }
+
+      // Filter by department
+      function filterByDepartment(dept) {
+        const filtered =
+          dept === "all"
+            ? teamMembers
+            : teamMembers.filter((m) => m.department === dept);
+        renderTeamMembers(filtered);
+
+        // Update active filter button
+        document.querySelectorAll(".filter-btn").forEach((btn) => {
+          btn.classList.remove("active");
+          if (btn.dataset.dept === dept) {
+            btn.classList.add("active");
+          }
+        });
+      }
+
+      // Search functionality
+      function searchMembers(query) {
+        const filtered = teamMembers.filter(
+          (member) =>
+            member.name.toLowerCase().includes(query.toLowerCase()) ||
+            member.department.toLowerCase().includes(query.toLowerCase()) ||
+            member.role.toLowerCase().includes(query.toLowerCase())
+        );
+        renderTeamMembers(filtered);
+      }
+
+      function goBack() {
+        const userId = localStorage.getItem("userId");
+        if (userId) {
+          window.location.href = `dashboard.html?id=${encodeURIComponent(
+            userId
+          )}`;
+        } else {
+          window.location.href = "dashboard.html";
+        }
+      }
+
+      // Initialize
+      document.addEventListener("DOMContentLoaded", () => {
+        generateTeamMembers();
+        renderTeamMembers();
+
+        // Filter buttons
+        document.querySelectorAll(".filter-btn").forEach((btn) => {
+          btn.addEventListener("click", () => {
+            filterByDepartment(btn.dataset.dept);
+          });
+        });
+
+        // Search box
+        document.getElementById("searchBox").addEventListener("input", (e) => {
+          searchMembers(e.target.value);
+        });
+      });
+    </script>
+    <script type="text/javascript">
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement(
+          {
+            pageLanguage: "en",
+            includedLanguages: "en,hi,ml",
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+          },
+          "google_translate_element"
+        );
+      }
+    </script>
+    <script
+      type="text/javascript"
+      src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+    ></script>
+  </body>
+</html>

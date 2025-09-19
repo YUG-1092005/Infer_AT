@@ -1,0 +1,3851 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Infera — Modern Chat</title>
+  <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
+  <script src="auto-discover.js"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <style>
+    :root {
+      /* Light Theme - White Glass Perfection */
+      --bg-primary: #ffffff;
+      --bg-secondary: rgba(255, 255, 255, 0.95);
+      --bg-glass: rgba(255, 255, 255, 0.25);
+      --bg-glass-strong: rgba(255, 255, 255, 0.4);
+      --text-primary: #263238;
+      --text-secondary: #37474f;
+      --text-muted: #546e7a;
+      --border-color: rgba(255, 255, 255, 0.3);
+      --shadow-light: 0 8px 32px rgba(0, 0, 0, 0.1);
+      --shadow-medium: 0 16px 48px rgba(0, 0, 0, 0.15);
+      --shadow-heavy: 0 24px 64px rgba(0, 0, 0, 0.2);
+      
+      /* Vibrant Peaceful Gradients */
+      --gradient-primary: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%); /* Vibrant Teal */
+      --gradient-secondary: linear-gradient(135deg, #ffa726 0%, #ff7043 100%); /* Warm Orange */
+      --gradient-success: linear-gradient(135deg, #66bb6a 0%, #43a047 100%); /* Fresh Green */
+      --gradient-warning: linear-gradient(135deg, #ffca28 0%, #ffa000 100%); /* Golden Yellow */
+      --gradient-danger: linear-gradient(135deg, #ef5350 0%, #e53935 100%); /* Coral Red */
+      
+      /* Perfect Glass Effects */
+      --glass-backdrop: blur(24px);
+      --glass-border: 1px solid rgba(255, 255, 255, 0.25);
+      --glass-shadow: 0 8px 32px rgba(78, 205, 196, 0.25);
+      
+      /* Animations */
+      --transition-fast: 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-medium: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      --transition-slow: 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    
+      #google_translate_element {
+        position: fixed;
+        top: 16px;
+        right: 16px;
+        z-index: 9999;
+        background: #0377ca;
+        padding: 8px 16px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+        font-size: 16px;
+      }
+
+      /* Hide the little Google flag icon */
+      .goog-te-gadget img {
+        display: none;
+      }
+
+      /* Change text color, background, and border */
+      .goog-te-gadget-simple {
+        background: #cdddf9 !important;
+        border: none !important;
+      }
+
+      .goog-te-menu-value span {
+        color: #4caf50 !important;
+      }
+
+      .goog-te-menu-value span:hover {
+        color: #007bff !important;
+      }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(135deg, #b2dfdb 0%, #e0f2f1 50%, #e1f5fe 100%);
+      min-height: 100vh;
+      overflow: hidden;
+      transition: all var(--transition-medium);
+    }
+
+    [data-theme="dark"] body {
+      background: linear-gradient(135deg, #2c3e50 0%, #34495e 50%, #2c3e50 100%);
+    }
+
+    /* Theme Toggle */
+    .theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1000;
+      background: var(--bg-glass-strong);
+      backdrop-filter: var(--glass-backdrop);
+      border: var(--glass-border);
+      border-radius: 50px;
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: all var(--transition-medium);
+      box-shadow: var(--glass-shadow), var(--shadow-light);
+    }
+
+    .theme-toggle:hover {
+      transform: scale(1.05);
+      box-shadow: var(--shadow-medium);
+    }
+
+    .theme-icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: all var(--transition-medium);
+    }
+
+    .theme-icon.active {
+      background: var(--gradient-primary);
+      color: white;
+      transform: scale(1.1);
+    }
+
+    .app {
+      display: flex;
+      height: 100vh;
+      padding: 20px;
+      gap: 20px;
+    }
+
+    /* Right Panel */
+    .right-panel {
+      width: 320px;
+      background: var(--bg-glass);
+      backdrop-filter: var(--glass-backdrop);
+      border: var(--glass-border);
+      border-radius: 24px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--glass-shadow), var(--shadow-medium);
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border-color);
+      background: var(--bg-glass-strong);
+    }
+
+    .panel-title {
+      font-size: 20px;
+      font-weight: 600;
+      color: var(--text-primary);
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .channel-details {
+      padding: 24px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .detail-item {
+      margin-bottom: 16px;
+    }
+
+    .detail-label {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .detail-value {
+      font-size: 14px;
+      color: var(--text-primary);
+      font-weight: 500;
+    }
+
+    .members-list {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .members-list {
+      flex: 1;
+      overflow-y: auto;
+      padding: 16px;
+    }
+
+    .member-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px;
+      border-radius: 12px;
+      margin-bottom: 8px;
+      transition: all var(--transition-medium);
+      cursor: pointer;
+    }
+
+    .member-item:hover {
+      background: var(--bg-glass-strong);
+      transform: translateX(4px);
+    }
+
+    .member-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--gradient-secondary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 14px;
+      box-shadow: var(--shadow-light);
+    }
+
+    .member-info {
+      flex: 1;
+    }
+
+    .member-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .member-status {
+      font-size: 12px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .member-status-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--gradient-success);
+    }
+
+    /* Sidebar */
+    .sidebar {
+      width: 380px;
+      background: var(--bg-glass);
+      backdrop-filter: var(--glass-backdrop);
+      border: var(--glass-border);
+      border-radius: 24px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--glass-shadow), var(--shadow-medium);
+      overflow: hidden;
+      transition: all var(--transition-medium);
+    }
+
+    .sidebar-header {
+      padding: 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-glass-strong);
+    }
+
+    .sidebar-title {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text-primary);
+      background: var(--gradient-primary);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .header-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--gradient-primary);
+      border: none;
+      color: white;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      transition: all var(--transition-medium);
+      box-shadow: var(--shadow-light);
+    }
+
+    .header-btn:hover {
+      transform: scale(1.1);
+      box-shadow: var(--shadow-medium);
+    }
+
+    .new-chat-btn {
+      font-size: 18px;
+    }
+
+    .new-chat-btn:hover {
+      transform: scale(1.1) rotate(90deg);
+    }
+
+    .search-container {
+      padding: 16px 24px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .search-input {
+      width: 100%;
+      padding: 12px 20px;
+      background: var(--bg-glass-strong);
+      backdrop-filter: var(--glass-backdrop);
+      border: var(--glass-border);
+      border-radius: 50px;
+      color: var(--text-primary);
+      font-size: 14px;
+      outline: none;
+      transition: all var(--transition-medium);
+    }
+
+    .search-input:focus {
+      transform: scale(1.02);
+      box-shadow: 0 0 0 3px rgba(78, 205, 196, 0.3);
+    }
+
+    .search-input::placeholder {
+      color: var(--text-muted);
+    }
+
+    .channels-list {
+      flex: 1;
+      overflow-y: auto;
+    }
+
+    .conversation-card {
+      margin: 8px 16px;
+      padding: 16px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      border-radius: 16px;
+      cursor: pointer;
+      transition: all var(--transition-medium);
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--shadow-light);
+    }
+
+    .conversation-card:hover {
+      background: rgba(255, 255, 255, 0.95);
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: var(--shadow-medium);
+      border: 1px solid rgba(78, 205, 196, 0.6);
+    }
+    
+    .conversation-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: linear-gradient(135deg, transparent, rgba(0, 122, 255, 0.05), transparent);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+    
+    .conversation-card:hover::before {
+      opacity: 1;
+    }
+
+    .conversation-card.active {
+      background: var(--gradient-primary);
+      color: white;
+      transform: scale(1.02);
+      box-shadow: var(--shadow-heavy);
+    }
+
+    .conversation-card.urgent {
+      border-left: 4px solid var(--apple-red);
+      background: linear-gradient(90deg, rgba(255, 59, 48, 0.1) 0%, var(--apple-light) 100%);
+    }
+
+    .conversation-card.urgent::before {
+      content: '🚨';
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      font-size: 16px;
+      background: var(--apple-red);
+      color: white;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      animation: pulse 2s infinite;
+    }
+    
+    @keyframes pulse {
+      0% { transform: scale(1); }
+      50% { transform: scale(1.1); }
+      100% { transform: scale(1); }
+    }
+
+    .conversation-card.jobcard {
+      border-left: 4px solid var(--apple-orange);
+      background: linear-gradient(90deg, rgba(255, 149, 0, 0.1) 0%, var(--apple-light) 100%);
+    }
+
+    .conversation-card.jobcard::before {
+      content: '📋';
+      position: absolute;
+      top: 8px;
+      right: 8px;
+      background: var(--apple-orange);
+      color: white;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+
+    .channel-avatar {
+      width: 49px;
+      height: 49px;
+      border-radius: 50%;
+      background: var(--whatsapp-green);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 600;
+      font-size: 18px;
+      margin-right: 12px;
+      flex-shrink: 0;
+    }
+
+    .channel-info {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .channel-name {
+      font-weight: 600;
+      font-size: 16px;
+      color: var(--whatsapp-text);
+      margin-bottom: 4px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .channel-last-message {
+      font-size: 14px;
+      color: var(--whatsapp-muted);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .channel-time {
+      font-size: 12px;
+      color: var(--whatsapp-muted);
+      margin-left: 8px;
+      flex-shrink: 0;
+    }
+
+    .add-channel-btn {
+      width: 100%;
+      padding: 12px 16px;
+      background: var(--whatsapp-green);
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      margin: 16px;
+      transition: background-color 0.2s;
+    }
+
+    .add-channel-btn:hover {
+      background: #20c157;
+    }
+
+    /* Main Chat Area */
+    .main-chat {
+      flex: 1;
+      background: var(--bg-glass);
+      backdrop-filter: var(--glass-backdrop);
+      border: var(--glass-border);
+      border-radius: 24px;
+      display: flex;
+      flex-direction: column;
+      box-shadow: var(--glass-shadow), var(--shadow-medium);
+      overflow: hidden;
+    }
+
+    .chat-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: var(--bg-glass-strong);
+      backdrop-filter: var(--glass-backdrop);
+    }
+
+    .chat-avatar {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      background: var(--gradient-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: white;
+      font-weight: 700;
+      font-size: 18px;
+      box-shadow: var(--shadow-light);
+    }
+
+    .chat-info {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .chat-details h3 {
+      font-size: 18px;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin-bottom: 2px;
+    }
+
+    .chat-status {
+      font-size: 14px;
+      color: var(--text-secondary);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .status-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--gradient-success);
+      animation: pulse 2s infinite;
+    }
+
+    .messages-container {
+      flex: 1;
+      padding: 24px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      background: linear-gradient(180deg, rgba(247, 247, 247, 0.3) 0%, transparent 100%);
+    }
+
+    .message {
+      max-width: 65%;
+      margin-bottom: 4px;
+      position: relative;
+    }
+
+    .message.sent {
+      align-self: flex-end;
+    }
+
+    .message.received {
+      align-self: flex-start;
+    }
+
+    .message-bubble {
+      padding: 16px 20px;
+      border-radius: 24px;
+      font-size: 15px;
+      line-height: 1.4;
+      word-wrap: break-word;
+      position: relative;
+      backdrop-filter: var(--glass-backdrop);
+      transition: all var(--transition-medium);
+      cursor: pointer;
+    }
+
+    .message.sent .message-bubble {
+      background: var(--gradient-primary);
+      color: white;
+      border-bottom-right-radius: 8px;
+      box-shadow: var(--shadow-light);
+    }
+
+    .message.received .message-bubble {
+      background: var(--bg-glass-strong);
+      backdrop-filter: var(--glass-backdrop);
+      border: var(--glass-border);
+      color: var(--text-primary);
+      border-bottom-left-radius: 8px;
+      box-shadow: var(--shadow-light);
+    }
+
+    .message.urgent .message-bubble {
+      background: var(--gradient-danger) !important;
+      color: white;
+      animation: urgentPulse 2s infinite;
+    }
+
+    @keyframes urgentPulse {
+      0%, 100% { box-shadow: var(--shadow-light); }
+      50% { box-shadow: 0 0 20px rgba(250, 177, 160, 0.5); }
+    }
+    
+    .message.urgent .message-bubble::before {
+      content: '🚨';
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #CC0000;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+    }
+
+    .message.jobcard .message-bubble {
+      background: var(--gradient-warning) !important;
+      color: white;
+    }
+    
+    .message.jobcard .message-bubble::before {
+      content: '📋';
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      background: #CC7700;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+    }
+    
+    /* Clickable message styles */
+    .message-bubble {
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+    
+    .message-bubble:hover {
+      transform: scale(1.02);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+    
+    .message.jobcard .message-bubble:hover {
+      box-shadow: 0 4px 15px rgba(255, 149, 0, 0.4);
+    }
+    
+    .message.urgent .message-bubble:hover {
+      box-shadow: 0 4px 15px rgba(255, 59, 48, 0.4);
+    }
+    
+    /* Message detail modal */
+    .message-detail-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      justify-content: center;
+      align-items: center;
+      z-index: 2000;
+    }
+    
+    .message-detail-content {
+      background: var(--apple-light);
+      border-radius: 20px;
+      width: 600px;
+      max-width: 90vw;
+      max-height: 90vh;
+      overflow-y: auto;
+      padding: 32px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+      position: relative;
+    }
+    
+    .message-detail-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 24px;
+      padding-bottom: 16px;
+      border-bottom: 2px solid var(--apple-border);
+    }
+    
+    .message-detail-type {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 18px;
+      font-weight: 600;
+    }
+    
+    .message-detail-body {
+      background: var(--apple-gray);
+      padding: 20px;
+      border-radius: 12px;
+      margin-bottom: 20px;
+      line-height: 1.6;
+    }
+    
+    .message-detail-meta {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+    
+    .message-meta-item {
+      background: var(--apple-gray);
+      padding: 12px;
+      border-radius: 8px;
+      text-align: center;
+    }
+    
+    .message-meta-label {
+      font-size: 12px;
+      color: var(--apple-secondary);
+      margin-bottom: 4px;
+    }
+    
+    .message-meta-value {
+      font-weight: 600;
+      color: var(--apple-text);
+    }
+    
+    .message-detail-actions {
+      display: flex;
+      gap: 12px;
+      justify-content: flex-end;
+    }
+
+    .message-sender {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--whatsapp-muted);
+      margin-bottom: 4px;
+      padding-left: 12px;
+    }
+
+    .message-time {
+      font-size: 11px;
+      color: rgba(255,255,255,0.7);
+      margin-top: 4px;
+      text-align: right;
+    }
+
+    .message.sent .message-time {
+      color: rgba(255,255,255,0.7);
+    }
+
+    .message.received .message-time {
+      color: var(--whatsapp-muted);
+      text-align: left;
+    }
+
+    .message-actions {
+      display: flex;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--whatsapp-muted);
+      margin-top: 4px;
+    }
+
+    .message-actions span {
+      background: rgba(0,0,0,0.1);
+      padding: 2px 6px;
+      border-radius: 10px;
+    }
+    
+    .flag-toggle-btn {
+      position: absolute;
+      top: -8px;
+      right: -8px;
+      width: 24px;
+      height: 24px;
+      border: none;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.9);
+      cursor: pointer;
+      font-size: 12px;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+      transition: all 0.2s;
+    }
+    
+    .message.sent:hover .flag-toggle-btn {
+      display: flex;
+    }
+    
+    .flag-toggle-btn:hover {
+      background: var(--apple-blue);
+      color: white;
+      transform: scale(1.1);
+    }
+    
+    .join-btn, .leave-btn {
+      padding: 6px 12px;
+      border: none;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      z-index: 10;
+      position: relative;
+      min-width: 50px;
+    }
+    
+    .join-btn {
+      background: var(--apple-green);
+      color: white;
+    }
+    
+    .join-btn:hover {
+      background: #28a745;
+      transform: translateY(-1px);
+    }
+    
+    .join-btn:active {
+      transform: scale(0.95);
+    }
+    
+    .leave-btn {
+      background: var(--apple-red);
+      color: white;
+    }
+    
+    .leave-btn:hover {
+      background: #dc3545;
+      transform: translateY(-1px);
+    }
+    
+    .leave-btn:active {
+      transform: scale(0.95);
+    }
+    
+    .conversation-card.not-member {
+      border: 1px dashed var(--apple-border);
+      background: rgba(0, 0, 0, 0.02);
+    }
+    
+    .conversation-card.not-member:hover {
+      background: rgba(0, 0, 0, 0.05);
+      transform: none;
+    }
+    
+    .system-message {
+      text-align: center;
+      margin: 16px 0;
+      padding: 8px 16px;
+      background: rgba(0, 0, 0, 0.05);
+      border-radius: 12px;
+      font-size: 14px;
+      color: var(--apple-secondary);
+    }
+
+    /* Input Area */
+    .input-area {
+      background: transparent;
+      padding: 16px 24px 24px;
+      display: flex;
+      align-items: flex-end;
+      gap: 12px;
+      border-top: 1px solid var(--apple-border);
+    }
+
+    .message-input {
+      flex: 1;
+      padding: 12px 20px;
+      border: 1px solid var(--apple-border);
+      border-radius: 20px;
+      background: var(--apple-light);
+      font-size: 16px;
+      font-family: inherit;
+      outline: none;
+      resize: none;
+      min-height: 44px;
+      max-height: 120px;
+      overflow-y: auto;
+      transition: all 0.2s;
+    }
+
+    .message-input:focus {
+      border-color: var(--apple-blue);
+      box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+    }
+
+    .send-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%);
+      border: none;
+      color: black;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      font-weight: 600;
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 4px 12px rgba(78, 205, 196, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .send-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+      transition: left 0.5s;
+    }
+
+    .send-btn:hover {
+      transform: translateY(-2px) scale(1.05);
+      box-shadow: 0 8px 20px rgba(78, 205, 196, 0.6);
+    }
+
+    .send-btn:hover::before {
+      left: 100%;
+    }
+
+    .send-btn:active {
+      transform: translateY(0) scale(0.98);
+      box-shadow: 0 2px 8px rgba(78, 205, 196, 0.4);
+    }
+
+    .send-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+
+    .action-btn {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      background: var(--bg-glass-strong);
+      backdrop-filter: var(--glass-backdrop);
+      border: var(--glass-border);
+      color: var(--text-primary);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+      transition: all var(--transition-medium);
+    }
+
+    .action-btn:hover {
+      transform: scale(1.1);
+      background: var(--gradient-primary);
+      color: white;
+      box-shadow: var(--shadow-medium);
+    }
+
+    /* Enhanced Compose Modal */
+    .compose-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.4);
+      backdrop-filter: blur(10px);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .compose-content {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      border-radius: 20px;
+      width: 600px;
+      max-width: 90vw;
+      max-height: 90vh;
+      overflow: hidden;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+      animation: slideUp 0.3s ease;
+    }
+
+    .compose-header {
+      padding: 24px 24px 16px;
+      border-bottom: 1px solid var(--apple-border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .compose-header h2 {
+      margin: 0;
+      font-size: 24px;
+      font-weight: 700;
+      color: var(--apple-text);
+    }
+
+    .close-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 16px;
+      background: var(--apple-gray);
+      border: none;
+      font-size: 18px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s;
+    }
+
+    .close-btn:hover {
+      background: var(--apple-border);
+    }
+
+    .compose-body {
+      padding: 24px;
+      max-height: 60vh;
+      overflow-y: auto;
+    }
+
+    .compose-options {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+
+    .option-btn {
+      flex: 1;
+      padding: 16px;
+      border: 2px solid var(--apple-border);
+      border-radius: 12px;
+      background: var(--apple-light);
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .option-btn:hover {
+      border-color: var(--apple-blue);
+      background: rgba(0, 122, 255, 0.05);
+    }
+
+    .option-btn.active {
+      border-color: var(--apple-blue);
+      background: var(--apple-blue);
+      color: white;
+    }
+
+    .option-btn.urgent {
+      border-color: var(--apple-red);
+    }
+
+    .option-btn.urgent:hover,
+    .option-btn.urgent.active {
+      background: var(--apple-red);
+      color: white;
+    }
+
+    .option-btn.jobcard {
+      border-color: var(--apple-orange);
+    }
+
+    .option-btn.jobcard:hover,
+    .option-btn.jobcard.active {
+      background: var(--apple-orange);
+      color: white;
+    }
+
+    .option-icon {
+      font-size: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    .form-group label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 600;
+      color: var(--apple-text);
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1px solid var(--apple-border);
+      border-radius: 10px;
+      font-size: 16px;
+      font-family: inherit;
+      transition: all 0.2s;
+      background: var(--apple-light);
+    }
+
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: var(--apple-blue);
+      box-shadow: 0 0 0 3px rgba(0, 122, 255, 0.1);
+    }
+
+    .file-upload-area {
+      border: 2px dashed var(--apple-border);
+      border-radius: 12px;
+      padding: 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s;
+      position: relative;
+    }
+
+    .file-upload-area:hover,
+    .file-upload-area.drag-over {
+      border-color: var(--apple-blue);
+      background: rgba(0, 122, 255, 0.05);
+    }
+    
+    .file-upload-area.drag-over {
+      border-color: var(--apple-green);
+      background: rgba(52, 199, 89, 0.1);
+      transform: scale(1.02);
+    }
+
+    .file-upload-area input[type="file"] {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    .upload-icon {
+      font-size: 32px;
+      display: block;
+      margin-bottom: 8px;
+    }
+
+    .file-list {
+      margin-top: 12px;
+    }
+
+    .file-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      background: var(--apple-gray);
+      border-radius: 8px;
+      margin-bottom: 8px;
+    }
+
+    .file-remove {
+      background: var(--apple-red);
+      color: white;
+      border: none;
+      border-radius: 4px;
+      padding: 4px 8px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .compose-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--apple-border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+    }
+
+    .btn-primary {
+      background: var(--apple-blue);
+      color: white;
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-primary:hover {
+      background: #0056CC;
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: var(--apple-gray);
+      color: var(--apple-text);
+      border: none;
+      padding: 12px 24px;
+      border-radius: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-secondary:hover {
+      background: var(--apple-border);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes slideUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .sidebar {
+        width: 100%;
+        position: absolute;
+        left: -100%;
+        transition: left 0.3s;
+        z-index: 100;
+      }
+
+      .sidebar.show {
+        left: 0;
+      }
+
+      .main-chat {
+        width: 100%;
+      }
+
+      .chat-header {
+        display: none;
+      }
+
+      .message {
+        max-width: 85%;
+      }
+    }
+
+    /* Scrollbar */
+    .messages-container::-webkit-scrollbar,
+    .channels-list::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .messages-container::-webkit-scrollbar-track,
+    .channels-list::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .messages-container::-webkit-scrollbar-thumb,
+    .channels-list::-webkit-scrollbar-thumb {
+      background: rgba(0,0,0,0.2);
+      border-radius: 3px;
+    }
+  </style>
+</head>
+<body data-theme="light">
+  <header>
+          <div id="google_translate_element"></div>
+
+  </header>
+
+  <div class="app">
+    <!-- Left Sidebar (Chats) -->
+    <div class="sidebar">
+      <div class="sidebar-header">
+        <div>
+          <h2 class="sidebar-title">Messages</h2>
+          <div id="currentUserIndicator" style="font-size: 12px; color: var(--text-secondary); margin-top: 4px;">Loading...</div>
+        </div>
+        <div class="header-actions" style="display: flex; gap: 8px;">
+          <button class="header-btn" id="backToDashboardBtn" title="Back to Dashboard">
+            <i class="fas fa-arrow-left"></i>
+          </button>
+          <button class="header-btn" id="refreshChannelsBtn" title="Refresh">
+            <i class="fas fa-sync-alt"></i>
+          </button>
+          <button class="header-btn new-chat-btn" id="newConversationBtn" title="New Chat">+</button>
+        </div>
+      </div>
+      <div class="search-container" style="position: relative;">
+        <input type="text" class="search-input" placeholder="Search chats and messages..." id="searchInput">
+        <button id="clearSearchBtn" style="position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: none; border: none; font-size: 16px; color: var(--text-secondary); cursor: pointer; display: none; width: 20px; height: 20px; border-radius: 50%;">×</button>
+      </div>
+      <div class="channels-list" id="channelList">
+        <!-- Channels will be loaded here -->
+      </div>
+      <div style="padding: 16px;">
+        <button id="createChannelBtn" style="width: 100%; padding: 12px; border-radius: 12px; background: var(--gradient-primary); color: white; border: none; font-weight: 600; cursor: pointer; transition: all var(--transition-medium);">+ Create Channel</button>
+      </div>
+    </div>
+
+    <!-- Main Chat Area -->
+    <div class="main-chat">
+      <div class="chat-header">
+        <div class="chat-info">
+          <div class="chat-avatar" id="chatAvatar">S</div>
+          <div class="chat-details">
+            <h3 id="currentChannel">Select a channel</h3>
+            <div class="chat-status">
+              <div class="status-indicator"></div>
+              <span id="channelMembers">No channel selected</span>
+            </div>
+          </div>
+        </div>
+        <div class="chat-actions" style="display: flex; gap: 12px;">
+          <button class="action-btn" id="voiceCallBtn" title="Voice Call">
+            <i class="fas fa-phone"></i>
+          </button>
+          <button class="action-btn" id="videoCallBtn" title="Video Call">
+            <i class="fas fa-video"></i>
+          </button>
+          <button class="action-btn" id="jobCardsBtn" title="Job Cards">
+            <i class="fas fa-clipboard-list"></i>
+          </button>
+          <button class="action-btn" id="composeBtn" title="Compose Message">
+            <i class="fas fa-edit"></i>
+          </button>
+        </div>
+      </div>
+      <div class="messages-container" id="messagesContainer">
+        <!-- Messages will be loaded here -->
+      </div>
+      <div class="input-area">
+        <input type="file" id="quickFileInput" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.jpg,.jpeg,.png,.gif" style="display: none;">
+        <button class="action-btn" id="attachBtn" style="margin-right: 8px;" title="Attach Files">
+          <i class="fas fa-paperclip"></i>
+        </button>
+        <textarea class="message-input" id="messageInput" placeholder="Type a message..." rows="1"></textarea>
+        <button class="send-btn" id="sendBtn" title="Send Message">
+          <i class="fas fa-paper-plane"></i>
+        </button>
+      </div>
+    </div>
+
+    <!-- Right Panel -->
+    <div class="right-panel">
+      <div class="panel-header">
+        <h3 class="panel-title">Channel Info</h3>
+      </div>
+      
+      <div class="channel-details">
+        <div class="detail-item">
+          <div class="detail-label">Channel Name</div>
+          <div class="detail-value" id="channelDetailName">No channel selected</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Created</div>
+          <div class="detail-value" id="channelDetailCreated">-</div>
+        </div>
+        <div class="detail-item">
+          <div class="detail-label">Members</div>
+          <div class="detail-value" id="channelDetailMembers">0 people</div>
+        </div>
+      </div>
+      
+      <div class="members-list" id="membersList">
+        <div style="text-align: center; padding: 20px; color: var(--text-muted);">
+          <i class="fas fa-users" style="font-size: 24px; margin-bottom: 8px; opacity: 0.5;"></i>
+          <p>No members to show</p>
+        </div>
+      </div>
+      
+      <div style="padding: 16px; border-top: 1px solid #e2e8f0;">
+        <button id="inviteToChannelBtn" style="width: 100%; padding: 12px; border-radius: 8px; background: #2563eb; color: white; border: none; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; transition: all 0.2s ease;">
+          <i class="fas fa-envelope"></i>
+          Invite via Email
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Message Detail Modal -->
+  <div class="message-detail-modal" id="messageDetailModal">
+    <div class="message-detail-content">
+      <div class="message-detail-header">
+        <div class="message-detail-type" id="messageDetailType">
+          <span id="messageTypeIcon">💬</span>
+          <span id="messageTypeText">Message</span>
+        </div>
+        <button class="close-btn" id="closeMessageDetailBtn">×</button>
+      </div>
+      
+      <div class="message-detail-body" id="messageDetailBody">
+        Message content will appear here...
+      </div>
+      
+      <div class="message-detail-meta">
+        <div class="message-meta-item">
+          <div class="message-meta-label">Sender</div>
+          <div class="message-meta-value" id="messageDetailSender">-</div>
+        </div>
+        <div class="message-meta-item">
+          <div class="message-meta-label">Channel</div>
+          <div class="message-meta-value" id="messageDetailChannel">-</div>
+        </div>
+        <div class="message-meta-item">
+          <div class="message-meta-label">Time</div>
+          <div class="message-meta-value" id="messageDetailTime">-</div>
+        </div>
+        <div class="message-meta-item" id="messageDeadlineItem" style="display: none;">
+          <div class="message-meta-label">Deadline</div>
+          <div class="message-meta-value" id="messageDetailDeadline">-</div>
+        </div>
+      </div>
+      
+      <div class="message-detail-actions">
+        <button class="btn-secondary" id="replyToMessageBtn">Reply</button>
+        <button class="btn-primary" id="markImportantBtn">Mark Important</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- New Channel Modal -->
+  <div class="compose-modal" id="channelModal">
+    <div class="compose-content" style="max-width: 400px;">
+      <div class="compose-header">
+        <h2>New Channel</h2>
+        <button class="close-btn" id="cancelChannelBtn">×</button>
+      </div>
+      
+      <div class="compose-body">
+        <div class="form-group">
+          <label>Channel Name:</label>
+          <input type="text" id="channelNameInput" placeholder="Enter channel name...">
+        </div>
+        
+        <div class="form-group">
+          <label>Description:</label>
+          <textarea id="channelDescription" placeholder="Channel description (optional)..." rows="3"></textarea>
+        </div>
+      </div>
+
+      <div class="compose-footer">
+        <button class="btn-secondary" id="cancelChannelBtn2">Cancel</button>
+        <button class="btn-primary" id="saveChannelBtn">Create Channel</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Enhanced Compose Modal -->
+  <div class="compose-modal" id="composeModal">
+    <div class="compose-content">
+      <div class="compose-header">
+        <h2>New Conversation</h2>
+        <button class="close-btn" id="cancelMessageBtn">×</button>
+      </div>
+      
+      <div class="compose-body">
+        <div class="compose-options">
+          <button class="option-btn" data-type="normal" id="normalBtn">
+            <span class="option-icon">💬</span>
+            <span style="color: #000;">Normal Message</span>
+          </button>
+          <button class="option-btn urgent" data-type="urgent" id="urgentBtn">
+            <span class="option-icon">🚨</span>
+            <span style="color: #000;">Urgent Message</span>
+          </button>
+        </div>
+      </div>
+      
+      <div class="compose-footer">
+        <button class="btn-secondary" id="cancelMessageBtn2">Cancel</button>
+        <button class="btn-primary" id="sendMessageBtn">Send Message</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Email Invite Modal -->
+  <div class="compose-modal" id="inviteModal">
+    <div class="compose-content" style="max-width: 500px;">
+      <div class="compose-header">
+        <h2>Invite to Channel</h2>
+        <button class="close-btn" id="cancelInviteBtn">×</button>
+      </div>
+      
+      <div class="compose-body">
+        <div class="form-group">
+          <label>Recipient Email:</label>
+          <input type="email" id="inviteEmail" placeholder="Enter email address..." required>
+        </div>
+        
+        <div class="form-group">
+          <label>Personal Message (Optional):</label>
+          <textarea id="inviteMessage" placeholder="Add a personal message to the invitation..." rows="3"></textarea>
+        </div>
+        
+        <div style="background: #f0f8ff; padding: 16px; border-radius: 8px; margin-top: 16px;">
+          <h4 style="margin: 0 0 8px 0; color: #1565c0;">📧 Email Preview:</h4>
+          <p style="margin: 0; font-size: 14px; color: #666;">The recipient will receive an invitation email with a secure link to join the channel.</p>
+        </div>
+      </div>
+
+      <div class="compose-footer">
+        <button class="btn-secondary" id="cancelInviteBtn2">Cancel</button>
+        <button class="btn-primary" id="sendInviteBtn">Send Invitation</button>
+      </div>
+    </div>
+  </div>
+            <span class="option-icon">🚨</span>
+            <span>Urgent Message</span>
+          </button>
+          <button class="option-btn jobcard" data-type="jobcard" id="jobcardBtn">
+            <span class="option-icon">📋</span>
+            <span>Job Card</span>
+          </button>
+        </div>
+
+        <div class="compose-form" id="composeForm">
+          <div class="form-group">
+            <label>To:</label>
+            <select id="composeChannel">
+              <option value="">Select Channel...</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Subject:</label>
+            <input type="text" id="composeSubject" placeholder="Enter subject...">
+          </div>
+
+          <div class="form-group">
+            <label>Message:</label>
+            <textarea id="composeContent" placeholder="Type your message..." rows="6"></textarea>
+          </div>
+
+          <div class="form-group" id="deadlineGroup" style="display: none;">
+            <label>Deadline:</label>
+            <input type="datetime-local" id="composeDeadline">
+          </div>
+
+          <div class="attachment-section">
+            <label>Attachments:</label>
+            <div class="file-upload-area" id="fileUploadArea">
+              <input type="file" id="fileInput" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.jpg,.jpeg,.png">
+              <div class="upload-placeholder">
+                <span class="upload-icon">📁</span>
+                <p>Drop files here or click to browse</p>
+                <small>Supports: PDF, Word, Excel, PowerPoint, Images</small>
+              </div>
+            </div>
+            <div class="file-list" id="fileList"></div>
+          </div>
+        </div>
+
+        <!-- Job Card Form -->
+        <div class="jobcard-form" id="jobcardForm" style="display: none;">
+          <div class="form-group">
+            <label>Job Title:</label>
+            <input type="text" id="jobTitle" placeholder="Enter job title...">
+          </div>
+          
+          <div class="form-group">
+            <label>Assigned To:</label>
+            <select id="jobAssignee">
+              <option value="">Select Assignee...</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Priority:</label>
+            <select id="jobPriority">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+              <option value="critical">Critical</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label>Due Date:</label>
+            <input type="datetime-local" id="jobDueDate">
+          </div>
+
+          <div class="form-group">
+            <label>Description:</label>
+            <textarea id="jobDescription" placeholder="Describe the job requirements..." rows="4"></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Attachments:</label>
+            <div class="file-upload-area" id="jobFileUploadArea">
+              <input type="file" id="jobFileInput" multiple accept=".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.jpg,.jpeg,.png">
+              <div class="upload-placeholder">
+                <span class="upload-icon">📁</span>
+                <p>Drop job-related files here</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="compose-footer">
+        <button class="btn-secondary" id="saveDraftBtn">Save Draft</button>
+        <button class="btn-primary" id="sendBtn">Send</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal for job card -->
+  <div class="modal" id="jobCardModal">
+    <div class="modal-content">
+      <h3>Create Job Card</h3>
+      <input type="text" id="jobTitle" placeholder="Job Title" required>
+      <textarea id="jobDescription" placeholder="Description" rows="3" required></textarea>
+      <input type="text" id="jobAssignedTo" placeholder="Assigned User ID">
+      <input type="datetime-local" id="jobDeadline">
+      <button class="save" id="saveJobCardBtn">Create</button>
+      <button class="cancel" id="cancelJobCardBtn">Cancel</button>
+    </div>
+  </div>
+
+  <script>
+    let API_BASE = "http://localhost:5000/api";
+    
+    // Auto-connect to server
+    async function initializeServer() {
+      try {
+        const testRes = await fetch('http://10.13.123.182:5000/health');
+        if (testRes.ok) {
+          API_BASE = 'http://10.13.123.182:5000/api';
+          window.KMRL_SERVER = 'http://10.13.123.182:5000';
+          console.log('Connected to network server:', API_BASE);
+        }
+      } catch (e) {
+        console.log('Using localhost server');
+        window.KMRL_SERVER = 'http://localhost:5000';
+      }
+    }
+    
+    console.log('Initial API_BASE:', API_BASE);
+
+    // Get user info - prioritize URL parameter over localStorage
+    const params = new URLSearchParams(location.search);
+    const userId = params.get("id") || localStorage.getItem("userId");
+    const token = localStorage.getItem("token");
+    
+    // Store current user ID in session for this tab
+    if (params.get("id")) {
+      sessionStorage.setItem("currentTabUserId", params.get("id"));
+    }
+    
+    console.log('Tab initialized with userId:', userId);
+
+    const socket = io(window.KMRL_SERVER || "http://localhost:5000", { auth: { token } });
+    let currentChannelId = null;
+    let currentUser = null;
+
+    // Load user
+    async function loadUser() {
+      console.log('Loading user...', { userId, token: token ? 'present' : 'missing' });
+      
+      if (!token || !userId) {
+        console.error('Missing token or userId');
+        alert("Not logged in");
+        location.href = "index.html";
+        return;
+      }
+
+      try {
+        console.log('Fetching user data...');
+        const res = await fetch(`${API_BASE}/users/${userId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        
+        console.log('User response status:', res.status);
+        
+        if (!res.ok) {
+          const errorText = await res.text();
+          console.error('User fetch failed:', res.status, errorText);
+          if (res.status === 401) {
+            alert('Session expired. Please login again.');
+            localStorage.removeItem('token');
+            localStorage.removeItem('userId');
+            location.href = 'login.html';
+            return;
+          }
+          throw new Error(`HTTP ${res.status}: ${errorText}`);
+        }
+        
+        const data = await res.json();
+        console.log('User data received:', data);
+        currentUser = data.user || data;
+        
+        // Update page title with user name
+        document.title = `Infera — ${currentUser.fullName || currentUser.username}`;
+        
+        // Store user info in session for this tab
+        sessionStorage.setItem('currentUser', JSON.stringify(currentUser));
+        
+        // Update user indicator
+        const userIndicator = document.getElementById('currentUserIndicator');
+        if (userIndicator) {
+          const serverInfo = window.KMRL_SERVER ? window.KMRL_SERVER.replace('http://', '') : 'localhost:5000';
+          userIndicator.innerHTML = `
+            <div>Logged in as: ${currentUser.fullName || currentUser.username}</div>
+            <div style="font-size: 10px; opacity: 0.7;">📡 Server: ${serverInfo}</div>
+          `;
+        }
+        
+        loadChannels();
+        loadUsers(); // Load users for job assignee dropdown
+      } catch (error) {
+        console.error("Error loading user:", error);
+        alert('Failed to load user data: ' + error.message);
+      }
+    }
+
+    // Load channels
+    async function loadChannels() {
+      const channelList = document.getElementById("channelList");
+      channelList.innerHTML = '<div style="padding: 20px; text-align: center; color: var(--apple-secondary);">Loading channels...</div>';
+      
+      try {
+        const res = await fetch(`${API_BASE}/channels`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        if (!res.ok) {
+          const error = await res.text();
+          console.error("Failed to load channels:", res.status, error);
+          if (res.status === 401) {
+            alert("Session expired. Please login again.");
+            location.href = "login.html";
+            return;
+          }
+          alert("Failed to load channels: " + error);
+          return;
+        }
+        const data = await res.json();
+        console.log("Channels data:", data);
+        const channelList = document.getElementById("channelList");
+        const composeChannelSelect = document.getElementById("composeChannel");
+        
+        channelList.innerHTML = "";
+        
+        if (data.channels && Array.isArray(data.channels)) {
+          data.channels.forEach(channel => {
+            // Add to sidebar
+            const card = document.createElement("div");
+            card.className = channel.isMember ? "conversation-card" : "conversation-card not-member";
+            card.dataset.channelId = channel._id;
+            
+            // Only add card type if there are actual urgent/jobcard messages
+            let cardType = '';
+            // TODO: Check actual message types from database instead of random
+            if (cardType && channel.isMember) card.classList.add(cardType);
+            
+            const joinLeaveButton = channel.isMember 
+              ? `<button class="leave-btn" onclick="event.stopPropagation(); event.preventDefault(); window.leaveChannel('${channel._id}'); return false;">Leave</button>`
+              : `<button class="join-btn" onclick="event.stopPropagation(); event.preventDefault(); console.log('Join button clicked!'); window.joinChannel('${channel._id}'); return false;">Join</button>`;
+            
+            card.innerHTML = `
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <div class="channel-avatar" style="width: 48px; height: 48px; border-radius: 12px; background: ${channel.isMember ? 'var(--gradient-primary)' : 'var(--bg-glass-strong)'}; display: flex; align-items: center; justify-content: center; color: ${channel.isMember ? 'white' : 'var(--text-secondary)'}; font-weight: 700; font-size: 18px; box-shadow: 0 4px 12px rgba(78, 205, 196, 0.4); transition: all 0.3s ease;">
+                  ${channel.name.charAt(0).toUpperCase()}
+                </div>
+                <div style="flex: 1; min-width: 0;">
+                  <div style="font-weight: 600; font-size: 16px; margin-bottom: 4px; color: inherit;">${channel.name}</div>
+                  <div style="font-size: 14px; color: var(--apple-secondary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                    ${channel.isMember ? 'Tap to view messages' : 'Join to see messages'}
+                  </div>
+                </div>
+                <div style="display: flex; flex-direction: column; align-items: flex-end; gap: 4px;">
+                  <div style="font-size: 12px; color: var(--apple-secondary);">
+                    ${new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+                  </div>
+                  ${joinLeaveButton}
+                </div>
+              </div>
+            `;
+            
+            if (channel.isMember) {
+              card.onclick = () => selectChannel(channel);
+            } else {
+              card.style.opacity = '0.8';
+              card.style.cursor = 'default';
+              // Make sure join button is still clickable
+              card.onclick = null;
+            }
+            
+            channelList.appendChild(card);
+          });
+        } else {
+          console.error("Invalid channels data:", data);
+          alert("Invalid channels data received");
+        }
+      } catch (error) {
+        console.error("Error loading channels:", error);
+        alert("Network error loading channels");
+      }
+    }
+
+    // Select channel
+    function selectChannel(channel) {
+      // Check if user is a member of this channel
+      if (!channel.isMember) {
+        alert('You need to join this channel first to view messages.');
+        return;
+      }
+      
+      currentChannelId = channel._id;
+      document.getElementById("currentChannel").textContent = channel.name;
+      document.getElementById("chatAvatar").textContent = channel.name.charAt(0).toUpperCase();
+      document.querySelectorAll(".conversation-card").forEach(item => item.classList.remove("active"));
+      event.currentTarget.classList.add("active");
+      socket.emit("joinChannel", channel._id);
+      loadMessages(channel._id);
+      loadChannelDetails(channel);
+    }
+
+    // Load messages
+    async function loadMessages(channelId) {
+      try {
+        const res = await fetch(`${API_BASE}/messages/channel/${channelId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        
+        if (!res.ok) {
+          console.error('Failed to load messages:', res.status);
+          return;
+        }
+        
+        const data = await res.json();
+        const messagesContainer = document.getElementById("messagesContainer");
+        messagesContainer.innerHTML = "";
+        
+        if (!data.messages || !Array.isArray(data.messages)) {
+          console.error('Invalid messages data:', data);
+          return;
+        }
+        
+        data.messages.forEach(message => {
+          const messageDiv = document.createElement("div");
+          const currentUserId = currentUser._id || currentUser.id;
+          const messageSenderId = message.senderId._id || message.senderId.id || message.senderId;
+          const isSent = messageSenderId === currentUserId;
+          
+          // Determine message type and styling
+          let messageClasses = `message ${isSent ? 'sent' : 'received'}`;
+          let messageHTML = '';
+          
+          // Check if it's a job card (either by type or content)
+          const isJobCard = message.type === 'jobcard' || message.jobCardId || message.content.includes('📋 **Job Card Created**');
+          // Check if it's urgent (either by type or important flag)
+          const isUrgent = message.type === 'urgent' || (message.flags && message.flags.important);
+          
+          if (isJobCard) {
+            messageClasses += ' jobcard';
+            messageHTML = createJobCardDisplay(message, isSent);
+          } else if (isUrgent) {
+            messageClasses += ' urgent';
+            messageHTML = createUrgentMessageDisplay(message, isSent);
+          } else {
+            messageHTML = createNormalMessageDisplay(message, isSent);
+          }
+          
+          messageDiv.className = messageClasses;
+
+          // Add sender name for received messages
+          if (!isSent && message.senderId && message.senderId.fullName) {
+            messageHTML = `
+              <div class="message-sender">${message.senderId.fullName}</div>
+              ${messageHTML}
+            `;
+          }
+
+          messageDiv.innerHTML = messageHTML;
+          
+          // Add flag toggle button for sent messages
+          if (isSent) {
+            const flagBtn = document.createElement('button');
+            flagBtn.className = 'flag-toggle-btn';
+            flagBtn.innerHTML = message.flags && message.flags.important ? '⭐' : '☆';
+            flagBtn.title = message.flags && message.flags.important ? 'Remove important flag' : 'Mark as important';
+            flagBtn.onclick = () => toggleMessageFlag(message._id, !(message.flags && message.flags.important));
+            messageDiv.style.position = 'relative';
+            messageDiv.appendChild(flagBtn);
+          }
+          
+          messagesContainer.appendChild(messageDiv);
+        });
+
+        // Scroll to bottom
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+      } catch (error) {
+        console.error("Error loading messages:", error);
+      }
+    }
+
+    // Load channel details
+    async function loadChannelDetails(channel) {
+      const channelMembers = document.getElementById("channelMembers");
+      if (channelMembers) {
+        channelMembers.textContent = `${channel.members?.length || 0} members`;
+      }
+
+      // Update right panel
+      const channelDetailName = document.getElementById("channelDetailName");
+      const channelDetailCreated = document.getElementById("channelDetailCreated");
+      
+      if (channelDetailName) {
+        channelDetailName.textContent = channel.name;
+      }
+      if (channelDetailCreated) {
+        channelDetailCreated.textContent = `${new Date(channel.createdAt).toLocaleDateString()}`;
+      }
+
+      // Load members
+      const membersList = document.getElementById("membersList");
+      if (!membersList) return;
+      membersList.innerHTML = "";
+      try {
+        // Fetch full channel details with populated members
+        const res = await fetch(`${API_BASE}/channels/${channel._id}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+        const data = await res.json();
+        const fullChannel = data.channel || data;
+        if (fullChannel.members && Array.isArray(fullChannel.members)) {
+          fullChannel.members.forEach(member => {
+            const div = document.createElement("div");
+            div.className = "member-item";
+            div.innerHTML = `
+              <div class="member-avatar">${member.fullName?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'}</div>
+              <div class="member-info">
+                <div class="member-name">${member.fullName || 'Unknown'}</div>
+                <div class="member-status">
+                  <div class="member-status-dot"></div>
+                  <span>Online</span>
+                </div>
+              </div>
+            `;
+            membersList.appendChild(div);
+          });
+        }
+      } catch (error) {
+        console.error("Error loading channel details:", error);
+      }
+    }
+
+    // Send message with real file support
+    async function sendMessage(content, type = "text", deadline = null, important = false, files = []) {
+      if (!currentChannelId || (!content.trim() && files.length === 0)) {
+        console.warn('Cannot send message: missing channel or content');
+        return false;
+      }
+
+      console.log('Sending message with files:', { currentChannelId, content, type, deadline, important, files: files.length });
+      
+      // Disable send button during sending
+      const sendBtn = document.getElementById('sendBtn');
+      if (sendBtn) {
+        sendBtn.disabled = true;
+        sendBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i>';
+      }
+
+      try {
+        let messageContent = content.trim();
+        let attachments = [];
+        
+        // Process files and create attachments (optimized for server limits)
+        if (files.length > 0) {
+          console.log('Processing files for upload:', files.map(f => ({ name: f.name, size: f.size, type: f.type })));
+          
+          for (const file of files) {
+            // Check file size limit (reduce to 2MB for base64 efficiency)
+            if (file.size > 2 * 1024 * 1024) {
+              alert(`File ${file.name} is too large. Maximum size is 2MB for messaging.`);
+              continue;
+            }
+            
+            // For demo purposes, store file metadata only (not actual data)
+            const attachment = {
+              filename: `${Date.now()}_${file.name}`,
+              originalName: file.name,
+              mimetype: file.type,
+              size: file.size,
+              url: `demo://files/${Date.now()}_${file.name}`, // Demo URL
+              uploadedAt: new Date().toISOString(),
+              // Store small base64 for very small files only
+              data: file.size < 100 * 1024 ? await fileToBase64(file) : null
+            };
+            
+            attachments.push(attachment);
+          }
+          
+          // Create file list for message content
+          const fileList = files.map(file => {
+            const icon = getFileIcon(file.name);
+            const sizeKB = (file.size / 1024).toFixed(1);
+            return `${icon} **${file.name}** (${sizeKB} KB)`;
+          }).join('\n');
+          
+          messageContent += messageContent ? '\n\n📎 **Attachments:**\n' + fileList : '📎 **Attachments:**\n' + fileList;
+        }
+
+        const messageData = {
+          channelId: currentChannelId,
+          content: messageContent,
+          type: files.length > 0 ? 'file' : type,
+          flags: { important: Boolean(important) },
+          attachments: attachments
+        };
+
+        if (deadline) {
+          messageData.deadline = deadline;
+        }
+
+        console.log('Message payload with attachments:', { ...messageData, attachments: attachments.map(a => ({ name: a.originalName, size: a.size })) });
+
+        const res = await fetch(`${API_BASE}/messages`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(messageData),
+        });
+
+        console.log('Response status:', res.status);
+        
+        if (!res.ok) {
+          const errorData = await res.json().catch(() => ({ message: 'Unknown error' }));
+          console.error('Send message failed:', errorData);
+          alert('Failed to send message: ' + errorData.message);
+          return false;
+        }
+
+        const data = await res.json();
+        console.log('Message with files sent successfully:', data);
+        
+        // Clear input
+        const messageInput = document.getElementById("messageInput");
+        if (messageInput) messageInput.value = "";
+        
+        // Show success feedback
+        if (sendBtn) {
+          sendBtn.innerHTML = '<i class="fas fa-check"></i>';
+          sendBtn.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+          setTimeout(() => {
+            sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+            sendBtn.style.background = 'linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%)';
+          }, 1000);
+        }
+        
+        // Refresh messages to show the new one
+        setTimeout(() => loadMessages(currentChannelId), 100);
+        
+        return true;
+      } catch (error) {
+        console.error("Error sending message:", error);
+        alert('Network error sending message: ' + error.message);
+        return false;
+      } finally {
+        // Re-enable send button
+        if (sendBtn) {
+          sendBtn.disabled = false;
+          if (sendBtn.innerHTML.includes('spinner')) {
+            sendBtn.innerHTML = '<i class="fas fa-paper-plane"></i>';
+          }
+        }
+      }
+    }
+    
+    // Convert file to base64
+    function fileToBase64(file) {
+      return new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = error => reject(error);
+      });
+    }
+
+    // Socket listeners
+    socket.on("newMessage", (message) => {
+      console.log('New message received:', message);
+      if (message.channelId === currentChannelId) {
+        loadMessages(currentChannelId);
+      }
+      // Update channel list to show latest message
+      loadChannels();
+    });
+
+    socket.on("channelCreated", (channel) => {
+      console.log('New channel created:', channel);
+      loadChannels();
+      // Show notification
+      const notification = document.createElement('div');
+      notification.className = 'system-message';
+      notification.innerHTML = `<em>📢 New channel "${channel.name || 'Unknown'}" was created</em>`;
+      notification.style.background = 'rgba(52, 199, 89, 0.1)';
+      notification.style.border = '1px solid rgba(52, 199, 89, 0.3)';
+      if (document.getElementById('messagesContainer')) {
+        document.getElementById('messagesContainer').appendChild(notification);
+      }
+    });
+
+    socket.on("channelUpdated", (channel) => {
+      console.log('Channel updated:', channel);
+      loadChannels();
+    });
+
+    socket.on("userJoined", (data) => {
+      console.log('User joined:', data);
+      if (data.channelId === currentChannelId) {
+        loadChannelDetails({ _id: currentChannelId });
+      }
+    });
+
+    socket.on('connect', () => {
+      console.log('Socket connected:', socket.id);
+    });
+
+    socket.on('disconnect', () => {
+      console.log('Socket disconnected');
+    });
+
+    socket.on('error', (error) => {
+      console.error('Socket error:', error);
+    });
+    
+    socket.on('userJoinedChannel', (data) => {
+      console.log('User joined channel:', data);
+      // Refresh channel list to update member status
+      loadChannels();
+      
+      // Show notification if it's the current channel
+      if (data.channelId === currentChannelId) {
+        const notification = document.createElement('div');
+        notification.className = 'system-message';
+        notification.innerHTML = `<em>${data.message}</em>`;
+        document.getElementById('messagesContainer').appendChild(notification);
+        loadChannelDetails({ _id: currentChannelId });
+      }
+    });
+    
+    socket.on('userLeftChannel', (data) => {
+      console.log('User left channel:', data);
+      // Refresh channel list to update member status
+      loadChannels();
+      
+      // Show notification if it's the current channel
+      if (data.channelId === currentChannelId) {
+        const notification = document.createElement('div');
+        notification.className = 'system-message';
+        notification.innerHTML = `<em>${data.message}</em>`;
+        document.getElementById('messagesContainer').appendChild(notification);
+        loadChannelDetails({ _id: currentChannelId });
+      }
+    });
+
+    // Quick file attachment for main chat
+    let quickFiles = [];
+    
+    // Event listeners for main chat input
+    function setupMainChatInput() {
+      const sendBtn = document.getElementById('sendBtn');
+      const attachBtn = document.getElementById('attachBtn');
+      const messageInput = document.getElementById("messageInput");
+      const quickFileInput = document.getElementById('quickFileInput');
+      
+      if (attachBtn && quickFileInput) {
+        attachBtn.onclick = () => quickFileInput.click();
+        
+        quickFileInput.onchange = (e) => {
+          quickFiles = Array.from(e.target.files);
+          console.log('Files selected:', quickFiles.map(f => ({ name: f.name, size: f.size, type: f.type })));
+          
+          // Validate file types and sizes
+          const validFiles = [];
+          const maxSize = 2 * 1024 * 1024; // 2MB for messaging
+          const allowedTypes = ['application/pdf', 'image/jpeg', 'image/png', 'image/gif', 'text/plain', 
+                               'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+          
+          quickFiles.forEach(file => {
+            if (file.size > maxSize) {
+              alert(`File ${file.name} is too large. Maximum size is 2MB for messaging.`);
+              return;
+            }
+            
+            if (!allowedTypes.includes(file.type) && !file.name.toLowerCase().endsWith('.pdf')) {
+              alert(`File type ${file.type} is not supported for ${file.name}`);
+              return;
+            }
+            
+            validFiles.push(file);
+          });
+          
+          quickFiles = validFiles;
+          
+          if (quickFiles.length > 0) {
+            attachBtn.style.background = 'linear-gradient(135deg, #4ecdc4 0%, #44a08d 100%)';
+            attachBtn.style.color = 'white';
+            attachBtn.innerHTML = `<i class="fas fa-paperclip"></i> ${quickFiles.length}`;
+            attachBtn.style.transform = 'scale(1.1)';
+            
+            // Show file preview
+            showFilePreview(quickFiles);
+          } else {
+            resetAttachButton();
+          }
+        };
+      }
+      
+      if (sendBtn) {
+        sendBtn.onclick = async () => {
+          const content = messageInput.value?.trim();
+          if (content || quickFiles.length > 0) {
+            const success = await sendMessage(content, 'text', null, false, quickFiles);
+            if (success) {
+              messageInput.value = '';
+              quickFiles = [];
+              quickFileInput.value = '';
+              resetAttachButton();
+              hideFilePreview();
+            }
+          }
+        };
+      }
+
+      if (messageInput) {
+        messageInput.onkeypress = async (e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault();
+            const content = e.target.value?.trim();
+            if (content || quickFiles.length > 0) {
+              const success = await sendMessage(content, 'text', null, false, quickFiles);
+              if (success) {
+                e.target.value = '';
+                quickFiles = [];
+                quickFileInput.value = '';
+                resetAttachButton();
+                hideFilePreview();
+              }
+            }
+          }
+        };
+        
+        // Auto-resize textarea
+        messageInput.oninput = (e) => {
+          e.target.style.height = 'auto';
+          e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
+        };
+      }
+    }
+    
+    // Reset attach button function
+    function resetAttachButton() {
+      const attachBtn = document.getElementById('attachBtn');
+      if (attachBtn) {
+        attachBtn.style.background = '';
+        attachBtn.style.color = '';
+        attachBtn.innerHTML = '<i class="fas fa-paperclip"></i>';
+        attachBtn.style.transform = '';
+      }
+    }
+    
+    // Show file preview
+    function showFilePreview(files) {
+      let existingPreview = document.getElementById('filePreview');
+      if (existingPreview) existingPreview.remove();
+      
+      const preview = document.createElement('div');
+      preview.id = 'filePreview';
+      preview.style.cssText = `
+        position: absolute;
+        bottom: 100%;
+        left: 0;
+        right: 0;
+        background: var(--bg-glass-strong);
+        backdrop-filter: var(--glass-backdrop);
+        border: var(--glass-border);
+        border-radius: 12px 12px 0 0;
+        padding: 12px;
+        margin-bottom: 8px;
+        max-height: 120px;
+        overflow-y: auto;
+      `;
+      
+      const fileList = files.map(file => {
+        const icon = getFileIcon(file.name);
+        const size = (file.size / 1024).toFixed(1);
+        return `
+          <div style="display: flex; align-items: center; gap: 8px; padding: 6px; background: rgba(0,0,0,0.1); border-radius: 6px; margin-bottom: 4px;">
+            <span style="font-size: 16px;">${icon}</span>
+            <div style="flex: 1; min-width: 0;">
+              <div style="font-size: 12px; font-weight: 600; color: var(--text-primary); white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${file.name}</div>
+              <div style="font-size: 10px; color: var(--text-muted);">${size} KB</div>
+            </div>
+            <button onclick="removeQuickFile('${file.name}')" style="background: var(--danger); color: white; border: none; border-radius: 50%; width: 20px; height: 20px; font-size: 10px; cursor: pointer;">×</button>
+          </div>
+        `;
+      }).join('');
+      
+      preview.innerHTML = `
+        <div style="font-size: 12px; font-weight: 600; color: var(--text-secondary); margin-bottom: 8px;">📎 Attached Files (${files.length})</div>
+        ${fileList}
+      `;
+      
+      document.querySelector('.input-area').style.position = 'relative';
+      document.querySelector('.input-area').appendChild(preview);
+    }
+    
+    // Hide file preview
+    function hideFilePreview() {
+      const preview = document.getElementById('filePreview');
+      if (preview) preview.remove();
+    }
+    
+    // Remove quick file
+    function removeQuickFile(fileName) {
+      const index = quickFiles.findIndex(f => f.name === fileName);
+      if (index > -1) {
+        quickFiles.splice(index, 1);
+        if (quickFiles.length > 0) {
+          showFilePreview(quickFiles);
+          const attachBtn = document.getElementById('attachBtn');
+          attachBtn.innerHTML = `<i class="fas fa-paperclip"></i> ${quickFiles.length}`;
+        } else {
+          hideFilePreview();
+          resetAttachButton();
+          document.getElementById('quickFileInput').value = '';
+        }
+      }
+    }
+    
+    setupMainChatInput();
+    
+    // Toggle message flag
+    async function toggleMessageFlag(messageId, important) {
+      try {
+        const res = await fetch(`${API_BASE}/messages/${messageId}`, {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            flags: { important }
+          })
+        });
+        
+        if (res.ok) {
+          // Refresh messages to show updated flag
+          loadMessages(currentChannelId);
+        } else {
+          console.error('Failed to toggle flag:', res.status);
+        }
+      } catch (error) {
+        console.error('Error toggling flag:', error);
+      }
+    }
+
+    // New conversation button
+    document.getElementById("newConversationBtn").onclick = () => {
+      // Refresh channel list in compose modal before showing
+      populateComposeChannels();
+      document.getElementById("composeModal").style.display = "flex";
+    };
+
+    // Compose modal option buttons
+    document.querySelectorAll('.option-btn').forEach(btn => {
+      btn.onclick = () => {
+        document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const type = btn.dataset.type;
+        const composeForm = document.getElementById('composeForm');
+        const jobcardForm = document.getElementById('jobcardForm');
+        const deadlineGroup = document.getElementById('deadlineGroup');
+        
+        if (type === 'jobcard') {
+          composeForm.style.display = 'none';
+          jobcardForm.style.display = 'block';
+        } else {
+          composeForm.style.display = 'block';
+          jobcardForm.style.display = 'none';
+          deadlineGroup.style.display = type === 'urgent' ? 'block' : 'none';
+        }
+      };
+    });
+
+    // File upload handling with proper file management
+    let selectedFiles = [];
+    let jobSelectedFiles = [];
+    
+    function setupFileUpload(inputId, listId, filesArray) {
+      const input = document.getElementById(inputId);
+      const list = document.getElementById(listId);
+      
+      if (input && list) {
+        input.onchange = (e) => {
+          Array.from(e.target.files).forEach(file => {
+            // Add to files array
+            filesArray.push(file);
+            
+            // Create visual item
+            const item = document.createElement('div');
+            item.className = 'file-item';
+            item.dataset.fileName = file.name;
+            
+            const fileIcon = getFileIcon(file.name);
+            item.innerHTML = `
+              <span>${fileIcon} ${file.name} (${(file.size / 1024).toFixed(1)} KB)</span>
+              <button class="file-remove" onclick="removeFile('${file.name}', '${inputId}', this)">Remove</button>
+            `;
+            list.appendChild(item);
+          });
+          
+          // Clear input to allow re-selecting same file
+          input.value = '';
+        };
+      }
+    }
+    
+    // Get appropriate file icon
+    function getFileIcon(fileName) {
+      const ext = fileName.split('.').pop().toLowerCase();
+      const icons = {
+        'pdf': '📄',
+        'doc': '📝', 'docx': '📝',
+        'xls': '📊', 'xlsx': '📊',
+        'ppt': '📋', 'pptx': '📋',
+        'jpg': '🖼️', 'jpeg': '🖼️', 'png': '🖼️', 'gif': '🖼️',
+        'txt': '📄',
+        'zip': '📦', 'rar': '📦'
+      };
+      return icons[ext] || '📎';
+    }
+    
+    // Remove file from selection
+    function removeFile(fileName, inputId, buttonElement) {
+      const filesArray = inputId === 'fileInput' ? selectedFiles : jobSelectedFiles;
+      const index = filesArray.findIndex(f => f.name === fileName);
+      if (index > -1) {
+        filesArray.splice(index, 1);
+      }
+      buttonElement.parentElement.remove();
+    }
+    
+    setupFileUpload('fileInput', 'fileList', selectedFiles);
+    setupFileUpload('jobFileInput', 'fileList', jobSelectedFiles);
+    
+    // Setup drag and drop for file upload areas
+    function setupDragAndDrop() {
+      const uploadAreas = ['fileUploadArea', 'jobFileUploadArea'];
+      
+      uploadAreas.forEach(areaId => {
+        const area = document.getElementById(areaId);
+        if (!area) return;
+        
+        const input = area.querySelector('input[type="file"]');
+        const filesArray = areaId === 'fileUploadArea' ? selectedFiles : jobSelectedFiles;
+        const listId = 'fileList';
+        
+        area.addEventListener('dragover', (e) => {
+          e.preventDefault();
+          area.classList.add('drag-over');
+        });
+        
+        area.addEventListener('dragleave', (e) => {
+          e.preventDefault();
+          if (!area.contains(e.relatedTarget)) {
+            area.classList.remove('drag-over');
+          }
+        });
+        
+        area.addEventListener('drop', (e) => {
+          e.preventDefault();
+          area.classList.remove('drag-over');
+          
+          const files = Array.from(e.dataTransfer.files);
+          files.forEach(file => {
+            // Check file type
+            const allowedTypes = ['.pdf', '.doc', '.docx', '.xls', '.xlsx', '.ppt', '.pptx', '.txt', '.jpg', '.jpeg', '.png', '.gif'];
+            const fileExt = '.' + file.name.split('.').pop().toLowerCase();
+            
+            if (!allowedTypes.includes(fileExt)) {
+              alert(`File type ${fileExt} is not supported. Allowed types: ${allowedTypes.join(', ')}`);
+              return;
+            }
+            
+            // Check file size (10MB limit)
+            if (file.size > 10 * 1024 * 1024) {
+              alert(`File ${file.name} is too large. Maximum size is 10MB.`);
+              return;
+            }
+            
+            // Add to files array
+            filesArray.push(file);
+            
+            // Create visual item
+            const item = document.createElement('div');
+            item.className = 'file-item';
+            item.dataset.fileName = file.name;
+            
+            const fileIcon = getFileIcon(file.name);
+            item.innerHTML = `
+              <span>${fileIcon} ${file.name} (${(file.size / 1024).toFixed(1)} KB)</span>
+              <button class="file-remove" onclick="removeFile('${file.name}', '${input.id}', this)">Remove</button>
+            `;
+            document.getElementById(listId).appendChild(item);
+          });
+        });
+      });
+    }
+    
+    setTimeout(setupDragAndDrop, 100);
+    
+    // Make removeFile globally available
+    window.removeFile = removeFile;
+
+    document.getElementById("saveChannelBtn").onclick = async () => {
+      const name = document.getElementById("channelNameInput").value.trim();
+      if (!name) {
+        alert("Please enter a channel name");
+        return;
+      }
+
+      try {
+        const res = await fetch(`${API_BASE}/channels`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify({ name }),
+        });
+        if (!res.ok) {
+          const error = await res.text();
+          console.error("Error creating channel:", error);
+          alert("Failed to create channel: " + error);
+          return;
+        }
+        document.getElementById("channelModal").style.display = "none";
+        document.getElementById("channelNameInput").value = "";
+        
+        const channelData = await res.json();
+        // Emit channel created event to all users
+        socket.emit('channelCreated', { 
+          channelId: channelData.channel?._id,
+          name: channelData.channel?.name || name
+        });
+        
+        loadChannels();
+      } catch (error) {
+        console.error("Error creating channel:", error);
+        alert("Network error creating channel");
+      }
+    };
+
+    document.getElementById("cancelChannelBtn").onclick = () => {
+      document.getElementById("channelModal").style.display = "none";
+    };
+
+    document.getElementById("createChannelBtn").onclick = () => {
+      document.getElementById("channelModal").style.display = "flex";
+    };
+
+    document.getElementById("cancelChannelBtn2").onclick = () => {
+      document.getElementById("channelModal").style.display = "none";
+    };
+
+    document.getElementById("refreshChannelsBtn").onclick = () => {
+      console.log('Manual refresh triggered');
+      loadChannels();
+      if (currentChannelId) {
+        loadMessages(currentChannelId);
+      }
+    };
+    
+    document.getElementById("backToDashboardBtn").onclick = () => {
+      const userId = localStorage.getItem("userId");
+      window.location.href = `dashboard.html?id=${encodeURIComponent(userId)}`;
+    };
+
+    document.getElementById("composeBtn").onclick = () => {
+      // Refresh channel list in compose modal before showing
+      populateComposeChannels();
+      document.getElementById("composeModal").style.display = "flex";
+    };
+    
+    document.getElementById("jobCardsBtn").onclick = () => {
+      const userId = localStorage.getItem("userId");
+      window.location.href = `jobcard.html?id=${encodeURIComponent(userId)}`;
+    };
+
+    // Fix the compose modal send button (there are two elements with same ID)
+    document.addEventListener('click', async (e) => {
+      if (e.target.id === 'sendBtn' && e.target.closest('.compose-modal')) {
+        const activeOption = document.querySelector('.option-btn.active');
+        const type = activeOption ? activeOption.dataset.type : 'normal';
+        const selectedChannelId = document.getElementById('composeChannel').value;
+        
+        if (!selectedChannelId) {
+          alert('Please select a channel first');
+          return;
+        }
+        
+        // Temporarily set currentChannelId for sending
+        const originalChannelId = currentChannelId;
+        currentChannelId = selectedChannelId;
+        
+        let success = false;
+        
+        try {
+          if (type === 'jobcard') {
+            // Handle job card creation
+            const jobData = {
+              title: document.getElementById('jobTitle').value?.trim(),
+              assignee: document.getElementById('jobAssignee').value,
+              priority: document.getElementById('jobPriority').value,
+              dueDate: document.getElementById('jobDueDate').value,
+              description: document.getElementById('jobDescription').value?.trim()
+            };
+            
+            if (!jobData.title || !jobData.description) {
+              alert('Please fill in job title and description');
+              return;
+            }
+            
+            // Get assignee name if selected
+            let assigneeName = 'Not assigned';
+            if (jobData.assignee) {
+              const assigneeSelect = document.getElementById('jobAssignee');
+              const selectedOption = assigneeSelect.options[assigneeSelect.selectedIndex];
+              assigneeName = selectedOption.textContent;
+            }
+            
+            // Create job card message
+            const content = `📋 **Job Card Created**\n\n**Title:** ${jobData.title}\n**Assigned to:** ${assigneeName}\n**Priority:** ${jobData.priority.toUpperCase()}\n**Due:** ${jobData.dueDate ? new Date(jobData.dueDate).toLocaleDateString() : 'Not set'}\n\n**Description:**\n${jobData.description}`;
+            
+            // Create job card first, then send message
+            try {
+              const jobCardRes = await fetch(`${API_BASE}/jobcards`, {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  Authorization: `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                  title: jobData.title,
+                  description: jobData.description,
+                  channelId: selectedChannelId,
+                  assignedTo: jobData.assignee || null,
+                  deadline: jobData.dueDate || null
+                })
+              });
+              
+              if (jobCardRes.ok) {
+                success = true;
+              } else {
+                const error = await jobCardRes.json();
+                alert('Failed to create job card: ' + error.message);
+                success = false;
+              }
+            } catch (error) {
+              console.error('Error creating job card:', error);
+              alert('Network error creating job card');
+              success = false;
+            }
+          } else {
+            const content = document.getElementById('composeContent').value?.trim();
+            const deadline = document.getElementById('composeDeadline').value;
+            const important = type === 'urgent';
+            
+            if (!content && selectedFiles.length === 0) {
+              alert('Please enter a message or select files to send');
+              return;
+            }
+            
+            success = await sendMessage(content, type === 'normal' ? 'text' : type, deadline || null, important, selectedFiles);
+          }
+          
+          if (success) {
+            // Reset form and close modal
+            document.getElementById('composeModal').style.display = 'none';
+            document.querySelectorAll('.option-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('normalBtn').classList.add('active');
+            document.getElementById('composeForm').style.display = 'block';
+            document.getElementById('jobcardForm').style.display = 'none';
+            document.getElementById('composeContent').value = '';
+            document.getElementById('composeSubject').value = '';
+            document.getElementById('composeDeadline').value = '';
+            
+                  // Clear job card form
+            document.getElementById('jobTitle').value = '';
+            document.getElementById('jobDescription').value = '';
+            document.getElementById('jobDueDate').value = '';
+            document.getElementById('jobPriority').value = 'medium';
+            
+            // Clear file lists and arrays
+            document.getElementById('fileList').innerHTML = '';
+            selectedFiles.length = 0;
+            jobSelectedFiles.length = 0;
+            
+            // Refresh channels to show new message
+            loadChannels();
+          }
+          
+        } finally {
+          // Restore original channel ID
+          currentChannelId = originalChannelId;
+        }
+      }
+    });
+
+    document.getElementById("cancelMessageBtn").onclick = () => {
+      document.getElementById("composeModal").style.display = "none";
+    };
+    
+    // Save draft functionality
+    document.getElementById("saveDraftBtn").onclick = () => {
+      const activeOption = document.querySelector('.option-btn.active');
+      const type = activeOption ? activeOption.dataset.type : 'normal';
+      const selectedChannelId = document.getElementById('composeChannel').value;
+      
+      let draftData = {
+        channelId: selectedChannelId,
+        type: type,
+        timestamp: Date.now()
+      };
+      
+      if (type === 'jobcard') {
+        draftData.jobData = {
+          title: document.getElementById('jobTitle').value,
+          assignee: document.getElementById('jobAssignee').value,
+          priority: document.getElementById('jobPriority').value,
+          dueDate: document.getElementById('jobDueDate').value,
+          description: document.getElementById('jobDescription').value
+        };
+      } else {
+        draftData.content = document.getElementById('composeContent').value;
+        draftData.subject = document.getElementById('composeSubject').value;
+        draftData.deadline = document.getElementById('composeDeadline').value;
+      }
+      
+      // Save to localStorage
+      const drafts = JSON.parse(localStorage.getItem('messageDrafts') || '[]');
+      const draftId = 'draft_' + Date.now();
+      draftData.id = draftId;
+      drafts.push(draftData);
+      
+      // Keep only last 10 drafts
+      if (drafts.length > 10) {
+        drafts.splice(0, drafts.length - 10);
+      }
+      
+      localStorage.setItem('messageDrafts', JSON.stringify(drafts));
+      alert('Draft saved successfully!');
+    };
+
+    // Enhanced search functionality
+    let searchTimeout;
+    document.getElementById("searchInput").oninput = (e) => {
+      const query = e.target.value.toLowerCase().trim();
+      
+      // Clear previous timeout
+      if (searchTimeout) clearTimeout(searchTimeout);
+      
+      // Debounce search to improve performance
+      searchTimeout = setTimeout(() => {
+        if (query === '') {
+          // Reset all channels and messages when search is empty
+          document.querySelectorAll(".conversation-card").forEach(card => {
+            card.style.display = "block";
+          });
+          
+          if (currentChannelId) {
+            document.querySelectorAll(".message").forEach(msg => {
+              msg.style.display = "block";
+              msg.style.backgroundColor = "";
+              msg.style.border = "";
+            });
+            document.querySelectorAll('.search-no-results').forEach(el => el.remove());
+          }
+          return;
+        }
+        
+        // Search through channels in sidebar
+        const channels = document.querySelectorAll(".conversation-card");
+        let hasVisibleChannels = false;
+        
+        channels.forEach(card => {
+          const channelName = card.querySelector('div[style*="font-weight: 600"]')?.textContent?.toLowerCase() || '';
+          const channelDesc = card.querySelector('div[style*="color: var(--apple-secondary)"]')?.textContent?.toLowerCase() || '';
+          
+          if (channelName.includes(query) || channelDesc.includes(query)) {
+            card.style.display = "block";
+            hasVisibleChannels = true;
+          } else {
+            card.style.display = "none";
+          }
+        });
+        
+        // If we're in a channel, also search through messages
+        if (currentChannelId) {
+          const messages = document.querySelectorAll(".message");
+          let hasVisibleMessages = false;
+          
+          // Remove previous search highlights and no-results messages
+          document.querySelectorAll('.search-no-results').forEach(el => el.remove());
+          
+          messages.forEach(msg => {
+            const text = msg.textContent.toLowerCase();
+            if (text.includes(query)) {
+              msg.style.display = "block";
+              msg.style.backgroundColor = "rgba(0, 122, 255, 0.1)";
+              msg.style.border = "1px solid rgba(0, 122, 255, 0.3)";
+              msg.style.borderRadius = "8px";
+              hasVisibleMessages = true;
+            } else {
+              msg.style.display = "none";
+              msg.style.backgroundColor = "";
+              msg.style.border = "";
+            }
+          });
+          
+          // Show a message if no results found in current channel
+          if (!hasVisibleMessages && query !== '') {
+            const noResults = document.createElement('div');
+            noResults.className = 'system-message search-no-results';
+            noResults.innerHTML = `<em>🔍 No messages found for "${query}" in this channel</em>`;
+            noResults.style.textAlign = 'center';
+            noResults.style.padding = '20px';
+            noResults.style.color = 'var(--apple-secondary)';
+            document.getElementById('messagesContainer').appendChild(noResults);
+          }
+        }
+        
+        console.log(`Search completed for "${query}": ${hasVisibleChannels ? 'channels found' : 'no channels found'}`);
+      }, 300); // 300ms debounce
+    };
+
+    // Initialize compose modal
+    function initializeComposeModal() {
+      // Set default active option
+      document.getElementById('normalBtn').classList.add('active');
+      
+      // Show normal form by default
+      document.getElementById('composeForm').style.display = 'block';
+      document.getElementById('jobcardForm').style.display = 'none';
+      document.getElementById('deadlineGroup').style.display = 'none';
+    }
+
+    // Periodic refresh for multi-tab sync
+    function startPeriodicRefresh() {
+      // Refresh channels every 30 seconds
+      setInterval(() => {
+        if (document.visibilityState === 'visible') {
+          loadChannels();
+          if (currentChannelId) {
+            loadMessages(currentChannelId);
+          }
+        }
+      }, 30000);
+      
+      // Refresh when tab becomes visible
+      document.addEventListener('visibilitychange', () => {
+        if (document.visibilityState === 'visible') {
+          loadChannels();
+          if (currentChannelId) {
+            loadMessages(currentChannelId);
+          }
+        }
+      });
+    }
+
+    // Setup search clear button
+    function setupSearchClearButton() {
+      const searchInput = document.getElementById('searchInput');
+      const clearBtn = document.getElementById('clearSearchBtn');
+      
+      if (searchInput && clearBtn) {
+        // Show/hide clear button based on input
+        searchInput.addEventListener('input', (e) => {
+          clearBtn.style.display = e.target.value ? 'block' : 'none';
+        });
+        
+        // Clear search when button is clicked
+        clearBtn.onclick = () => {
+          searchInput.value = '';
+          searchInput.dispatchEvent(new Event('input'));
+          clearBtn.style.display = 'none';
+          searchInput.focus();
+        };
+        
+        // Add keyboard shortcut (Escape to clear)
+        searchInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape') {
+            searchInput.value = '';
+            searchInput.dispatchEvent(new Event('input'));
+            clearBtn.style.display = 'none';
+          }
+        });
+      }
+    }
+
+    // Init - wait for server connection first
+    (async () => {
+      await initializeServer();
+      loadUser();
+      setTimeout(initializeComposeModal, 100);
+      setTimeout(setupSearchClearButton, 100);
+      startPeriodicRefresh();
+    })();
+    
+    // Join channel function
+    async function joinChannel(channelId) {
+      console.log('\n🔵 JOIN CHANNEL FUNCTION CALLED');
+      console.log('📋 Channel ID:', channelId);
+      console.log('👤 Current user:', currentUser?.fullName || 'Not loaded');
+      console.log('🔑 Token:', token ? 'Present ✅' : 'Missing ❌');
+      console.log('🌐 API Base:', API_BASE);
+      
+      if (!token) {
+        console.error('❌ No token available');
+        alert('Not logged in');
+        return;
+      }
+      
+      if (!channelId) {
+        console.error('❌ No channel ID provided');
+        alert('Invalid channel ID');
+        return;
+      }
+      
+      try {
+        const url = `${API_BASE}/channels/${channelId}/join`;
+        console.log('📡 Making request to:', url);
+        
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        console.log('📨 Response status:', res.status);
+        console.log('📨 Response headers:', Object.fromEntries(res.headers.entries()));
+        
+        if (res.ok) {
+          const data = await res.json();
+          console.log('✅ Successfully joined channel:', data);
+          alert('Successfully joined channel!');
+          loadChannels(); // Refresh channel list
+        } else {
+          let errorMessage = 'Unknown error';
+          try {
+            const error = await res.json();
+            console.error('❌ Join error details:', error);
+            errorMessage = error.message;
+          } catch (e) {
+            const errorText = await res.text();
+            console.error('❌ Non-JSON error response:', errorText);
+            errorMessage = `HTTP ${res.status}: ${res.statusText}`;
+          }
+          console.error('❌ Failed to join channel:', errorMessage);
+          alert('Failed to join channel: ' + errorMessage);
+        }
+      } catch (error) {
+        console.error('❌ Network error joining channel:', error);
+        alert('Network error joining channel: ' + error.message);
+      }
+    }
+    
+    // Leave channel function
+    async function leaveChannel(channelId) {
+      if (!confirm('Are you sure you want to leave this channel?')) {
+        return;
+      }
+      
+      try {
+        console.log('Leaving channel:', channelId);
+        console.log('API URL:', `${API_BASE}/channels/${channelId}/leave`);
+        
+        const res = await fetch(`${API_BASE}/channels/${channelId}/leave`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          }
+        });
+        
+        console.log('Leave response status:', res.status);
+        
+        if (res.ok) {
+          const data = await res.json();
+          console.log('Successfully left channel:', data);
+          // If currently viewing this channel, clear the view
+          if (currentChannelId === channelId) {
+            currentChannelId = null;
+            document.getElementById('currentChannel').textContent = 'Select a chat';
+            document.getElementById('messagesContainer').innerHTML = '';
+          }
+          loadChannels(); // Refresh channel list
+        } else {
+          let errorMessage = 'Unknown error';
+          try {
+            const error = await res.json();
+            errorMessage = error.message;
+          } catch (e) {
+            const errorText = await res.text();
+            console.error('Non-JSON error response:', errorText);
+            errorMessage = `HTTP ${res.status}: ${res.statusText}`;
+          }
+          alert('Failed to leave channel: ' + errorMessage);
+        }
+      } catch (error) {
+        console.error('Error leaving channel:', error);
+        alert('Network error leaving channel: ' + error.message);
+      }
+    }
+    
+    // Create job card display
+    function createJobCardDisplay(message, isSent) {
+      const jobData = parseJobCardContent(message.content);
+      const priorityColor = {
+        'low': 'var(--apple-green)',
+        'medium': 'var(--apple-blue)', 
+        'high': 'var(--apple-orange)',
+        'critical': 'var(--apple-red)'
+      }[jobData.priority] || 'var(--apple-blue)';
+      
+      return `
+        <div class="message-bubble job-card-bubble" onclick="openMessageDetail('${message._id}')" style="background: ${isSent ? 'var(--apple-orange)' : 'var(--apple-light)'}; color: ${isSent ? 'white' : 'var(--apple-text)'}; border-left: 4px solid ${priorityColor}; padding: 16px; border-radius: 12px;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 12px;">
+            <span style="font-size: 20px;">📋</span>
+            <strong style="font-size: 16px;">Job Card</strong>
+            <span style="background: ${priorityColor}; color: white; padding: 2px 8px; border-radius: 12px; font-size: 12px; font-weight: 600;">${jobData.priority.toUpperCase()}</span>
+          </div>
+          <div style="margin-bottom: 8px;"><strong>Title:</strong> ${jobData.title}</div>
+          <div style="margin-bottom: 8px;"><strong>Assigned to:</strong> ${jobData.assignee}</div>
+          ${jobData.due ? `<div style="margin-bottom: 8px;"><strong>Due:</strong> ${jobData.due}</div>` : ''}
+          <div style="margin-bottom: 8px;"><strong>Description:</strong></div>
+          <div style="background: rgba(0,0,0,0.1); padding: 8px; border-radius: 8px; font-size: 14px; max-height: 60px; overflow: hidden; text-overflow: ellipsis;">${jobData.description}</div>
+          <div style="margin-top: 8px; font-size: 12px; opacity: 0.8; text-align: center;">Click to view full details</div>
+        </div>
+        <div class="message-time">
+          ${new Date(message.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+        </div>
+      `;
+    }
+    
+    // Create urgent message display
+    function createUrgentMessageDisplay(message, isSent) {
+      return `
+        <div class="message-bubble urgent-bubble" onclick="openMessageDetail('${message._id}')" style="background: var(--apple-red); color: white; border-left: 4px solid #CC0000; padding: 12px; border-radius: 12px; position: relative;">
+          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+            <span style="font-size: 16px; animation: pulse 2s infinite;">🚨</span>
+            <strong>URGENT</strong>
+          </div>
+          <div>${message.content}</div>
+          ${message.deadline ? `<div style="margin-top: 8px; font-size: 12px; opacity: 0.9;">⏰ Deadline: ${new Date(message.deadline).toLocaleDateString()}</div>` : ''}
+          <div style="margin-top: 8px; font-size: 11px; opacity: 0.8; text-align: center;">Click to view details</div>
+        </div>
+        <div class="message-time">
+          ${new Date(message.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+        </div>
+      `;
+    }
+    
+    // Enhanced message display with real file support
+    function createNormalMessageDisplay(message, isSent) {
+      let formattedContent = message.content;
+      
+      // Handle file messages with real attachments
+      if (message.type === 'file' || message.content.includes('📎 **Attachments:**') || (message.attachments && message.attachments.length > 0)) {
+        formattedContent = message.content
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\n/g, '<br>');
+        
+        // Add real file attachments if available
+        if (message.attachments && message.attachments.length > 0) {
+          const attachmentHtml = message.attachments.map(attachment => {
+            const icon = getFileIcon(attachment.originalName);
+            const sizeKB = (attachment.size / 1024).toFixed(1);
+            const fileData = attachment.data || null;
+            
+            return `
+              <div class="file-attachment" onclick="openFile('${attachment.originalName}', '${fileData}')" 
+                   style="background: rgba(0,0,0,0.1); padding: 12px; margin: 8px 0; border-radius: 12px; display: flex; align-items: center; gap: 12px; cursor: pointer; transition: all 0.3s; border: 1px solid rgba(0,0,0,0.1);" 
+                   onmouseover="this.style.background='rgba(0,0,0,0.15)'; this.style.transform='translateY(-2px)'; this.style.boxShadow='0 4px 12px rgba(0,0,0,0.15)';" 
+                   onmouseout="this.style.background='rgba(0,0,0,0.1)'; this.style.transform='translateY(0)'; this.style.boxShadow='none';">
+                <div style="width: 40px; height: 40px; background: ${getFileColor(attachment.originalName)}; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: white; font-size: 16px;">
+                  <i class="fas fa-${icon}"></i>
+                </div>
+                <div style="flex: 1;">
+                  <div style="font-weight: 600; color: var(--text-primary); margin-bottom: 2px;">${attachment.originalName}</div>
+                  <div style="font-size: 12px; color: var(--text-muted);">${sizeKB} KB • ${attachment.mimetype} • Click to open</div>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                  <button onclick="event.stopPropagation(); downloadFile('${attachment.originalName}', '${fileData}')" 
+                          style="background: var(--success); color: white; border: none; padding: 6px 8px; border-radius: 6px; font-size: 12px; cursor: pointer;" 
+                          title="Download">
+                    <i class="fas fa-download"></i>
+                  </button>
+                </div>
+              </div>
+            `;
+          }).join('');
+          
+          formattedContent += '<br>' + attachmentHtml;
+        } else {
+          // Fallback for old format
+          formattedContent = formattedContent.replace(
+            /(📄|📝|📊|📋|🖼️|📦|📎)\s*<strong>(.*?)<\/strong>\s*\((.*?)\)/g, 
+            '<div class="file-attachment" onclick="openFile(\'$2\')" style="background: rgba(0,0,0,0.1); padding: 8px; margin: 4px 0; border-radius: 8px; display: flex; align-items: center; gap: 8px; cursor: pointer; transition: all 0.2s;" onmouseover="this.style.background=\'rgba(0,0,0,0.2)\'" onmouseout="this.style.background=\'rgba(0,0,0,0.1)\'"><span style="font-size: 18px;">$1</span><div><strong>$2</strong><br><small style="opacity: 0.7;">$3 - Click to open</small></div></div>'
+          );
+        }
+      } else if (message.content.includes('**')) {
+        formattedContent = message.content
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+          .replace(/\n/g, '<br>');
+      }
+      
+      // Get file color based on extension
+      function getFileColor(fileName) {
+        const ext = fileName.split('.').pop().toLowerCase();
+        const colors = {
+          'pdf': '#dc2626',
+          'doc': '#2563eb', 'docx': '#2563eb',
+          'xls': '#059669', 'xlsx': '#059669',
+          'ppt': '#ea580c', 'pptx': '#ea580c',
+          'jpg': '#7c3aed', 'jpeg': '#7c3aed', 'png': '#7c3aed', 'gif': '#7c3aed',
+          'txt': '#6b7280'
+        };
+        return colors[ext] || '#6b7280';
+      }
+      
+      return `
+        <div class="message-bubble" onclick="openMessageDetail('${message._id}')">
+          ${formattedContent}
+          ${message.flags && message.flags.important ? '<div style="margin-top: 8px; font-size: 12px; opacity: 0.8;">⭐ Important</div>' : ''}
+          ${message.deadline ? `<div style="margin-top: 8px; font-size: 12px; opacity: 0.8;">⏰ Due: ${new Date(message.deadline).toLocaleDateString()}</div>` : ''}
+          ${message.content.length > 100 ? '<div style="margin-top: 8px; font-size: 11px; opacity: 0.7; text-align: center;">Click to view full message</div>' : ''}
+        </div>
+        <div class="message-time">
+          ${new Date(message.timestamp).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'})}
+        </div>
+      `;
+    }
+    
+    // Parse job card content
+    function parseJobCardContent(content) {
+      const lines = content.split('\n');
+      const jobData = {
+        title: 'Untitled Job',
+        assignee: 'Not assigned',
+        priority: 'medium',
+        due: null,
+        description: 'No description'
+      };
+      
+      lines.forEach(line => {
+        if (line.includes('**Title:**')) {
+          jobData.title = line.replace('**Title:**', '').trim();
+        } else if (line.includes('**Assigned to:**')) {
+          jobData.assignee = line.replace('**Assigned to:**', '').trim();
+        } else if (line.includes('**Priority:**')) {
+          jobData.priority = line.replace('**Priority:**', '').trim().toLowerCase();
+        } else if (line.includes('**Due:**')) {
+          jobData.due = line.replace('**Due:**', '').trim();
+        } else if (line.includes('**Description:**')) {
+          const descIndex = lines.indexOf(line);
+          jobData.description = lines.slice(descIndex + 1).join('\n').trim();
+        }
+      });
+      
+      return jobData;
+    }
+
+    // Populate compose modal channel dropdown
+    async function populateComposeChannels() {
+      try {
+        const res = await fetch(`${API_BASE}/channels`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        if (!res.ok) {
+          console.error('Failed to load channels for compose:', res.status);
+          return;
+        }
+        
+        const data = await res.json();
+        const composeChannelSelect = document.getElementById('composeChannel');
+        
+        if (composeChannelSelect && data.channels) {
+          composeChannelSelect.innerHTML = '<option value="">Select Channel...</option>';
+          
+          data.channels
+            .filter(channel => channel.isMember)
+            .forEach(channel => {
+              const option = document.createElement('option');
+              option.value = channel._id;
+              option.textContent = channel.name;
+              composeChannelSelect.appendChild(option);
+            });
+        }
+      } catch (error) {
+        console.error('Error loading channels for compose:', error);
+      }
+    }
+
+    // Load users for job assignee dropdown
+    async function loadUsers() {
+      try {
+        console.log('Loading users for job assignee dropdown...');
+        const res = await fetch(`${API_BASE}/users`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        if (!res.ok) {
+          console.error('Failed to load users:', res.status);
+          return;
+        }
+        
+        const data = await res.json();
+        console.log('Users data received:', data);
+        
+        const jobAssigneeSelect = document.getElementById('jobAssignee');
+        if (jobAssigneeSelect && data.users && Array.isArray(data.users)) {
+          // Clear existing options except the first one
+          jobAssigneeSelect.innerHTML = '<option value="">Select Assignee...</option>';
+          
+          // Add users from same department
+          data.users
+            .filter(user => user.department === currentUser.department)
+            .forEach(user => {
+              const option = document.createElement('option');
+              option.value = user._id;
+              option.textContent = `${user.fullName} (${user.role})`;
+              jobAssigneeSelect.appendChild(option);
+            });
+          
+          console.log(`Loaded ${jobAssigneeSelect.options.length - 1} users for job assignment`);
+        }
+      } catch (error) {
+        console.error('Error loading users:', error);
+      }
+    }
+
+    // Open message detail modal
+    async function openMessageDetail(messageId) {
+      try {
+        const res = await fetch(`${API_BASE}/messages/channel/${currentChannelId}`, {
+          headers: { Authorization: `Bearer ${token}` }
+        });
+        
+        if (!res.ok) throw new Error('Failed to load message details');
+        
+        const data = await res.json();
+        const message = data.messages.find(msg => msg._id === messageId);
+        
+        if (!message) {
+          alert('Message not found');
+          return;
+        }
+        
+        // Determine message type
+        const isJobCard = message.type === 'jobcard' || message.jobCardId || message.content.includes('📋 **Job Card Created**');
+        const isUrgent = message.type === 'urgent' || (message.flags && message.flags.important);
+        
+        // Set modal content
+        if (isJobCard) {
+          document.getElementById('messageTypeIcon').textContent = '📋';
+          document.getElementById('messageTypeText').textContent = 'Job Card';
+        } else if (isUrgent) {
+          document.getElementById('messageTypeIcon').textContent = '🚨';
+          document.getElementById('messageTypeText').textContent = 'Urgent Message';
+        } else {
+          document.getElementById('messageTypeIcon').textContent = '💬';
+          document.getElementById('messageTypeText').textContent = 'Message';
+        }
+        
+        // Format content
+        let formattedContent = message.content;
+        if (message.content.includes('**')) {
+          formattedContent = message.content
+            .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+            .replace(/\n/g, '<br>');
+        }
+        
+        document.getElementById('messageDetailBody').innerHTML = formattedContent;
+        document.getElementById('messageDetailSender').textContent = message.senderId?.fullName || 'Unknown';
+        document.getElementById('messageDetailChannel').textContent = document.getElementById('currentChannel').textContent;
+        document.getElementById('messageDetailTime').textContent = new Date(message.timestamp).toLocaleString();
+        
+        // Show deadline if exists
+        if (message.deadline) {
+          document.getElementById('messageDeadlineItem').style.display = 'block';
+          document.getElementById('messageDetailDeadline').textContent = new Date(message.deadline).toLocaleString();
+        } else {
+          document.getElementById('messageDeadlineItem').style.display = 'none';
+        }
+        
+        // Update important button
+        const importantBtn = document.getElementById('markImportantBtn');
+        if (message.flags && message.flags.important) {
+          importantBtn.textContent = 'Remove Important';
+          importantBtn.dataset.important = 'true';
+        } else {
+          importantBtn.textContent = 'Mark Important';
+          importantBtn.dataset.important = 'false';
+        }
+        
+        // Store message ID
+        document.getElementById('messageDetailModal').dataset.messageId = messageId;
+        
+        // Show modal
+        document.getElementById('messageDetailModal').style.display = 'flex';
+      } catch (error) {
+        console.error('Error loading message details:', error);
+        alert('Failed to load message details');
+      }
+    }
+    
+    // Close message detail modal
+    document.getElementById('closeMessageDetailBtn').addEventListener('click', () => {
+      document.getElementById('messageDetailModal').style.display = 'none';
+    });
+    
+    // Reply to message
+    document.getElementById('replyToMessageBtn').addEventListener('click', () => {
+      document.getElementById('messageDetailModal').style.display = 'none';
+      document.getElementById('messageInput').focus();
+      document.getElementById('messageInput').value = '@reply ';
+    });
+    
+    // Mark/unmark important
+    document.getElementById('markImportantBtn').addEventListener('click', async () => {
+      const messageId = document.getElementById('messageDetailModal').dataset.messageId;
+      const isImportant = document.getElementById('markImportantBtn').dataset.important === 'true';
+      
+      try {
+        await toggleMessageFlag(messageId, !isImportant);
+        document.getElementById('messageDetailModal').style.display = 'none';
+      } catch (error) {
+        console.error('Error toggling importance:', error);
+        alert('Failed to update message importance');
+      }
+    });
+    
+    // Close modal when clicking outside
+    document.getElementById('messageDetailModal').addEventListener('click', (e) => {
+      if (e.target === e.currentTarget) {
+        document.getElementById('messageDetailModal').style.display = 'none';
+      }
+    });
+    
+    // Theme Toggle Functionality
+    const themeToggle = document.getElementById('themeToggle');
+    const body = document.body;
+    const themeIcons = document.querySelectorAll('.theme-icon');
+
+    // Load saved theme
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    body.setAttribute('data-theme', savedTheme);
+    updateThemeIcons(savedTheme);
+
+    themeToggle.addEventListener('click', () => {
+      const currentTheme = body.getAttribute('data-theme');
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      
+      body.setAttribute('data-theme', newTheme);
+      localStorage.setItem('theme', newTheme);
+      updateThemeIcons(newTheme);
+      
+      // Show toast notification
+      const notification = document.createElement('div');
+      notification.style.cssText = `
+        position: fixed; top: 80px; right: 20px; z-index: 1000;
+        background: var(--bg-glass-strong); backdrop-filter: var(--glass-backdrop);
+        border: var(--glass-border); border-radius: 12px; padding: 16px 20px;
+        color: var(--text-primary); box-shadow: var(--shadow-medium);
+        transform: translateX(400px); transition: transform 0.3s ease;
+      `;
+      notification.textContent = `Switched to ${newTheme} mode`;
+      document.body.appendChild(notification);
+      
+      setTimeout(() => notification.style.transform = 'translateX(0)', 100);
+      setTimeout(() => {
+        notification.style.transform = 'translateX(400px)';
+        setTimeout(() => notification.remove(), 300);
+      }, 3000);
+    });
+
+    function updateThemeIcons(theme) {
+      themeIcons.forEach(icon => {
+        icon.classList.toggle('active', icon.getAttribute('data-theme') === theme);
+      });
+    }
+
+    // Enhanced file opening with real PDF support
+    function openFile(fileName, fileData = null) {
+      const fileExt = fileName.split('.').pop().toLowerCase();
+      
+      if (fileExt === 'pdf') {
+        // Create enhanced PDF viewer modal
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+          position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+          background: rgba(0,0,0,0.9); z-index: 2000;
+          display: flex; justify-content: center; align-items: center;
+        `;
+        
+        const viewer = document.createElement('div');
+        viewer.style.cssText = `
+          background: white; border-radius: 12px; padding: 0;
+          width: 95%; height: 95%; max-width: 1200px;
+          display: flex; flex-direction: column; overflow: hidden;
+        `;
+        
+        viewer.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; border-bottom: 1px solid #e5e7eb; background: #f8f9fa;">
+            <div style="display: flex; align-items: center; gap: 12px;">
+              <div style="width: 32px; height: 32px; background: #dc2626; border-radius: 6px; display: flex; align-items: center; justify-content: center; color: white; font-weight: 600;">PDF</div>
+              <div>
+                <h3 style="margin: 0; color: #333; font-size: 16px;">${fileName}</h3>
+                <p style="margin: 0; font-size: 12px; color: #666;">PDF Document</p>
+              </div>
+            </div>
+            <div style="display: flex; gap: 8px;">
+              <button onclick="downloadFile('${fileName}', '${fileData}')" style="background: #10b981; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; display: flex; align-items: center; gap: 4px;">
+                <i class="fas fa-download"></i> Download
+              </button>
+              <button onclick="this.closest('div[style*="position: fixed"]').remove()" style="background: #6b7280; color: white; border: none; border-radius: 6px; width: 32px; height: 32px; cursor: pointer; font-size: 14px;">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+          </div>
+          <div style="flex: 1; background: #f3f4f6; display: flex; align-items: center; justify-content: center; position: relative;">
+            ${fileData ? `
+              <iframe src="${fileData}" style="width: 100%; height: 100%; border: none; background: white;" title="PDF Viewer"></iframe>
+            ` : `
+              <div style="text-align: center; color: #666;">
+                <div style="font-size: 64px; margin-bottom: 20px; color: #dc2626;"><i class="fas fa-file-pdf"></i></div>
+                <h3 style="margin: 0 0 12px 0; color: #374151;">${fileName}</h3>
+                <p style="margin: 0 0 20px 0; max-width: 400px; line-height: 1.5;">PDF viewer ready. In a production environment, this would display the actual PDF content using PDF.js or similar technology.</p>
+                <div style="display: flex; gap: 12px; justify-content: center;">
+                  <button onclick="downloadFile('${fileName}')" style="background: #2563eb; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                    <i class="fas fa-download"></i> Download PDF
+                  </button>
+                  <button onclick="alert('Print functionality would be implemented here')" style="background: #059669; color: white; border: none; padding: 12px 20px; border-radius: 8px; cursor: pointer; font-weight: 600;">
+                    <i class="fas fa-print"></i> Print
+                  </button>
+                </div>
+              </div>
+            `}
+          </div>
+        `;
+        
+        modal.className = 'pdf-modal';
+        modal.appendChild(viewer);
+        document.body.appendChild(modal);
+        
+        // Close on outside click
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) modal.remove();
+        });
+        
+        // Keyboard shortcuts
+        const handleKeyPress = (e) => {
+          if (e.key === 'Escape') {
+            modal.remove();
+            document.removeEventListener('keydown', handleKeyPress);
+          }
+        };
+        document.addEventListener('keydown', handleKeyPress);
+        
+      } else if (['jpg', 'jpeg', 'png', 'gif'].includes(fileExt)) {
+        // Enhanced image viewer
+        const modal = document.createElement('div');
+        modal.style.cssText = `
+          position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+          background: rgba(0,0,0,0.95); z-index: 2000;
+          display: flex; justify-content: center; align-items: center;
+        `;
+        
+        modal.innerHTML = `
+          <div style="position: relative; max-width: 90%; max-height: 90%; background: white; border-radius: 12px; overflow: hidden;">
+            <div style="padding: 16px; background: #f8f9fa; border-bottom: 1px solid #e5e7eb; display: flex; justify-content: space-between; align-items: center;">
+              <h3 style="margin: 0; color: #333;">🖼️ ${fileName}</h3>
+              <button onclick="this.closest('div[style*="position: fixed"]').remove()" style="background: #6b7280; color: white; border: none; border-radius: 6px; width: 32px; height: 32px; cursor: pointer;">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <div style="padding: 20px; text-align: center;">
+              ${fileData ? `
+                <img src="${fileData}" style="max-width: 100%; max-height: 70vh; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);" alt="${fileName}">
+              ` : `
+                <div style="width: 400px; height: 300px; background: #f0f0f0; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #666; margin: 0 auto;">
+                  <div>
+                    <div style="font-size: 48px; margin-bottom: 16px;">🖼️</div>
+                    <p>Image Preview</p>
+                    <p style="font-size: 14px;">Actual image would be displayed here</p>
+                  </div>
+                </div>
+              `}
+              <div style="margin-top: 16px;">
+                <button onclick="downloadFile('${fileName}', '${fileData}')" style="background: #2563eb; color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer;">
+                  <i class="fas fa-download"></i> Download
+                </button>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        document.body.appendChild(modal);
+        modal.addEventListener('click', (e) => {
+          if (e.target === modal) modal.remove();
+        });
+        
+      } else {
+        // For other file types
+        if (confirm(`Open ${fileName}?\n\nThis will download the file to your device.`)) {
+          downloadFile(fileName, fileData);
+        }
+      }
+    }
+    
+    // Enhanced download function with server-friendly approach
+    function downloadFile(fileName, fileData = null) {
+      try {
+        if (fileData && fileData.startsWith('data:') && fileData.length < 500000) {
+          // Real file download for small files only
+          const link = document.createElement('a');
+          link.href = fileData;
+          link.download = fileName;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          
+          showNotification(`Downloaded ${fileName} successfully`, 'success');
+        } else {
+          // Demo download for larger files or files without data
+          const fileExt = fileName.split('.').pop().toLowerCase();
+          let demoContent;
+          
+          if (fileExt === 'pdf') {
+            // Create a simple PDF-like content
+            demoContent = `%PDF-1.4\n1 0 obj\n<<\n/Type /Catalog\n/Pages 2 0 R\n>>\nendobj\n\nDemo PDF: ${fileName}\nGenerated: ${new Date().toLocaleString()}\n\nThis is a demo PDF file for ${fileName}.\nIn production, this would be the actual PDF content.`;
+          } else {
+            demoContent = `Demo File: ${fileName}\n\nGenerated on: ${new Date().toLocaleString()}\n\nFile Type: ${fileExt.toUpperCase()}\n\nThis is a demonstration file. In a real implementation, this would contain the actual file content from the server.\n\nFile would normally be downloaded from: /api/files/download/${fileName}`;
+          }
+          
+          const link = document.createElement('a');
+          link.href = 'data:text/plain;charset=utf-8,' + encodeURIComponent(demoContent);
+          link.download = fileName;
+          document.body.appendChild(link);
+          link.click();
+          document.body.removeChild(link);
+          
+          showNotification(`Demo download: ${fileName} (${(demoContent.length / 1024).toFixed(1)} KB)`, 'info');
+        }
+      } catch (error) {
+        console.error('Download error:', error);
+        showNotification('Download failed: ' + error.message, 'error');
+      }
+    }
+
+    // Make functions globally available
+    window.joinChannel = joinChannel;
+    window.leaveChannel = leaveChannel;
+    window.createJobCardDisplay = createJobCardDisplay;
+    window.createUrgentMessageDisplay = createUrgentMessageDisplay;
+    window.createNormalMessageDisplay = createNormalMessageDisplay;
+    window.loadUsers = loadUsers;
+    window.openMessageDetail = openMessageDetail;
+    window.openFile = openFile;
+    window.downloadFile = downloadFile;
+    window.removeQuickFile = removeQuickFile;
+  </script>
+  <!-- Email Invite Modal -->
+  <div class="compose-modal" id="inviteModal" style="display: none;">
+    <div class="compose-content" style="max-width: 500px;">
+      <div class="compose-header">
+        <h2>Invite to Channel</h2>
+        <button class="close-btn" id="cancelInviteBtn">×</button>
+      </div>
+      
+      <div class="compose-body">
+        <div class="form-group">
+          <label>Recipient Email:</label>
+          <input type="email" id="inviteEmail" placeholder="Enter email address..." required>
+        </div>
+        
+        <div class="form-group">
+          <label>Personal Message (Optional):</label>
+          <textarea id="inviteMessage" placeholder="Add a personal message to the invitation..." rows="3"></textarea>
+        </div>
+        
+        <div style="background: #f0f8ff; padding: 16px; border-radius: 8px; margin-top: 16px;">
+          <h4 style="margin: 0 0 8px 0; color: #1565c0;">📧 Email Preview:</h4>
+          <p style="margin: 0; font-size: 14px; color: #666;">The recipient will receive an invitation email with a secure link to join the channel.</p>
+        </div>
+      </div>
+
+      <div class="compose-footer">
+        <button class="btn-secondary" id="cancelInviteBtn2">Cancel</button>
+        <button class="btn-primary" id="sendInviteBtn">Send Invitation</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Email invitation functionality
+    window.inviteChannelId = null;
+    
+    // Show invite modal
+    function showInviteModal(channelId) {
+      window.inviteChannelId = channelId;
+      document.getElementById('inviteModal').style.display = 'flex';
+      document.getElementById('inviteEmail').focus();
+    }
+    
+    // Hide invite modal
+    function hideInviteModal() {
+      document.getElementById('inviteModal').style.display = 'none';
+      document.getElementById('inviteEmail').value = '';
+      document.getElementById('inviteMessage').value = '';
+      window.inviteChannelId = null;
+    }
+    
+    // Send invitation
+    async function sendInvitation() {
+      const email = document.getElementById('inviteEmail').value.trim();
+      const message = document.getElementById('inviteMessage').value.trim();
+      
+      if (!email) {
+        alert('Please enter an email address');
+        return;
+      }
+      
+      if (!window.inviteChannelId) {
+        alert('No channel selected');
+        return;
+      }
+      
+      const sendBtn = document.getElementById('sendInviteBtn');
+      const originalText = sendBtn.textContent;
+      sendBtn.textContent = 'Sending...';
+      sendBtn.disabled = true;
+      
+      try {
+        const token = localStorage.getItem('token');
+        
+        // Auto-detect server
+        let API_BASE = 'http://localhost:5000';
+        try {
+          const testRes = await fetch('http://10.13.123.182:5000/health');
+          if (testRes.ok) {
+            API_BASE = 'http://10.13.123.182:5000';
+          }
+        } catch (e) {
+          console.log('Using localhost server');
+        }
+        
+        console.log('Sending invitation to:', `${API_BASE}/api/email/invite`);
+        console.log('Channel ID:', window.inviteChannelId);
+        console.log('Email:', email);
+        
+        const response = await fetch(`${API_BASE}/api/email/invite`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}`
+          },
+          body: JSON.stringify({
+            channelId: window.inviteChannelId,
+            recipientEmail: email,
+            personalMessage: message
+          })
+        });
+        
+        console.log('Response status:', response.status);
+        const result = await response.json();
+        console.log('Response data:', result);
+        
+        if (response.ok) {
+          alert(`✅ Invitation sent successfully to ${email}!\n\nThe recipient will receive a professional email with a secure link to join the channel.`);
+          hideInviteModal();
+        } else {
+          alert(`❌ Failed to send invitation: ${result.message || 'Unknown error'}`);
+        }
+      } catch (error) {
+        console.error('Send invitation error:', error);
+        alert(`❌ Failed to send invitation: ${error.message}\n\nPlease check:\n• Server is running\n• Email service is configured\n• You have permission to invite users`);
+      } finally {
+        sendBtn.textContent = originalText;
+        sendBtn.disabled = false;
+      }
+    }
+    
+    // Event listeners
+    document.addEventListener('DOMContentLoaded', function() {
+      // Invite button click
+      const inviteBtn = document.getElementById('inviteToChannelBtn');
+      if (inviteBtn) {
+        inviteBtn.addEventListener('click', function() {
+          console.log('Invite button clicked');
+          
+          // Simple approach: Use the first available channel
+          let channelId = null;
+          
+          // Method 1: From URL parameters
+          const urlParams = new URLSearchParams(window.location.search);
+          channelId = urlParams.get('channel');
+          
+          // Method 2: From active channel in sidebar
+          if (!channelId) {
+            const activeChannelEl = document.querySelector('.channel-item.active, .channel.active, [data-channel-id]');
+            if (activeChannelEl) {
+              channelId = activeChannelEl.getAttribute('data-channel-id') || 
+                         activeChannelEl.getAttribute('data-id') ||
+                         activeChannelEl.dataset.channelId;
+            }
+          }
+          
+          // Method 3: Get first channel from loaded channels if available
+          if (!channelId && window.loadedChannels && window.loadedChannels.length > 0) {
+            channelId = window.loadedChannels[0]._id || window.loadedChannels[0].id;
+            console.log('Using first available channel:', channelId);
+          }
+          
+          // Method 4: Fallback - create a test invitation
+          if (!channelId) {
+            // Show modal anyway and let user know
+            showInviteModal('test-channel');
+            alert('⚠️ No specific channel selected.\n\nThe invitation will be sent for general KMRL system access.\n\nRecipient can join any available channels after signup.');
+            return;
+          }
+          
+          console.log('Found channel ID:', channelId);
+          
+          // Always proceed if we have any channel ID
+          if (channelId && channelId !== 'test-channel') {
+            showInviteModal(channelId);
+          }
+        });
+      } else {
+        console.error('Invite button not found');
+      }
+      
+      // Modal close buttons (check if elements exist)
+      const cancelBtn1 = document.getElementById('cancelInviteBtn');
+      const cancelBtn2 = document.getElementById('cancelInviteBtn2');
+      const sendBtn = document.getElementById('sendInviteBtn');
+      const modal = document.getElementById('inviteModal');
+      const emailInput = document.getElementById('inviteEmail');
+      
+      if (cancelBtn1) cancelBtn1.addEventListener('click', hideInviteModal);
+      if (cancelBtn2) cancelBtn2.addEventListener('click', hideInviteModal);
+      if (sendBtn) sendBtn.addEventListener('click', sendInvitation);
+      
+      if (modal) {
+        modal.addEventListener('click', function(e) {
+          if (e.target === this) hideInviteModal();
+        });
+      }
+      
+      if (emailInput) {
+        emailInput.addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') sendInvitation();
+        });
+      }
+    });
+  </script>
+  
+    <script type="text/javascript">
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement(
+          {
+            pageLanguage: "en",
+            includedLanguages: "en,hi,ml",
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+          },
+          "google_translate_element"
+        );
+      }
+    </script>
+    <script
+      type="text/javascript"
+      src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+    ></script>
+</body>
+</html>

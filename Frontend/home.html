@@ -1,0 +1,7 @@
+<!DOCTYPE html>
+<html><head><meta charset="UTF-8"><title>KMRL Home Redirect</title></head>
+<body><script>
+const ip = new URLSearchParams(window.location.search).get('ip') || '10.13.123.182:5000';
+window.location.href = `http://${ip}`;
+</script>
+<p>Redirecting to KMRL Home...</p></body></html>

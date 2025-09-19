@@ -1,0 +1,2318 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Infera</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"
+    />
+    <style>
+      :root {
+        --primary: #2563eb;
+        --success: #10b981;
+        --warning: #f59e0b;
+        --danger: #ef4444;
+        --info: #06b6d4;
+        --light: #f8fafc;
+        --dark: #1e293b;
+        --muted: #64748b;
+        --border: #e2e8f0;
+        --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+        --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+      }
+
+      #google_translate_element {
+        position: fixed;
+        top: 16px;
+        right: 16px;
+        z-index: 9999;
+        background: #8a8a8a;
+        padding: 8px 16px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+        font-size: 16px;
+      }
+
+      /* Hide the little Google flag icon */
+      .goog-te-gadget img {
+        display: none;
+      }
+
+      /* Change text color, background, and border */
+      .goog-te-gadget-simple {
+        background: #eeefef !important;
+        border: none !important;
+      }
+
+      .goog-te-menu-value span {
+        color: #4caf50 !important;
+      }
+
+      .goog-te-menu-value span:hover {
+        color: #007bff !important;
+      }
+
+      * {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+        background: linear-gradient(135deg, #778ff9 0%, #9ea6f1 100%);
+        min-height: 100vh;
+        color: var(--dark);
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      .header {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: var(--shadow-lg);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .header h1 {
+        font-size: 28px;
+        font-weight: 700;
+        color: var(--dark);
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .header-actions {
+        display: flex;
+        gap: 12px;
+      }
+
+      .btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        text-decoration: none;
+      }
+
+      .btn-primary {
+        background: var(--primary);
+        color: white;
+      }
+
+      .btn-primary:hover {
+        background: #1d4ed8;
+        transform: translateY(-1px);
+      }
+
+      .btn-secondary {
+        background: var(--light);
+        color: var(--dark);
+        border: 1px solid var(--border);
+      }
+
+      .btn-secondary:hover {
+        background: #f1f5f9;
+      }
+
+      .filters-section {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 24px;
+        box-shadow: var(--shadow);
+      }
+
+      .filters-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 16px;
+      }
+
+      .filter-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .filter-group label {
+        font-weight: 600;
+        color: var(--dark);
+        font-size: 14px;
+      }
+
+      .filter-input {
+        padding: 10px 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.2s;
+      }
+
+      .filter-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+
+      .search-box {
+        position: relative;
+        flex: 1;
+      }
+
+      .search-box input {
+        width: 100%;
+        padding: 12px 16px 12px 44px;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        font-size: 16px;
+      }
+
+      .search-box i {
+        position: absolute;
+        left: 16px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: var(--muted);
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 16px;
+        margin-bottom: 24px;
+      }
+
+      .stat-card {
+        background: white;
+        border-radius: 12px;
+        padding: 20px;
+        box-shadow: var(--shadow);
+        text-align: center;
+      }
+
+      .stat-value {
+        font-size: 2rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+      }
+
+      .stat-label {
+        color: var(--muted);
+        font-size: 14px;
+      }
+
+      .jobs-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+        gap: 20px;
+      }
+
+      .job-card {
+        background: white;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: var(--shadow);
+        transition: all 0.3s;
+        cursor: pointer;
+        position: relative;
+        overflow: hidden;
+      }
+
+      .job-card:hover {
+        transform: translateY(-4px);
+        box-shadow: var(--shadow-lg);
+      }
+
+      .job-card::before {
+        content: "";
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 4px;
+        height: 100%;
+      }
+
+      .job-card.priority-high::before {
+        background: var(--danger);
+      }
+
+      .job-card.priority-medium::before {
+        background: var(--warning);
+      }
+
+      .job-card.priority-low::before {
+        background: var(--success);
+      }
+
+      .job-card.priority-critical::before {
+        background: #dc2626;
+      }
+
+      .job-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 16px;
+      }
+
+      .job-title {
+        font-size: 18px;
+        font-weight: 700;
+        color: var(--dark);
+        margin-bottom: 8px;
+      }
+
+      .job-id {
+        font-size: 12px;
+        color: var(--muted);
+        font-family: monospace;
+      }
+
+      .job-status {
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 12px;
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+
+      .status-pending {
+        background: #fef3c7;
+        color: #92400e;
+      }
+
+      .status-in-progress {
+        background: #dbeafe;
+        color: #1e40af;
+      }
+
+      .status-completed {
+        background: #d1fae5;
+        color: #065f46;
+      }
+
+      .status-overdue {
+        background: #fecaca;
+        color: #991b1b;
+      }
+
+      .job-meta {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+        margin-bottom: 16px;
+        font-size: 14px;
+      }
+
+      .meta-item {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .meta-label {
+        color: var(--muted);
+        font-size: 12px;
+        font-weight: 600;
+      }
+
+      .meta-value {
+        color: var(--dark);
+        font-weight: 500;
+      }
+
+      .job-description {
+        color: var(--muted);
+        line-height: 1.5;
+        margin-bottom: 16px;
+        display: -webkit-box;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .job-actions {
+        display: flex;
+        gap: 8px;
+        padding-top: 16px;
+        border-top: 1px solid var(--border);
+      }
+
+      .action-btn {
+        padding: 8px 12px;
+        border: none;
+        border-radius: 6px;
+        font-size: 12px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.2s;
+        flex: 1;
+      }
+
+      .btn-view {
+        background: var(--primary);
+        color: white;
+      }
+
+      .btn-edit {
+        background: var(--warning);
+        color: white;
+      }
+
+      .btn-complete {
+        background: var(--success);
+        color: white;
+      }
+
+      /* Modal Styles */
+      .modal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.5);
+        backdrop-filter: blur(5px);
+        z-index: 1000;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .modal-content {
+        background: white;
+        border-radius: 16px;
+        width: 90%;
+        max-width: 800px;
+        max-height: 90vh;
+        overflow-y: auto;
+        box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      }
+
+      .modal-header {
+        padding: 24px 24px 0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .modal-title {
+        font-size: 24px;
+        font-weight: 700;
+        color: var(--dark);
+      }
+
+      .close-btn {
+        background: none;
+        border: none;
+        font-size: 24px;
+        cursor: pointer;
+        color: var(--muted);
+        padding: 8px;
+        border-radius: 8px;
+      }
+
+      .close-btn:hover {
+        background: var(--light);
+        color: var(--dark);
+      }
+
+      .modal-body {
+        padding: 24px;
+      }
+
+      .form-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+      }
+
+      .form-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .form-group label {
+        font-weight: 600;
+        color: var(--dark);
+      }
+
+      .form-input {
+        padding: 12px 16px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.2s;
+      }
+
+      .form-input:focus {
+        outline: none;
+        border-color: var(--primary);
+        box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+      }
+
+      .form-textarea {
+        min-height: 100px;
+        resize: vertical;
+      }
+
+      .modal-footer {
+        padding: 0 24px 24px;
+        display: flex;
+        gap: 12px;
+        justify-content: flex-end;
+      }
+
+      /* Job Detail Modal */
+      .job-detail-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 24px;
+      }
+
+      .detail-card {
+        background: var(--light);
+        padding: 16px;
+        border-radius: 12px;
+        border-left: 4px solid var(--primary);
+      }
+
+      .detail-label {
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--muted);
+        text-transform: uppercase;
+        margin-bottom: 8px;
+      }
+
+      .detail-value {
+        font-size: 16px;
+        font-weight: 600;
+        color: var(--dark);
+      }
+
+      .progress-section {
+        background: var(--light);
+        padding: 20px;
+        border-radius: 12px;
+        margin-bottom: 24px;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 8px;
+        background: #e5e7eb;
+        border-radius: 4px;
+        overflow: hidden;
+        margin-top: 12px;
+      }
+
+      .progress-fill {
+        height: 100%;
+        background: var(--primary);
+        transition: width 0.3s ease;
+      }
+
+      .empty-state {
+        text-align: center;
+        padding: 60px 20px;
+        color: var(--muted);
+      }
+
+      .empty-state i {
+        font-size: 48px;
+        margin-bottom: 16px;
+        opacity: 0.5;
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 12px;
+        }
+
+        .header {
+          flex-direction: column;
+          gap: 16px;
+          text-align: center;
+        }
+
+        .filters-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .jobs-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .job-meta {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <header>
+      <div id="google_translate_element"></div>
+    </header>
+    <div class="container">
+      <div class="header">
+        <div>
+          <h1><i class="fas fa-clipboard-list"></i> KMRL Job Management</h1>
+          <p style="margin-top: 8px; color: var(--muted)">
+            Manage and track job assignments across departments
+          </p>
+        </div>
+        <div class="header-actions">
+          <button class="btn btn-secondary" onclick="goBack()">
+            <i class="fas fa-arrow-left"></i> Back
+          </button>
+          <button class="btn btn-primary" onclick="openCreateModal()">
+            <i class="fas fa-plus"></i> Create Job
+          </button>
+          <button
+            class="btn"
+            style="background: var(--info); color: white"
+            onclick="showPersonalDashboard()"
+          >
+            <i class="fas fa-user"></i> My Jobs
+          </button>
+        </div>
+      </div>
+
+      <!-- Statistics -->
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-value" style="color: var(--primary)" id="totalJobs">
+            0
+          </div>
+          <div class="stat-label">Total Jobs</div>
+        </div>
+        <div class="stat-card">
+          <div
+            class="stat-value"
+            style="color: var(--warning)"
+            id="pendingJobs"
+          >
+            0
+          </div>
+          <div class="stat-label">Pending</div>
+        </div>
+        <div class="stat-card">
+          <div
+            class="stat-value"
+            style="color: var(--info)"
+            id="inProgressJobs"
+          >
+            0
+          </div>
+          <div class="stat-label">In Progress</div>
+        </div>
+        <div class="stat-card">
+          <div
+            class="stat-value"
+            style="color: var(--success)"
+            id="completedJobs"
+          >
+            0
+          </div>
+          <div class="stat-label">Completed</div>
+        </div>
+      </div>
+
+      <!-- Filters -->
+      <div class="filters-section">
+        <div
+          style="
+            display: flex;
+            gap: 16px;
+            align-items: end;
+            margin-bottom: 16px;
+          "
+        >
+          <div class="search-box">
+            <input
+              type="text"
+              id="searchInput"
+              placeholder="Search jobs by title, description, or assignee..."
+            />
+            <i class="fas fa-search"></i>
+          </div>
+          <button class="btn btn-secondary" onclick="clearFilters()">
+            <i class="fas fa-times"></i> Clear
+          </button>
+        </div>
+
+        <div class="filters-grid">
+          <div class="filter-group">
+            <label>Department</label>
+            <select class="filter-input" id="departmentFilter">
+              <option value="">All Departments</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Status</label>
+            <select class="filter-input" id="statusFilter">
+              <option value="">All Status</option>
+              <option value="pending">Pending</option>
+              <option value="in-progress">In Progress</option>
+              <option value="completed">Completed</option>
+              <option value="overdue">Overdue</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Priority</label>
+            <select class="filter-input" id="priorityFilter">
+              <option value="">All Priorities</option>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+              <option value="critical">Critical</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Deadline</label>
+            <select class="filter-input" id="deadlineFilter">
+              <option value="">All Deadlines</option>
+              <option value="today">Due Today</option>
+              <option value="week">Due This Week</option>
+              <option value="overdue">Overdue</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label>Assigned To</label>
+            <select class="filter-input" id="assigneeFilter">
+              <option value="">All Assignees</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Jobs Grid -->
+      <div class="jobs-grid" id="jobsGrid">
+        <div class="empty-state">
+          <i class="fas fa-clipboard-list"></i>
+          <h3>Loading jobs...</h3>
+        </div>
+      </div>
+    </div>
+
+    <!-- Create Job Modal -->
+    <div class="modal" id="createJobModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title">Create New Job</h2>
+          <button class="close-btn" onclick="closeCreateModal()">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <form id="createJobForm">
+            <div class="form-grid">
+              <div class="form-group">
+                <label>Job Title *</label>
+                <input type="text" class="form-input" id="jobTitle" required />
+              </div>
+              <div class="form-group">
+                <label>Department *</label>
+                <select class="form-input" id="jobDepartment" required>
+                  <option value="">Select Department</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Assign to Supervisor</label>
+                <select class="form-input" id="jobSupervisor">
+                  <option value="">Select Supervisor</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Assign to Employee</label>
+                <select class="form-input" id="jobEmployee">
+                  <option value="">Select Employee</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Priority *</label>
+                <select class="form-input" id="jobPriority" required>
+                  <option value="low">Low</option>
+                  <option value="medium" selected>Medium</option>
+                  <option value="high">High</option>
+                  <option value="critical">Critical</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Deadline</label>
+                <input
+                  type="datetime-local"
+                  class="form-input"
+                  id="jobDeadline"
+                />
+              </div>
+            </div>
+            <div class="form-group" style="margin-top: 20px">
+              <label>Description *</label>
+              <textarea
+                class="form-input form-textarea"
+                id="jobDescription"
+                required
+                placeholder="Describe the job requirements and objectives..."
+              ></textarea>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button
+            type="button"
+            class="btn btn-secondary"
+            onclick="closeCreateModal()"
+          >
+            Cancel
+          </button>
+          <button type="submit" class="btn btn-primary" form="createJobForm">
+            Create Job
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Job Detail Modal -->
+    <div class="modal" id="jobDetailModal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h2 class="modal-title" id="detailJobTitle">Job Details</h2>
+          <button class="close-btn" onclick="closeDetailModal()">
+            &times;
+          </button>
+        </div>
+        <div class="modal-body">
+          <div class="job-detail-grid">
+            <div class="detail-card">
+              <div class="detail-label">Job ID</div>
+              <div class="detail-value" id="detailJobId">-</div>
+            </div>
+            <div class="detail-card">
+              <div class="detail-label">Status</div>
+              <div class="detail-value" id="detailJobStatus">-</div>
+            </div>
+            <div class="detail-card">
+              <div class="detail-label">Priority</div>
+              <div class="detail-value" id="detailJobPriority">-</div>
+            </div>
+            <div class="detail-card">
+              <div class="detail-label">Department</div>
+              <div class="detail-value" id="detailJobDepartment">-</div>
+            </div>
+            <div class="detail-card">
+              <div class="detail-label">Created By</div>
+              <div class="detail-value" id="detailJobCreator">-</div>
+            </div>
+            <div class="detail-card">
+              <div class="detail-label">Assigned To</div>
+              <div class="detail-value" id="detailJobAssignee">-</div>
+            </div>
+            <div class="detail-card">
+              <div class="detail-label">Created Date</div>
+              <div class="detail-value" id="detailJobCreated">-</div>
+            </div>
+            <div class="detail-card">
+              <div class="detail-label">Deadline</div>
+              <div class="detail-value" id="detailJobDeadline">-</div>
+            </div>
+          </div>
+
+          <div class="progress-section">
+            <h3 style="margin-bottom: 12px">Progress</h3>
+            <div
+              style="
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+              "
+            >
+              <span id="detailProgressText">0% Complete</span>
+              <span id="detailProgressDays">0 days remaining</span>
+            </div>
+            <div class="progress-bar">
+              <div
+                class="progress-fill"
+                id="detailProgressBar"
+                style="width: 0%"
+              ></div>
+            </div>
+          </div>
+
+          <div
+            style="background: var(--light); padding: 20px; border-radius: 12px"
+          >
+            <h3 style="margin-bottom: 12px">Description</h3>
+            <p
+              id="detailJobDescription"
+              style="line-height: 1.6; color: var(--muted)"
+            >
+              -
+            </p>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" onclick="editJob()">
+            <i class="fas fa-edit"></i> Edit
+          </button>
+          <button class="btn btn-primary" onclick="updateJobStatus()">
+            <i class="fas fa-check"></i> Update Status
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Real data from API
+      let API_BASE = "http://localhost:5000/api";
+      const token = localStorage.getItem("token");
+      const userId = localStorage.getItem("userId");
+
+      let departments = [];
+      let employees = [];
+      let jobs = [];
+      let filteredJobs = [];
+      let currentJob = null;
+
+      // Auto-detect server
+      async function initializeServer() {
+        try {
+          const testRes = await fetch("http://10.13.123.182:5000/health");
+          if (testRes.ok) {
+            API_BASE = "http://10.13.123.182:5000/api";
+            console.log("Connected to network server:", API_BASE);
+          }
+        } catch (e) {
+          console.log("Using localhost server");
+        }
+      }
+
+      // Fetch real employees from API
+      async function fetchEmployees() {
+        try {
+          console.log("Fetching employees from:", `${API_BASE}/users`);
+          const response = await fetch(`${API_BASE}/users`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          console.log("Employees response status:", response.status);
+
+          if (response.ok) {
+            const data = await response.json();
+            console.log("Raw employees data:", data);
+
+            // Handle different response formats
+            let userArray = [];
+            if (Array.isArray(data)) {
+              userArray = data;
+            } else if (data.users && Array.isArray(data.users)) {
+              userArray = data.users;
+            } else if (data.data && Array.isArray(data.data)) {
+              userArray = data.data;
+            } else {
+              console.log("Unexpected API response format:", data);
+              throw new Error("Invalid response format");
+            }
+
+            employees = userArray.map((user) => ({
+              id: user._id || user.id,
+              name: user.fullName || user.name || "Unknown User",
+              department: user.department || "General",
+              role: user.role || "Employee",
+              level: getRoleLevel(user.role),
+              isSupervisor: isSupervisorRole(user.role),
+              email: user.email || "N/A",
+              phone: user.phone || "N/A",
+              joinDate: new Date(user.createdAt || Date.now()),
+            }));
+
+            // Use KMRL standard departments
+            departments = [
+              "Station Control",
+              "Train Operations",
+              "Maintenance",
+              "Safety & Security",
+              "Engineering",
+              "Administration",
+              "Finance",
+              "Human Resources",
+              "IT & Communications",
+              "Customer Service",
+            ];
+
+            console.log("Loaded employees:", employees.length);
+            console.log("Using KMRL departments:", departments);
+            console.log("Sample employee:", employees[0]);
+          } else {
+            const errorText = await response.text();
+            console.error(
+              "Failed to fetch employees:",
+              response.status,
+              errorText
+            );
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+        } catch (error) {
+          console.error("Error fetching employees:", error);
+          // Use KMRL standard departments as fallback
+          departments = [
+            "Station Control",
+            "Train Operations",
+            "Maintenance",
+            "Safety & Security",
+            "Engineering",
+            "Administration",
+            "Finance",
+            "Human Resources",
+            "IT & Communications",
+            "Customer Service",
+          ];
+          employees = [];
+          console.log("Using fallback KMRL departments:", departments);
+        }
+      }
+
+      function getRoleLevel(role) {
+        const levels = {
+          director: 5,
+          manager: 4,
+          supervisor: 3,
+          officer: 2,
+          assistant: 1,
+          employee: 1,
+        };
+        return levels[role?.toLowerCase()] || 1;
+      }
+
+      function isSupervisorRole(role) {
+        const supervisorRoles = ["director", "manager", "supervisor"];
+        return supervisorRoles.includes(role?.toLowerCase());
+      }
+
+      // Fetch real jobs from API
+      async function fetchJobs() {
+        try {
+          const response = await fetch(`${API_BASE}/jobs`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          if (response.status === 404) {
+            console.log(
+              "Jobs endpoint not found, creating sample jobs for demonstration"
+            );
+            // Create sample jobs for demonstration
+            jobs = createSampleJobs();
+            filteredJobs = [...jobs];
+            return;
+          }
+
+          if (response.ok) {
+            const data = await response.json();
+
+            // Handle different response formats
+            let jobArray = [];
+            if (Array.isArray(data)) {
+              jobArray = data;
+            } else if (data.jobs && Array.isArray(data.jobs)) {
+              jobArray = data.jobs;
+            } else if (data.data && Array.isArray(data.data)) {
+              jobArray = data.data;
+            } else {
+              console.log("No jobs found or unexpected format:", data);
+              jobs = [];
+              filteredJobs = [];
+              return;
+            }
+
+            jobs = jobArray.map((job) => ({
+              id: job._id || job.id || `JOB-${Date.now()}`,
+              title: job.title || "Untitled Job",
+              description: job.description || "No description provided",
+              department: job.department || "General",
+              createdBy: employees.find((emp) => emp.id === job.createdBy) || {
+                name: "Unknown",
+                id: job.createdBy,
+              },
+              assignedTo: employees.find((emp) => emp.id === job.assignedTo),
+              status: job.status || "pending",
+              priority: job.priority || "medium",
+              createdDate: new Date(
+                job.createdAt || job.createdDate || Date.now()
+              ),
+              deadline: new Date(
+                job.deadline || Date.now() + 7 * 24 * 60 * 60 * 1000
+              ),
+              progress: job.progress || 0,
+            }));
+            filteredJobs = [...jobs];
+            console.log("Loaded jobs:", jobs.length);
+          } else {
+            throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+          }
+        } catch (error) {
+          console.error("Error fetching jobs:", error);
+          // Create sample jobs as fallback
+          jobs = createSampleJobs();
+          filteredJobs = [...jobs];
+        }
+      }
+
+      // Create new job via API
+      async function createJobAPI(jobData) {
+        try {
+          const response = await fetch(`${API_BASE}/jobs`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(jobData),
+          });
+
+          if (response.status === 404) {
+            // Fallback: create job locally if API endpoint doesn't exist
+            console.log("Jobs API not available, creating job locally");
+            const newJob = {
+              id: `JOB-${Date.now()}`,
+              title: jobData.title,
+              description: jobData.description,
+              department: jobData.department,
+              createdBy: employees.find(
+                (emp) => emp.id === jobData.createdBy
+              ) || { name: "Current User", id: jobData.createdBy },
+              assignedTo: employees.find(
+                (emp) => emp.id === jobData.assignedTo
+              ),
+              status: jobData.status || "pending",
+              priority: jobData.priority || "medium",
+              createdDate: new Date(),
+              deadline: new Date(
+                jobData.deadline || Date.now() + 7 * 24 * 60 * 60 * 1000
+              ),
+              progress: jobData.progress || 0,
+            };
+
+            jobs.unshift(newJob);
+            filteredJobs = [...jobs];
+            return newJob;
+          }
+
+          if (response.ok) {
+            const newJob = await response.json();
+            await fetchJobs(); // Refresh jobs list
+            return newJob;
+          } else {
+            throw new Error(`Failed to create job: ${response.status}`);
+          }
+        } catch (error) {
+          console.error("Error creating job:", error);
+          throw error;
+        }
+      }
+
+      // Update job status via API
+      async function updateJobAPI(jobId, updates) {
+        try {
+          const response = await fetch(`${API_BASE}/jobs/${jobId}`, {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify(updates),
+          });
+
+          if (response.status === 404) {
+            // Fallback: update job locally if API endpoint doesn't exist
+            console.log("Jobs API not available, updating job locally");
+            const job = jobs.find((j) => j.id === jobId);
+            if (job) {
+              Object.assign(job, updates);
+              filteredJobs = [...jobs];
+              return true;
+            }
+            throw new Error("Job not found");
+          }
+
+          if (response.ok) {
+            await fetchJobs(); // Refresh jobs list
+            return true;
+          } else {
+            throw new Error(`Failed to update job: ${response.status}`);
+          }
+        } catch (error) {
+          console.error("Error updating job:", error);
+          throw error;
+        }
+      }
+
+      // Generate dummy employees (fallback)
+      function generateEmployees() {
+        const realNames = [
+          "Dr. Maulika Patel",
+          "Dr. Gopi Bhatt",
+          "Dr. Nirali Pandya",
+          "Mr. Keyur Prajapati",
+          "Mr. Sunit Parmar",
+          "Mr. Sneh Vyas",
+          "Ms. Ankita Chauhan",
+          "Dr. Jayna Donga",
+          "Ms. Dipti Mathpal",
+          "Mr. Atmiya Patel",
+          "Dr. Akash Dave",
+          "Ms. Shraddha Korvadiya",
+          "Mr. Shyam Viththalani",
+          "Mr. Mihir Rajyaguru",
+          "Mr. Dhruv Dalwadi",
+          "Mr. Jitendrasinh Raulji",
+          "Ms. Jignasha Lakhtaria",
+          "Ms. Jaina Patel",
+          "Mr. Vaibhav Gandhi",
+          "Ms. Anjali Suthar",
+          "Ms. Sreeja P",
+          "Mr. Shaikh Amin Farooqbhai",
+          "Dr. Kishori Sudhir Shekokar",
+          "Mr. Manav Bhavinkumar Patel",
+          "Ms. Jagruti Prajapati",
+          "Dr. Pritesh Pandey",
+          "Ms. Priyanka Panchal",
+          "Mr. Pratik Soni",
+          "Dr. Mehul Thakkar",
+          "Dr. Sunayana Domadia",
+          "Ms. Tejal Tandel",
+          "Ms. Palak Dave",
+          "Mr. Jimesh Rana",
+          "Ms. Bhumika Prajapati",
+          "Ms. Roma Barot",
+          "Ms. Dhruval Kachhiya",
+          "Mr. Chetan Kumar Verma",
+          "Mr. Mayur Parmar",
+          "Ms. Komal Yadav",
+          "Ms. Jayshri Patil",
+          "Mr. Mehulkumar Amin",
+          "Mr. Nitin Patel",
+          "Mr. Piyush Suthar",
+          "Mr. Harsh Goswami",
+          "Dr. Darshana Prajapati",
+          "Dr. Foram Milind Joshi",
+          "Ms. Khushboo Patel",
+          "Ms. Sejal Patel",
+          "Dr. Jay Raval",
+          "Mr. Tapankumar Patel",
+          "Mr. Sagar Jani",
+          "Mr. Hitesh Thakwani",
+          "Dr. Bhavesh Pithadiya",
+          "Mr. Jeet Panchal",
+          "Dr. Parvin Sodagar",
+          "Dr. Shreekant Pathak",
+          "Ms. Jigisha Kachhia",
+          "Ms. Riddhi Sondagar",
+          "Ms. Sujan Diwan",
+          "Mr. Walsh Christian",
+          "Ms. Darshana Patel",
+          "Mr. Himanshu C Mevada",
+        ];
+
+        const roles = [
+          { name: "Director", level: 5, isSupervisor: true },
+          { name: "Assistant Director", level: 4, isSupervisor: true },
+          { name: "Manager", level: 3, isSupervisor: true },
+          { name: "Senior Officer", level: 2, isSupervisor: false },
+          { name: "Officer", level: 1, isSupervisor: false },
+          { name: "Assistant Officer", level: 1, isSupervisor: false },
+        ];
+
+        const employees = [];
+        let empId = 1001;
+        let nameIndex = 0;
+
+        departments.forEach((dept) => {
+          // Distribute real names across departments
+          const namesPerDept = Math.ceil(realNames.length / departments.length);
+          for (
+            let i = 0;
+            i < namesPerDept && nameIndex < realNames.length;
+            i++
+          ) {
+            const name = realNames[nameIndex++];
+            const role = roles[Math.floor(Math.random() * roles.length)];
+            const emailName = name
+              .replace(/^(Dr\.|Mr\.|Ms\.)\s/, "")
+              .toLowerCase()
+              .replace(/\s+/g, ".");
+
+            employees.push({
+              id: empId++,
+              name: name,
+              department: dept,
+              role: role.name,
+              level: role.level,
+              isSupervisor: role.isSupervisor,
+              email: `${emailName}@kmrl.com`,
+              phone: `+91 ${
+                Math.floor(Math.random() * 9000000000) + 1000000000
+              }`,
+              joinDate: new Date(
+                2020 + Math.floor(Math.random() * 4),
+                Math.floor(Math.random() * 12),
+                Math.floor(Math.random() * 28) + 1
+              ),
+            });
+          }
+        });
+
+        return employees;
+      }
+
+      // Create sample jobs using real employees
+      function createSampleJobs() {
+        if (employees.length === 0) return [];
+
+        const jobTitles = [
+          "Track Inspection Report",
+          "Signal System Maintenance",
+          "Platform Safety Audit",
+          "Train Schedule Optimization",
+          "Emergency Response Drill",
+          "Equipment Calibration",
+          "Safety Protocol Review",
+          "Passenger Flow Analysis",
+          "Infrastructure Assessment",
+          "Communication System Test",
+          "Power System Check",
+          "Security Audit Review",
+        ];
+
+        const descriptions = [
+          "Conduct comprehensive inspection of railway tracks for safety compliance and maintenance needs",
+          "Perform routine maintenance and testing on all signaling equipment and systems",
+          "Complete safety audit of all platform areas and passenger facilities",
+          "Review and optimize current train scheduling for improved efficiency",
+          "Organize and conduct emergency response training drill for all staff",
+          "Calibrate and test all critical railway equipment and monitoring systems",
+        ];
+
+        const statuses = ["pending", "in-progress", "completed"];
+        const priorities = ["low", "medium", "high", "critical"];
+
+        const sampleJobs = [];
+
+        for (let i = 0; i < Math.min(20, employees.length * 2); i++) {
+          const randomEmployee =
+            employees[Math.floor(Math.random() * employees.length)];
+          const creator =
+            employees[Math.floor(Math.random() * employees.length)];
+
+          const createdDate = new Date();
+          createdDate.setDate(
+            createdDate.getDate() - Math.floor(Math.random() * 15)
+          );
+
+          const deadline = new Date(createdDate);
+          deadline.setDate(
+            deadline.getDate() + Math.floor(Math.random() * 10) + 3
+          );
+
+          sampleJobs.push({
+            id: `JOB-${String(i + 1).padStart(4, "0")}`,
+            title: jobTitles[Math.floor(Math.random() * jobTitles.length)],
+            description:
+              descriptions[Math.floor(Math.random() * descriptions.length)],
+            department: randomEmployee.department,
+            createdBy: creator,
+            assignedTo: Math.random() > 0.2 ? randomEmployee : null,
+            status: statuses[Math.floor(Math.random() * statuses.length)],
+            priority: priorities[Math.floor(Math.random() * priorities.length)],
+            createdDate: createdDate,
+            deadline: deadline,
+            progress: Math.floor(Math.random() * 100),
+          });
+        }
+
+        console.log("Created sample jobs:", sampleJobs.length);
+        return sampleJobs;
+      }
+
+      // Generate dummy jobs (fallback)
+      function generateJobs() {
+        const jobTitles = [
+          "Track Inspection",
+          "Signal Maintenance",
+          "Platform Safety Check",
+          "Train Schedule Update",
+          "Emergency Drill",
+          "Equipment Calibration",
+          "Safety Protocol Review",
+          "Passenger Flow Analysis",
+          "Infrastructure Assessment",
+          "Communication System Test",
+          "Power System Maintenance",
+          "Security Audit",
+          "Staff Training Session",
+          "Route Optimization",
+          "Maintenance Schedule",
+          "Quality Assurance Check",
+        ];
+
+        const descriptions = [
+          "Conduct thorough inspection of railway tracks for safety compliance",
+          "Perform routine maintenance on signaling equipment",
+          "Ensure platform safety measures are properly implemented",
+          "Update and optimize train scheduling system",
+          "Organize and conduct emergency response drill",
+          "Calibrate and test critical railway equipment",
+          "Review and update safety protocols and procedures",
+          "Analyze passenger flow patterns during peak hours",
+          "Assess infrastructure condition and maintenance needs",
+          "Test communication systems for reliability",
+          "Perform scheduled maintenance on power systems",
+          "Conduct comprehensive security audit",
+          "Organize training session for staff members",
+          "Optimize route planning for better efficiency",
+          "Create and update maintenance schedules",
+          "Perform quality assurance checks on operations",
+        ];
+
+        const statuses = ["pending", "in-progress", "completed", "overdue"];
+        const priorities = ["low", "medium", "high", "critical"];
+
+        const jobs = [];
+
+        for (let i = 0; i < 150; i++) {
+          const dept =
+            departments[Math.floor(Math.random() * departments.length)];
+          const deptEmployees = employees.filter(
+            (emp) => emp.department === dept
+          );
+          const creator =
+            deptEmployees[Math.floor(Math.random() * deptEmployees.length)];
+          const assignee =
+            Math.random() > 0.3
+              ? deptEmployees[Math.floor(Math.random() * deptEmployees.length)]
+              : null;
+
+          const createdDate = new Date();
+          createdDate.setDate(
+            createdDate.getDate() - Math.floor(Math.random() * 30)
+          );
+
+          const deadline = new Date(createdDate);
+          deadline.setDate(
+            deadline.getDate() + Math.floor(Math.random() * 14) + 1
+          );
+
+          let status = statuses[Math.floor(Math.random() * statuses.length)];
+
+          // Make some jobs overdue
+          if (deadline < new Date() && status !== "completed") {
+            status = "overdue";
+          }
+
+          jobs.push({
+            id: `JOB-${String(i + 1).padStart(4, "0")}`,
+            title: jobTitles[Math.floor(Math.random() * jobTitles.length)],
+            description:
+              descriptions[Math.floor(Math.random() * descriptions.length)],
+            department: dept,
+            createdBy: creator,
+            assignedTo: assignee,
+            status: status,
+            priority: priorities[Math.floor(Math.random() * priorities.length)],
+            createdDate: createdDate,
+            deadline: deadline,
+            progress:
+              status === "completed" ? 100 : Math.floor(Math.random() * 80),
+          });
+        }
+
+        return jobs;
+      }
+
+      // Initialize page
+      async function init() {
+        // Check authentication
+        if (!token || !userId) {
+          alert("Please login to access job management");
+          window.location.href = "login.html";
+          return;
+        }
+
+        // Show loading state
+        document.getElementById("jobsGrid").innerHTML = `
+        <div class="empty-state">
+          <i class="fas fa-spinner fa-spin"></i>
+          <h3>Loading jobs...</h3>
+          <p>Connecting to server...</p>
+        </div>
+      `;
+
+        try {
+          await initializeServer();
+          await fetchEmployees();
+          await fetchJobs();
+
+          populateDepartmentFilters();
+          renderJobs();
+          updateStats();
+          setupEventListeners();
+
+          console.log("Job management system initialized successfully");
+        } catch (error) {
+          console.error("Failed to initialize:", error);
+          document.getElementById("jobsGrid").innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-exclamation-triangle"></i>
+            <h3>Connection Error</h3>
+            <p>Unable to connect to server. Please check your connection.</p>
+            <button class="btn btn-primary" onclick="init()">Retry</button>
+          </div>
+        `;
+        }
+      }
+
+      // Populate department filters
+      function populateDepartmentFilters() {
+        console.log("Populating department filters with:", departments);
+        const deptFilter = document.getElementById("departmentFilter");
+        const jobDeptSelect = document.getElementById("jobDepartment");
+
+        // Clear existing options first
+        deptFilter.innerHTML = '<option value="">All Departments</option>';
+        jobDeptSelect.innerHTML = '<option value="">Select Department</option>';
+
+        departments.forEach((dept) => {
+          const option1 = document.createElement("option");
+          option1.value = dept;
+          option1.textContent = dept;
+          deptFilter.appendChild(option1);
+
+          const option2 = document.createElement("option");
+          option2.value = dept;
+          option2.textContent = dept;
+          jobDeptSelect.appendChild(option2);
+        });
+
+        console.log(
+          "Department dropdowns populated. Job dept options:",
+          jobDeptSelect.options.length
+        );
+      }
+
+      // Setup event listeners
+      function setupEventListeners() {
+        document
+          .getElementById("searchInput")
+          .addEventListener("input", applyFilters);
+        document
+          .getElementById("departmentFilter")
+          .addEventListener("change", applyFilters);
+        document
+          .getElementById("statusFilter")
+          .addEventListener("change", applyFilters);
+        document
+          .getElementById("priorityFilter")
+          .addEventListener("change", applyFilters);
+        document
+          .getElementById("deadlineFilter")
+          .addEventListener("change", applyFilters);
+
+        document
+          .getElementById("jobDepartment")
+          .addEventListener("change", updateAssigneeOptions);
+        document
+          .getElementById("createJobForm")
+          .addEventListener("submit", createJob);
+      }
+
+      // Update assignee options based on department
+      function updateAssigneeOptions() {
+        const dept = document.getElementById("jobDepartment").value;
+        const supervisorSelect = document.getElementById("jobSupervisor");
+        const employeeSelect = document.getElementById("jobEmployee");
+
+        console.log("Updating assignee options for department:", dept);
+        console.log("Available employees:", employees.length);
+
+        supervisorSelect.innerHTML =
+          '<option value="">Select Supervisor</option>';
+        employeeSelect.innerHTML = '<option value="">Select Employee</option>';
+
+        if (dept) {
+          const deptEmployees = employees.filter(
+            (emp) => emp.department === dept
+          );
+          console.log(`Employees in ${dept}:`, deptEmployees.length);
+
+          const supervisors = deptEmployees.filter((emp) => emp.isSupervisor);
+          const regularEmployees = deptEmployees.filter(
+            (emp) => !emp.isSupervisor
+          );
+
+          console.log(
+            "Supervisors:",
+            supervisors.length,
+            "Regular employees:",
+            regularEmployees.length
+          );
+
+          supervisors.forEach((emp) => {
+            const option = document.createElement("option");
+            option.value = emp.id;
+            option.textContent = `${emp.name} (${emp.role})`;
+            supervisorSelect.appendChild(option);
+          });
+
+          regularEmployees.forEach((emp) => {
+            const option = document.createElement("option");
+            option.value = emp.id;
+            option.textContent = `${emp.name} (${emp.role})`;
+            employeeSelect.appendChild(option);
+          });
+
+          console.log(
+            "Supervisor options:",
+            supervisorSelect.options.length,
+            "Employee options:",
+            employeeSelect.options.length
+          );
+        }
+      }
+
+      // Apply filters
+      function applyFilters() {
+        const search = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+        const dept = document.getElementById("departmentFilter").value;
+        const status = document.getElementById("statusFilter").value;
+        const priority = document.getElementById("priorityFilter").value;
+        const deadline = document.getElementById("deadlineFilter").value;
+
+        filteredJobs = jobs.filter((job) => {
+          const matchesSearch =
+            !search ||
+            job.title.toLowerCase().includes(search) ||
+            job.description.toLowerCase().includes(search) ||
+            job.assignedTo?.name.toLowerCase().includes(search);
+
+          const matchesDept = !dept || job.department === dept;
+          const matchesStatus = !status || job.status === status;
+          const matchesPriority = !priority || job.priority === priority;
+
+          let matchesDeadline = true;
+          if (deadline) {
+            const today = new Date();
+            const jobDeadline = new Date(job.deadline);
+
+            switch (deadline) {
+              case "today":
+                matchesDeadline =
+                  jobDeadline.toDateString() === today.toDateString();
+                break;
+              case "week":
+                const weekFromNow = new Date(today);
+                weekFromNow.setDate(weekFromNow.getDate() + 7);
+                matchesDeadline =
+                  jobDeadline <= weekFromNow && jobDeadline >= today;
+                break;
+              case "overdue":
+                matchesDeadline =
+                  jobDeadline < today && job.status !== "completed";
+                break;
+            }
+          }
+
+          return (
+            matchesSearch &&
+            matchesDept &&
+            matchesStatus &&
+            matchesPriority &&
+            matchesDeadline
+          );
+        });
+
+        renderJobs();
+        updateStats();
+      }
+
+      // Clear filters
+      function clearFilters() {
+        document.getElementById("searchInput").value = "";
+        document.getElementById("departmentFilter").value = "";
+        document.getElementById("statusFilter").value = "";
+        document.getElementById("priorityFilter").value = "";
+        document.getElementById("deadlineFilter").value = "";
+
+        filteredJobs = [...jobs];
+        renderJobs();
+        updateStats();
+      }
+
+      // Render jobs
+      function renderJobs() {
+        const grid = document.getElementById("jobsGrid");
+
+        if (filteredJobs.length === 0) {
+          grid.innerHTML = `
+          <div class="empty-state">
+            <i class="fas fa-search"></i>
+            <h3>No jobs found</h3>
+            <p>Try adjusting your filters or search terms</p>
+          </div>
+        `;
+          return;
+        }
+
+        grid.innerHTML = filteredJobs
+          .map(
+            (job) => `
+        <div class="job-card priority-${
+          job.priority
+        }" onclick="openJobDetail('${job.id}')">
+          <div class="job-header">
+            <div>
+              <div class="job-title">${job.title}</div>
+              <div class="job-id">${job.id}</div>
+            </div>
+            <span class="job-status status-${job.status}">${job.status.replace(
+              "-",
+              " "
+            )}</span>
+          </div>
+          
+          <div class="job-meta">
+            <div class="meta-item">
+              <div class="meta-label">Department</div>
+              <div class="meta-value">${job.department}</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-label">Priority</div>
+              <div class="meta-value">${job.priority.toUpperCase()}</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-label">Assigned To</div>
+              <div class="meta-value">${
+                job.assignedTo?.name || "Unassigned"
+              }</div>
+            </div>
+            <div class="meta-item">
+              <div class="meta-label">Deadline</div>
+              <div class="meta-value">${job.deadline.toLocaleDateString()}</div>
+            </div>
+          </div>
+          
+          <div class="job-description">${job.description}</div>
+          
+          <div class="job-actions" onclick="event.stopPropagation()">
+            <button class="action-btn btn-view" onclick="openJobDetail('${
+              job.id
+            }')">
+              <i class="fas fa-eye"></i> View
+            </button>
+            <button class="action-btn btn-edit" onclick="editJob('${job.id}')">
+              <i class="fas fa-edit"></i> Edit
+            </button>
+            ${
+              job.status !== "completed"
+                ? `
+              <button class="action-btn btn-complete" onclick="markComplete('${job.id}')">
+                <i class="fas fa-check"></i> Complete
+              </button>
+            `
+                : ""
+            }
+          </div>
+        </div>
+      `
+          )
+          .join("");
+      }
+
+      // Update statistics
+      function updateStats() {
+        document.getElementById("totalJobs").textContent = filteredJobs.length;
+        document.getElementById("pendingJobs").textContent =
+          filteredJobs.filter((j) => j.status === "pending").length;
+        document.getElementById("inProgressJobs").textContent =
+          filteredJobs.filter((j) => j.status === "in-progress").length;
+        document.getElementById("completedJobs").textContent =
+          filteredJobs.filter((j) => j.status === "completed").length;
+      }
+
+      // Modal functions
+      function openCreateModal() {
+        document.getElementById("createJobModal").style.display = "flex";
+      }
+
+      function closeCreateModal() {
+        document.getElementById("createJobModal").style.display = "none";
+        document.getElementById("createJobForm").reset();
+
+        // Reset modal to create mode
+        document.querySelector("#createJobModal .modal-title").textContent =
+          "Create New Job";
+        document.querySelector(
+          '#createJobModal button[type="submit"]'
+        ).textContent = "Create Job";
+        delete document.getElementById("createJobModal").dataset.editJobId;
+      }
+
+      function openJobDetail(jobId) {
+        currentJob = jobs.find((job) => job.id === jobId);
+        if (!currentJob) return;
+
+        document.getElementById("detailJobTitle").textContent =
+          currentJob.title;
+        document.getElementById("detailJobId").textContent = currentJob.id;
+        document.getElementById("detailJobStatus").textContent =
+          currentJob.status.replace("-", " ").toUpperCase();
+        document.getElementById("detailJobPriority").textContent =
+          currentJob.priority.toUpperCase();
+        document.getElementById("detailJobDepartment").textContent =
+          currentJob.department;
+        document.getElementById("detailJobCreator").textContent =
+          currentJob.createdBy.name;
+        document.getElementById("detailJobAssignee").textContent =
+          currentJob.assignedTo?.name || "Unassigned";
+        document.getElementById("detailJobCreated").textContent =
+          currentJob.createdDate.toLocaleDateString();
+        document.getElementById("detailJobDeadline").textContent =
+          currentJob.deadline.toLocaleDateString();
+        document.getElementById("detailJobDescription").textContent =
+          currentJob.description;
+
+        // Progress calculation
+        const progress = currentJob.progress;
+        document.getElementById(
+          "detailProgressText"
+        ).textContent = `${progress}% Complete`;
+        document.getElementById(
+          "detailProgressBar"
+        ).style.width = `${progress}%`;
+
+        const daysRemaining = Math.ceil(
+          (currentJob.deadline - new Date()) / (1000 * 60 * 60 * 24)
+        );
+        document.getElementById("detailProgressDays").textContent =
+          daysRemaining > 0
+            ? `${daysRemaining} days remaining`
+            : daysRemaining === 0
+            ? "Due today"
+            : `${Math.abs(daysRemaining)} days overdue`;
+
+        document.getElementById("jobDetailModal").style.display = "flex";
+      }
+
+      function closeDetailModal() {
+        document.getElementById("jobDetailModal").style.display = "none";
+        currentJob = null;
+      }
+
+      // Job actions
+      async function createJob(e) {
+        e.preventDefault();
+
+        const submitBtn = document.querySelector('#createJobModal button[type="submit"]');
+        if (!submitBtn) {
+          console.error('Submit button not found');
+          return;
+        }
+        
+        const originalText = submitBtn.textContent;
+        const isEdit =
+          document.getElementById("createJobModal").dataset.editJobId;
+
+        submitBtn.textContent = isEdit ? "Updating..." : "Creating...";
+        submitBtn.disabled = true;
+
+        try {
+          const formData = {
+            title: document.getElementById("jobTitle").value,
+            department: document.getElementById("jobDepartment").value,
+            assignedTo:
+              document.getElementById("jobEmployee").value ||
+              document.getElementById("jobSupervisor").value,
+            priority: document.getElementById("jobPriority").value,
+            deadline: document.getElementById("jobDeadline").value,
+            description: document.getElementById("jobDescription").value,
+            createdBy: userId,
+            status: "pending",
+            progress: 0,
+          };
+
+          if (isEdit) {
+            // Update existing job
+            await updateJobAPI(isEdit, formData);
+            alert("Job updated successfully!");
+          } else {
+            // Create new job
+            await createJobAPI(formData);
+            alert("Job created successfully!");
+          }
+
+          closeCreateModal();
+          await fetchJobs(); // Refresh jobs from server
+          renderJobs();
+          updateStats();
+        } catch (error) {
+          alert(
+            `Failed to ${isEdit ? "update" : "create"} job: ` + error.message
+          );
+        } finally {
+          submitBtn.textContent = originalText;
+          submitBtn.disabled = false;
+        }
+      }
+
+      function editJob(jobId) {
+        const job = jobs.find((j) => j.id === jobId);
+        if (!job) return;
+
+        // Populate edit form with current job data
+        document.getElementById("jobTitle").value = job.title;
+        document.getElementById("jobDepartment").value = job.department;
+        document.getElementById("jobPriority").value = job.priority;
+        document.getElementById("jobDescription").value = job.description;
+
+        if (job.deadline) {
+          const deadline = new Date(job.deadline);
+          document.getElementById("jobDeadline").value = deadline
+            .toISOString()
+            .slice(0, 16);
+        }
+
+        // Update assignee dropdowns
+        updateAssigneeOptions();
+
+        // Set assignee if exists
+        if (job.assignedTo) {
+          const assigneeId = job.assignedTo.id;
+          const supervisorSelect = document.getElementById("jobSupervisor");
+          const employeeSelect = document.getElementById("jobEmployee");
+
+          // Check if assignee is in supervisor or employee dropdown
+          for (let option of supervisorSelect.options) {
+            if (option.value === assigneeId) {
+              supervisorSelect.value = assigneeId;
+              break;
+            }
+          }
+          for (let option of employeeSelect.options) {
+            if (option.value === assigneeId) {
+              employeeSelect.value = assigneeId;
+              break;
+            }
+          }
+        }
+
+        // Change modal title and button
+        document.querySelector("#createJobModal .modal-title").textContent =
+          "Edit Job";
+        document.querySelector(
+          '#createJobModal button[type="submit"]'
+        ).textContent = "Update Job";
+
+        // Store job ID for update
+        document.getElementById("createJobModal").dataset.editJobId = jobId;
+
+        // Show modal
+        document.getElementById("createJobModal").style.display = "flex";
+      }
+
+      async function markComplete(jobId) {
+        try {
+          await updateJobAPI(jobId, { status: "completed", progress: 100 });
+          applyFilters();
+          alert("Job marked as completed!");
+        } catch (error) {
+          alert("Failed to update job: " + error.message);
+        }
+      }
+
+      async function updateJobStatus() {
+        if (!currentJob) return;
+
+        const statuses = ["pending", "in-progress", "completed"];
+        const currentIndex = statuses.indexOf(currentJob.status);
+
+        if (currentIndex < statuses.length - 1) {
+          const newStatus = statuses[currentIndex + 1];
+          const newProgress = currentIndex === 0 ? 50 : 100;
+
+          try {
+            await updateJobAPI(currentJob.id, {
+              status: newStatus,
+              progress: newProgress,
+            });
+
+            closeDetailModal();
+            applyFilters();
+            alert("Job status updated successfully!");
+          } catch (error) {
+            alert("Failed to update job: " + error.message);
+          }
+        } else {
+          alert("Job is already completed!");
+        }
+      }
+
+      function goBack() {
+        const userId = localStorage.getItem("userId");
+        window.location.href = `dashboard.html?id=${encodeURIComponent(
+          userId
+        )}`;
+      }
+
+      async function showPersonalDashboard() {
+        // Get current user info
+        let currentUser = null;
+        try {
+          console.log("Fetching user data for:", userId);
+          const response = await fetch(`${API_BASE}/users/${userId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+          console.log("User response status:", response.status);
+
+          if (response.ok) {
+            const userData = await response.json();
+            console.log("User data received:", userData);
+
+            // Handle different response formats
+            const user = userData.user || userData;
+            currentUser = {
+              name: user.fullName || user.name || "Unknown User",
+              department: user.department || "General",
+              role: user.role || "Employee",
+              id: user._id || user.id || userId,
+              email: user.email || "No email",
+            };
+            console.log("Processed user:", currentUser);
+          } else {
+            console.error(
+              "Failed to fetch user:",
+              response.status,
+              await response.text()
+            );
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+        }
+
+        if (!currentUser) {
+          console.error("No user data available");
+          // Use fallback data from localStorage
+          currentUser = {
+            name:
+              localStorage.getItem("userName") ||
+              localStorage.getItem("fullName") ||
+              "Unknown User",
+            department: "General",
+            role: "Employee",
+            id: userId,
+            email: "No email available",
+          };
+          console.log("Using fallback user data:", currentUser);
+        }
+
+        // Filter jobs for current user
+        console.log("Filtering jobs for user:", currentUser.id);
+        console.log("Available jobs:", jobs.length);
+
+        const personalJobs = jobs.filter((job) => {
+          const isAssigned = job.assignedTo?.id === currentUser.id;
+          const isCreator = job.createdBy?.id === currentUser.id;
+          console.log(
+            `Job ${job.id}: assigned=${isAssigned}, creator=${isCreator}`
+          );
+          return isAssigned || isCreator;
+        });
+
+        console.log("Personal jobs found:", personalJobs.length);
+
+        // Get user initials for avatar
+        const initials = currentUser.name
+          ? currentUser.name
+              .split(" ")
+              .map((n) => n[0])
+              .join("")
+              .toUpperCase()
+              .substring(0, 2)
+          : "U";
+
+        const modal = document.createElement("div");
+        modal.className = "modal";
+        modal.style.display = "flex";
+        modal.innerHTML = `
+        <div class="modal-content" style="max-width: 1000px;">
+          <div class="modal-header">
+            <h2><i class="fas fa-user-circle"></i> ${
+              currentUser.name
+            } - Personal Dashboard</h2>
+            <button class="close-btn" onclick="this.closest('.modal').remove()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 24px;">
+              <div style="background: var(--light); padding: 16px; border-radius: 12px; text-align: center;">
+                <div style="font-size: 24px; font-weight: 700; color: var(--primary);">${
+                  personalJobs.length
+                }</div>
+                <div style="font-size: 14px; color: var(--muted);">Total Jobs</div>
+              </div>
+              <div style="background: var(--light); padding: 16px; border-radius: 12px; text-align: center;">
+                <div style="font-size: 24px; font-weight: 700; color: var(--warning);">${
+                  personalJobs.filter((j) => j.status === "pending").length
+                }</div>
+                <div style="font-size: 14px; color: var(--muted);">Pending</div>
+              </div>
+              <div style="background: var(--light); padding: 16px; border-radius: 12px; text-align: center;">
+                <div style="font-size: 24px; font-weight: 700; color: var(--info);">${
+                  personalJobs.filter((j) => j.status === "in-progress").length
+                }</div>
+                <div style="font-size: 14px; color: var(--muted);">In Progress</div>
+              </div>
+              <div style="background: var(--light); padding: 16px; border-radius: 12px; text-align: center;">
+                <div style="font-size: 24px; font-weight: 700; color: var(--success);">${
+                  personalJobs.filter((j) => j.status === "completed").length
+                }</div>
+                <div style="font-size: 14px; color: var(--muted);">Completed</div>
+              </div>
+            </div>
+            
+            <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; padding: 20px; border-radius: 12px; margin-bottom: 24px;">
+              <div style="display: flex; align-items: center; gap: 16px;">
+                <div style="width: 60px; height: 60px; background: rgba(255,255,255,0.2); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 24px; font-weight: 700;">
+                  ${initials}
+                </div>
+                <div>
+                  <h3 style="margin: 0;">${currentUser.name}</h3>
+                  <p style="margin: 4px 0 0 0; opacity: 0.9;">${
+                    currentUser.role
+                  } - ${currentUser.department}</p>
+                  <p style="margin: 4px 0 0 0; opacity: 0.8; font-size: 14px;">Email: ${
+                    currentUser.email
+                  }</p>
+                  <p style="margin: 4px 0 0 0; opacity: 0.8; font-size: 14px;">User ID: ${
+                    currentUser.id
+                  }</p>
+                </div>
+              </div>
+            </div>
+            
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+              <h3 style="margin: 0;">My Job Assignments (${
+                personalJobs.length
+              })</h3>
+              <button onclick="refreshPersonalJobs(this)" style="background: var(--primary); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; font-size: 12px;">
+                <i class="fas fa-sync-alt"></i> Refresh
+              </button>
+            </div>
+            <div style="max-height: 400px; overflow-y: auto;" id="personalJobsList">
+              ${
+                personalJobs.length === 0
+                  ? '<div style="text-align: center; padding: 40px; color: var(--muted);">No jobs assigned</div>'
+                  : personalJobs
+                      .slice(0, 8)
+                      .map(
+                        (job) => `
+                  <div style="border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 12px; background: white;">
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                      <div>
+                        <h4 style="margin: 0;">${job.title}</h4>
+                        <p style="margin: 4px 0 0 0; font-size: 12px; color: var(--muted);">${
+                          job.id
+                        }</p>
+                      </div>
+                      <span style="padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: ${
+                        job.status === "completed"
+                          ? "#d1fae5"
+                          : job.status === "in-progress"
+                          ? "#dbeafe"
+                          : "#fef3c7"
+                      }; color: ${
+                          job.status === "completed"
+                            ? "#065f46"
+                            : job.status === "in-progress"
+                            ? "#1e40af"
+                            : "#92400e"
+                        };">${job.status.replace("-", " ").toUpperCase()}</span>
+                    </div>
+                    <p style="color: var(--muted); font-size: 14px; margin-bottom: 12px;">${
+                      job.description
+                    }</p>
+                    <div style="display: flex; gap: 8px;">
+                      <button onclick="openJobDetail('${
+                        job.id
+                      }'); this.closest('.modal').remove();" style="background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer;">
+                        View Details
+                      </button>
+                    </div>
+                  </div>
+                `
+                      )
+                      .join("")
+              }
+            </div>
+          </div>
+        </div>
+      `;
+
+        document.body.appendChild(modal);
+        modal.addEventListener("click", (e) => {
+          if (e.target === modal) modal.remove();
+        });
+      }
+
+      // Refresh personal jobs
+      async function refreshPersonalJobs(button) {
+        const originalText = button.innerHTML;
+        button.innerHTML =
+          '<i class="fas fa-spinner fa-spin"></i> Refreshing...';
+        button.disabled = true;
+
+        try {
+          await fetchJobs(); // Refresh all jobs
+
+          // Get current user info again
+          const response = await fetch(`${API_BASE}/users/${userId}`, {
+            headers: { Authorization: `Bearer ${token}` },
+          });
+
+          if (response.ok) {
+            const userData = await response.json();
+            const currentUser = {
+              id: userData._id || userData.id,
+              name: userData.fullName || userData.name,
+            };
+
+            // Filter updated jobs for current user
+            const personalJobs = jobs.filter(
+              (job) =>
+                job.assignedTo?.id === currentUser.id ||
+                job.createdBy?.id === currentUser.id
+            );
+
+            // Update the job list
+            const jobsList = document.getElementById("personalJobsList");
+            if (jobsList) {
+              jobsList.innerHTML =
+                personalJobs.length === 0
+                  ? '<div style="text-align: center; padding: 40px; color: var(--muted);">No jobs assigned</div>'
+                  : personalJobs
+                      .slice(0, 8)
+                      .map(
+                        (job) => `
+                <div style="border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 12px; background: white;">
+                  <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px;">
+                    <div>
+                      <h4 style="margin: 0;">${job.title}</h4>
+                      <p style="margin: 4px 0 0 0; font-size: 12px; color: var(--muted);">${
+                        job.id
+                      }</p>
+                    </div>
+                    <span style="padding: 4px 12px; border-radius: 20px; font-size: 12px; font-weight: 600; background: ${
+                      job.status === "completed"
+                        ? "#d1fae5"
+                        : job.status === "in-progress"
+                        ? "#dbeafe"
+                        : "#fef3c7"
+                    }; color: ${
+                          job.status === "completed"
+                            ? "#065f46"
+                            : job.status === "in-progress"
+                            ? "#1e40af"
+                            : "#92400e"
+                        };">${job.status.replace("-", " ").toUpperCase()}</span>
+                  </div>
+                  <p style="color: var(--muted); font-size: 14px; margin-bottom: 12px;">${
+                    job.description
+                  }</p>
+                  <div style="display: flex; gap: 8px;">
+                    <button onclick="openJobDetail('${
+                      job.id
+                    }'); this.closest('.modal').remove();" style="background: var(--primary); color: white; border: none; padding: 6px 12px; border-radius: 6px; font-size: 12px; cursor: pointer;">
+                      View Details
+                    </button>
+                  </div>
+                </div>
+              `
+                      )
+                      .join("");
+            }
+
+            // Update stats
+            const statsElements = button
+              .closest(".modal-content")
+              .querySelectorAll(".stat-card div:first-child");
+            if (statsElements.length >= 4) {
+              statsElements[0].textContent = personalJobs.length;
+              statsElements[1].textContent = personalJobs.filter(
+                (j) => j.status === "pending"
+              ).length;
+              statsElements[2].textContent = personalJobs.filter(
+                (j) => j.status === "in-progress"
+              ).length;
+              statsElements[3].textContent = personalJobs.filter(
+                (j) => j.status === "completed"
+              ).length;
+            }
+          }
+        } catch (error) {
+          console.error("Error refreshing personal jobs:", error);
+          alert("Failed to refresh jobs");
+        } finally {
+          button.innerHTML = originalText;
+          button.disabled = false;
+        }
+      }
+
+      // Make function globally available
+      window.refreshPersonalJobs = refreshPersonalJobs;
+
+      // Close modals when clicking outside
+      document.addEventListener("click", (e) => {
+        if (e.target.classList.contains("modal")) {
+          e.target.style.display = "none";
+        }
+      });
+
+      // Initialize
+      init();
+    </script>
+    <script type="text/javascript">
+      function googleTranslateElementInit() {
+        new google.translate.TranslateElement(
+          {
+            pageLanguage: "en",
+            includedLanguages: "en,hi,ml",
+            layout: google.translate.TranslateElement.InlineLayout.SIMPLE,
+          },
+          "google_translate_element"
+        );
+      }
+    </script>
+    <script
+      type="text/javascript"
+      src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"
+    ></script>
+  </body>
+</html>
