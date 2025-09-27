@@ -1,6 +1,6 @@
-# 🚆 Infera – Smart Document Intelligence for KMRL (SIH 2025)
+# 🚆 Infer@ – Smart Document Intelligence for KMRL (SIH 2025)
 
-Infera is our **Smart India Hackathon 2025** project designed to streamline **document processing and information extraction** for **Kochi Metro Rail Limited (KMRL)**.  
+Infer@ is our **Smart India Hackathon 2025** project designed to streamline **document processing and information extraction** for **Kochi Metro Rail Limited (KMRL)**.  
 Our solution leverages **AI-powered OCR, document understanding, and validation pipelines** to make unstructured data usable, reliable, and actionable.
 
 ---
@@ -82,7 +82,7 @@ Equip every stakeholder—from **station controllers and engineers to finance of
 
 ## 📊 Competitive Edge
 
-| Feature / Capability | UiPath | Google Document AI | ABBYY | **Infera (ours)** |
+| Feature / Capability | UiPath | Google Document AI | ABBYY | **Infer@ (ours)** |
 |-----------------------|--------|---------------------|-------|-------------------|
 | Multi-Source Ingestion | ✅ | ✅ | ✅ | ✅ |
 | OCR + Layout Extraction | ✅ | ✅ | ✅ | ✅ |
@@ -130,9 +130,9 @@ We are a group of passionate innovators collaborating under **Smart India Hackat
 
 ## 🎯 Vision
 
-<p align="center">
+<!-- <p align="center">
   <img src="Frontend/20250914_234002.png" width="180" height="180" alt="Vision Icon"/>
-</p>
+</p> -->
 
 > “Transforming how KMRL handles documents —  
 > from **manual effort** to **AI-powered automation**.”
