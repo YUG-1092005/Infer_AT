@@ -115,7 +115,7 @@ SIH25/
 
 ## 👨‍💻 Team
 
-We are a group of passionate innovators collaborating under **Smart India Hackathon 2025** to build **Infera**.
+We are a group of passionate innovators collaborating under **Smart India Hackathon 2025** to build **Infer@**.
 
 | Name               | Role(s) |
 |--------------------|-----------------------------------------------------------|
