@@ -130,9 +130,9 @@ We are a group of passionate innovators collaborating under **Smart India Hackat
 
 ## 🎯 Vision
 
-<p align="center">
+<!-- <p align="center">
   <img src="Frontend/20250914_234002.png" width="180" height="180" alt="Vision Icon"/>
-</p>
+</p> -->
 
 > “Transforming how KMRL handles documents —  
 > from **manual effort** to **AI-powered automation**.”
