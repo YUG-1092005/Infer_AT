@@ -109,7 +109,7 @@ SIH25/
 ---
 
 ## 📽️ Demo
-🔗 [Click here to watch our solution video](https://drive.google.com/file/d/1avSMbWBuqz7W4FwSi-brYzF4bMKDY1EO/view)
+[Click here to watch our solution video](https://youtu.be/Jba6Oc7b24s)
 
 --- 
 
@@ -130,9 +130,9 @@ We are a group of passionate innovators collaborating under **Smart India Hackat
 
 ## 🎯 Vision
 
-<!-- <p align="center">
-  <img src="Frontend/20250914_234002.png" width="180" height="180" alt="Vision Icon"/>
-</p> -->
+<p align="center">
+  <img src="Frontend/logo.png" width="180" height="180" alt="Vision Icon"/>
+</p> 
 
 > “Transforming how KMRL handles documents —  
 > from **manual effort** to **AI-powered automation**.”
