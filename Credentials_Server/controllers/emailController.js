@@ -34,13 +34,13 @@ async function sendChannelInvite(req, res) {
     if (channelId === "test-channel") {
       // Send general KMRL system invitation with redirect
       const networkIP = "https://credential-5ht0.onrender.com";
-      const publicDomain = "https://infera-official.vercel.app";
+      const publicDomain = "https://inferat-official.vercel.app";
       const generalInviteLink = `${publicDomain}/signUp.html`;
 
       const mailOptions = {
         from: `"KMRL Communication System" <${EMAIL_CONFIG.auth.user}>`,
         to: recipientEmail,
-        subject: `🚄 KMRL System Invitation | Team Infera`,
+        subject: `🚄 KMRL System Invitation | Team Infer@`,
         html: `<h2>Welcome to KMRL Communication System</h2>
                <p>You've been invited to join the KMRL Communication System.</p>
                <a href="${generalInviteLink}" style="background: #1976d2; color: white; padding: 15px 30px; text-decoration: none; border-radius: 8px;">Join KMRL System</a>`,
@@ -98,7 +98,7 @@ async function sendChannelInvite(req, res) {
 
     // Create invitation and homepage links with redirect solution
     const networkIP = "https://credential-5ht0.onrender.com";
-    const publicDomain = "https://infera-official.vercel.app";
+    const publicDomain = "https://inferat-official.vercel.app";
     const inviteLink = `${publicDomain}/signUp.html`;
     const homepageLink = `${publicDomain}/index.html`;
 
@@ -235,7 +235,7 @@ async function sendChannelInvite(req, res) {
             <p><strong>Kochi Metro Rail Limited</strong></p>
             <p>Official Communication System</p>
             <div style="margin: 20px 0; padding: 15px; background: rgba(25, 118, 210, 0.1); border-radius: 8px;">
-              <p style="margin: 0; font-weight: 600; color: #1976d2;">💻 Powered by Team Infera</p>
+              <p style="margin: 0; font-weight: 600; color: #1976d2;">💻 Powered by Team Infer@</p>
               <p style="margin: 5px 0 0 0; font-size: 12px; opacity: 0.9;">Advanced Document Intelligence & Communication Solutions</p>
             </div>
             <div style="margin: 20px 0;">
@@ -253,7 +253,7 @@ async function sendChannelInvite(req, res) {
     const mailOptions = {
       from: `"KMRL Communication System" <${EMAIL_CONFIG.auth.user}>`,
       to: recipientEmail,
-      subject: `🚄 KMRL Channel Invitation Link - Join "${channel.name}" | Team Infera`,
+      subject: `🚄 KMRL Channel Invitation Link - Join "${channel.name}" | Team Infer@`,
       html: emailHtml,
     };
 
