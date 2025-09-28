@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Infera — Modern Chat</title>
+  <title>Infer@ — Modern Chat</title>
   <script src="https://cdn.socket.io/4.0.0/socket.io.min.js"></script>
   <!-- <script src="auto-discover.js"></script> -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -1748,7 +1748,7 @@
         currentUser = data.user || data;
         
         // Update page title with user name
-        document.title = `Infera — ${currentUser.fullName || currentUser.username}`;
+        document.title = `Infer@ — ${currentUser.fullName || currentUser.username}`;
         
         // Store user info in session for this tab
         sessionStorage.setItem('currentUser', JSON.stringify(currentUser));

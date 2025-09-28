@@ -6,7 +6,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.28/jspdf.plugin.autotable.min.js"></script>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Infera</title>
+    <title>Infer@</title>
     <style>
       * {
         box-sizing: border-box;
@@ -728,7 +728,7 @@
   <body>
     <header>
       <div style="position: relative; z-index: 1">
-        Infera's Document Analyzer
+        Infer@'s Document Analyzer
       </div>
       <div id="google_translate_element"></div>
     </header>
@@ -797,7 +797,7 @@
               class="download-pdf-btn"
               title="Download formatted summary as PDF"
             >
-              ⬇️ Download Summary (Infera)
+              ⬇️ Download Summary (Infer@)
             </button>
             <button id="copySummaryBtn" title="Copy summary to clipboard">
               📋 Copy Summary
@@ -1391,7 +1391,7 @@
             doc.setTextColor("#ffffff");
             doc.setFontSize(16);
             doc.setFont("helvetica", "bold");
-            doc.text("INFERA", margin + 25, 45);
+            doc.text("INFER@", margin + 25, 45);
 
             // Title
             doc.setTextColor(colors.primary);
@@ -1426,7 +1426,7 @@
               pageHeight - 40
             );
             const footer =
-              "INFERA - Professional Document Intelligence | Confidential";
+              "INFER@ - Professional Document Intelligence | Confidential";
             const footerWidth = doc.getTextWidth(footer);
             doc.text(footer, (pageWidth - footerWidth) / 2, pageHeight - 25);
           }
@@ -1715,7 +1715,7 @@
 
           // Save with timestamp
           const timestamp = new Date().toISOString().split("T")[0];
-          doc.save(`Infera_Complete_Report_${timestamp}.pdf`);
+          doc.save(`Infer@_Complete_Report_${timestamp}.pdf`);
         });
 
       // Update button text to reflect comprehensive report

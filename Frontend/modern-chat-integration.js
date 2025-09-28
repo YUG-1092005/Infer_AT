@@ -657,7 +657,7 @@ class ModernChatApp {
   updateUserInterface() {
     // Update any user-specific UI elements
     if (this.currentUser) {
-      document.title = `Infera — ${this.currentUser.fullName || this.currentUser.username}`;
+      document.title = `Infer@ — ${this.currentUser.fullName || this.currentUser.username}`;
     }
   }
 
