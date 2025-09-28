@@ -109,7 +109,7 @@ SIH25/
 ---
 
 ## 📽️ Demo
-🔗 [Click here to watch our solution video]([https://drive.google.com/file/d/1avSMbWBuqz7W4FwSi-brYzF4bMKDY1EO/view](https://youtu.be/Jba6Oc7b24s))
+[Click here to watch our solution video](https://youtu.be/Jba6Oc7b24s)
 
 --- 
 
