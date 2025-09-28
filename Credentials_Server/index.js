@@ -344,7 +344,7 @@ const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
     origin: [
-      'https://inferat-official.vercel.app/',
+      'https://inferat-official.vercel.app',
       'https://credential-5ht0.onrender.com'
     ],
     methods: ["GET", "POST"],
@@ -355,7 +355,7 @@ const io = socketIo(server, {
 
 // --- CORS MIDDLEWARE ---
 const allowedOrigins = [
-  'https://inferat-official.vercel.app/',
+  'https://inferat-official.vercel.app',
   'https://credential-5ht0.onrender.com',
   'http://localhost:3000',
   'http://localhost:5000'
