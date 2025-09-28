@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Infer@</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+        line-height: 1.7;
+        margin: 0;
+        height: 100%;
+        background-image: radial-gradient(
+            circle at 35% 80%,
+            rgba(128, 0, 255, 0.3) 0%,
+            rgba(128, 0, 255, 0.15) 30%,
+            transparent 60%
+          ),
+          radial-gradient(
+            circle at 55% 50%,
+            rgba(0, 255, 255, 0.3) 0%,
+            rgba(0, 255, 255, 0.15) 30%,
+            transparent 60%
+          );
+        background-color: #ffffff;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-attachment: fixed;
+        padding: 40px 20px;
+      }
+
+      .privacy-container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        padding: 60px 50px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        animation: fadeInUp 0.8s ease-out;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 50px;
+      }
+
+      .shield-icon {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, #4285f4 0%, #2563eb 100%);
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 25px rgba(66, 133, 244, 0.3);
+        animation: pulse 3s infinite;
+      }
+
+      .shield-icon::before {
+        content: "🛡️";
+        font-size: 28px;
+      }
+
+      .page-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 15px;
+        letter-spacing: -0.02em;
+      }
+
+      .intro-text {
+        font-size: 1.1rem;
+        color: #718096;
+        margin-bottom: 40px;
+        line-height: 1.8;
+      }
+
+      .brand-name {
+        color: #4285f4;
+        font-weight: 700;
+      }
+
+      .section {
+        margin-bottom: 35px;
+        padding: 25px;
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 16px;
+        border-left: 4px solid #4285f4;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      /* .section:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      } */
+
+      .section-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+      }
+
+      .section-number {
+        background: linear-gradient(135deg, #4285f4, #2563eb);
+        color: white;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        font-weight: 700;
+        margin-right: 15px;
+      }
+
+      .section-content {
+        font-size: 1rem;
+        color: #262a32;
+        line-height: 1.7;
+      }
+
+      .contact-section {
+        background: linear-gradient(135deg, #247dfa, #5da1ff);
+        color: white;
+        text-align: center;
+        border-left: none;
+        padding: 40px 25px;
+      }
+
+      .contact-section .section-title {
+        color: white;
+        justify-content: center;
+      }
+
+      .contact-section .section-number {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .email-link {
+        display: inline-flex;
+        align-items: center;
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-top: 20px;
+        padding: 8px 24px;
+        background: rgba(0, 81, 255, 0.9);
+        border-radius: 50px;
+        transition: all 0.3s ease;
+      }
+
+      .email-link:hover {
+        /* background: rgba(255, 255, 255, 0.3); */
+        transform: scale(1.05);
+        box-shadow: 0 10px 25px rgba(66, 133, 244, 0.3);
+      }
+
+      .email-icon {
+        margin-right: 8px;
+        font-size: 1.2rem;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .privacy-container {
+          padding: 40px 30px;
+          border-radius: 20px;
+          margin: 20px;
+        }
+
+        .page-title {
+          font-size: 2rem;
+        }
+
+        .intro-text {
+          font-size: 1rem;
+        }
+
+        .section {
+          padding: 20px;
+          margin-bottom: 25px;
+        }
+
+        .shield-icon {
+          width: 60px;
+          height: 60px;
+        }
+
+        .shield-icon::before {
+          font-size: 24px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        body {
+          padding: 20px 10px;
+        }
+
+        .privacy-container {
+          padding: 30px 20px;
+          border-radius: 16px;
+          margin: 0;
+        }
+
+        .page-title {
+          font-size: 1.75rem;
+        }
+
+        .section-title {
+          font-size: 1.1rem;
+          flex-direction: column;
+          text-align: center;
+          gap: 10px;
+        }
+
+        .section-number {
+          margin-right: 0;
+        }
+      }
+
+      /* Animations */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+          box-shadow: 0 10px 25px rgba(66, 133, 244, 0.3);
+        }
+        50% {
+          transform: scale(1.05);
+          box-shadow: 0 15px 35px rgba(66, 133, 244, 0.4);
+        }
+      }
+
+      /* Smooth scrolling */
+      html {
+        scroll-behavior: smooth;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="privacy-container">
+      <div class="header">
+        <div class="shield-icon"></div>
+        <h1 class="page-title">Privacy Policy</h1>
+        <p class="intro-text">
+          At <span class="brand-name">INFER@</span>, we value your privacy and
+          are committed to protecting your personal information. We want to
+          assure you that we do not collect, store, or share any personal data
+          from our users. This Privacy Policy outlines our practices regarding
+          data protection and security.
+        </p>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">
+          <span class="section-number">1</span>
+          No Data Collection
+        </h2>
+        <p class="section-content">
+          <span class="brand-name">INFER@</span> does not collect any personal
+          or sensitive information from users. You can use our website and its
+          features without providing any personal details.
+        </p>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">
+          <span class="section-number">2</span>
+          No Sharing of Data
+        </h2>
+        <p class="section-content">
+          Since we do not collect any personal data, we do not share any
+          information with third parties for marketing, analytics, or any other
+          purposes.
+        </p>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">
+          <span class="section-number">3</span>
+          Data Security
+        </h2>
+        <p class="section-content">
+          While we do not collect or store user data, we prioritize the security
+          of our website to ensure a safe and secure browsing experience for all
+          visitors. Our website is hosted on a secure platform, and we take all
+          necessary precautions to protect against unauthorized access or cyber
+          threats.
+        </p>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">
+          <span class="section-number">4</span>
+          External Links
+        </h2>
+        <p class="section-content">
+          Our website may contain links to third-party websites. Please note
+          that we are not responsible for the privacy practices or the content
+          of these external sites. We encourage you to review the privacy
+          policies of any third-party websites you visit.
+        </p>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">
+          <span class="section-number">5</span>
+          Changes to this Policy
+        </h2>
+        <p class="section-content">
+          We reserve the right to update this Privacy Policy at any time. Any
+          changes will be reflected on this page with an updated effective date.
+        </p>
+      </div>
+
+      <div class="section contact-section">
+        <h2 class="section-title">
+          <!-- <span class="section-number">6</span> -->
+          Contact Us
+        </h2>
+        <p class="section-content">
+          <strong
+            >If you have any questions or concerns about our privacy practices,
+            feel free to contact us at:</strong
+          >
+        </p>
+        <a
+          href="https://mail.google.com/mail/?view=cm&fs=1&to=inferadoc@gmail.com"
+          target="_blank"
+          class="email-link"
+        >
+          <span class="email-icon">📧</span>
+          <strong>inferadoc@gmail.com</strong>
+        </a>
+      </div>
+    </div>
+  </body>
+</html>

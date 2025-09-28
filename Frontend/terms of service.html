@@ -1,0 +1,490 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Infer@</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+          Oxygen, Ubuntu, Cantarell, sans-serif;
+        line-height: 1.7;
+        margin: 0;
+        height: 100%;
+        background-image: radial-gradient(
+            circle at 35% 80%,
+            rgba(128, 0, 255, 0.3) 0%,
+            rgba(128, 0, 255, 0.15) 30%,
+            transparent 60%
+          ),
+          radial-gradient(
+            circle at 55% 50%,
+            rgba(0, 255, 255, 0.3) 0%,
+            rgba(0, 255, 255, 0.15) 30%,
+            transparent 60%
+          );
+        background-color: #ffffff;
+        background-repeat: no-repeat;
+        background-size: cover;
+        background-attachment: fixed;
+        padding: 40px 20px;
+      }
+
+      .terms-container {
+        max-width: 900px;
+        margin: 0 auto;
+        background: rgba(255, 255, 255, 0.5);
+        backdrop-filter: blur(20px);
+        border-radius: 24px;
+        padding: 60px 50px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        animation: fadeInUp 0.8s ease-out;
+      }
+
+      .header {
+        text-align: center;
+        margin-bottom: 50px;
+      }
+
+      .legal-icon {
+        width: 70px;
+        height: 70px;
+        background: linear-gradient(135deg, #4285f4 0%, #2563eb 100%);
+        border-radius: 50%;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        margin-bottom: 30px;
+        box-shadow: 0 10px 25px rgba(66, 133, 244, 0.3);
+        animation: pulse 3s infinite;
+      }
+
+      .legal-icon::before {
+        content: "📋";
+        font-size: 28px;
+      }
+
+      .page-title {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #2d3748;
+        margin-bottom: 10px;
+        letter-spacing: -0.02em;
+      }
+
+      .effective-date {
+        font-size: 1rem;
+        color: #718096;
+        font-weight: 500;
+        margin-bottom: 25px;
+        padding: 8px 16px;
+        background: rgba(66, 133, 244, 0.1);
+        border-radius: 20px;
+        display: inline-block;
+      }
+
+      .intro-text {
+        font-size: 1.1rem;
+        color: #4a5568;
+        margin-bottom: 40px;
+        line-height: 1.8;
+        text-align: left;
+      }
+
+      .brand-name {
+        color: #4285f4;
+        font-weight: 700;
+      }
+
+      .section {
+        margin-bottom: 35px;
+        padding: 25px;
+        background: rgba(255, 255, 255, 0.5);
+        border-radius: 16px;
+        border-left: 4px solid #4285f4;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .section:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+      }
+
+      .section-title {
+        font-size: 1.3rem;
+        font-weight: 600;
+        color: #2d3748;
+        margin-bottom: 15px;
+        display: flex;
+        align-items: center;
+      }
+
+      .section-number {
+        background: linear-gradient(135deg, #4285f4, #2563eb);
+        color: white;
+        width: 28px;
+        height: 28px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.9rem;
+        font-weight: 700;
+        margin-right: 15px;
+        flex-shrink: 0;
+      }
+
+      .section-content {
+        font-size: 1rem;
+        color: #4a5568;
+        line-height: 1.7;
+      }
+
+      .section-content ul {
+        margin: 15px 0;
+        padding-left: 20px;
+      }
+
+      .section-content li {
+        margin-bottom: 8px;
+        color: #4a5568;
+      }
+
+      .section-content li::marker {
+        color: #4285f4;
+      }
+
+      .highlight-box {
+        background: rgba(255, 193, 7, 0.1);
+        border: 1px solid rgba(255, 193, 7, 0.3);
+        border-radius: 12px;
+        padding: 20px;
+        margin: 20px 0;
+      }
+
+      .highlight-box strong {
+        color: #e65100;
+      }
+
+      .contact-section {
+        background: linear-gradient(135deg, #4285f4, #2563eb);
+        color: white;
+        text-align: center;
+        border-left: none;
+        padding: 40px 25px;
+      }
+
+      .contact-section .section-title {
+        color: white;
+        justify-content: center;
+      }
+
+      .contact-section .section-number {
+        background: rgba(255, 255, 255, 0.2);
+      }
+
+      .email-link {
+        display: inline-flex;
+        align-items: center;
+        color: white;
+        text-decoration: none;
+        font-weight: 600;
+        font-size: 1.1rem;
+        margin-top: 20px;
+        padding: 8px 24px;
+        background: rgba(0, 81, 255, 0.9);
+        border-radius: 50px;
+        transition: all 0.3s ease;
+      }
+
+      .email-link:hover {
+        /* background: rgba(255, 255, 255, 0.3); */
+        transform: scale(1.05);
+        box-shadow: 0 10px 25px rgba(66, 133, 244, 0.3);
+      }
+
+      .email-icon {
+        margin-right: 8px;
+        font-size: 1.2rem;
+      }
+
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .terms-container {
+          padding: 40px 30px;
+          border-radius: 20px;
+          margin: 20px;
+        }
+
+        .page-title {
+          font-size: 2rem;
+        }
+
+        .intro-text {
+          font-size: 1rem;
+        }
+
+        .section {
+          padding: 20px;
+          margin-bottom: 25px;
+        }
+
+        .legal-icon {
+          width: 60px;
+          height: 60px;
+        }
+
+        .legal-icon::before {
+          font-size: 24px;
+        }
+      }
+
+      @media (max-width: 480px) {
+        body {
+          padding: 20px 10px;
+        }
+
+        .terms-container {
+          padding: 30px 20px;
+          border-radius: 16px;
+          margin: 0;
+        }
+
+        .page-title {
+          font-size: 1.75rem;
+        }
+
+        .section-title {
+          font-size: 1.1rem;
+          flex-direction: column;
+          text-align: center;
+          gap: 10px;
+        }
+
+        .section-number {
+          margin-right: 0;
+        }
+
+        .section-content ul {
+          padding-left: 15px;
+        }
+      }
+
+      /* Animations */
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          transform: scale(1);
+          box-shadow: 0 10px 25px rgba(66, 133, 244, 0.3);
+        }
+        50% {
+          transform: scale(1.05);
+          box-shadow: 0 15px 35px rgba(66, 133, 244, 0.4);
+        }
+      }
+
+      /* Smooth scrolling */
+      html {
+        scroll-behavior: smooth;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="terms-container">
+      <div class="header">
+        <div class="legal-icon"></div>
+        <h1 class="page-title">
+          Terms of Service – <span class="brand-name">INFER@</span>
+        </h1>
+        <p class="intro-text">
+          Welcome to <strong class="brand-name">Infer@</strong>! By accessing or
+          using our services, website, or platform, you agree to the following
+          Terms of Service. Please read them carefully before using
+          <span class="brand-name">Infer@</span>.
+        </p>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">
+          <span class="section-number">1</span>
+          Acceptance of Terms
+        </h2>
+        <p class="section-content">
+          By using <span class="brand-name">Infer@</span>, you confirm that you
+          have read, understood, and agreed to these Terms of Service. If you do
+          not agree, please stop using our platform immediately.
+        </p>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">
+          <span class="section-number">2</span>
+          Use of the Platform
+        </h2>
+        <div class="section-content">
+          <ul>
+            <li>
+              <span class="brand-name">Infer@</span> provides digital tools,
+              resources, and solutions to enhance project management and
+              collaboration.
+            </li>
+            <li>
+              You agree to use the platform only for lawful purposes and in
+              compliance with all applicable laws.
+            </li>
+            <li>
+              You may not misuse, disrupt, or attempt to gain unauthorized
+              access to our systems.
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">
+          <span class="section-number">3</span>
+          Intellectual Property
+        </h2>
+        <div class="section-content">
+          <ul>
+            <li>
+              All content, designs, logos, code, and documentation available on
+              <span class="brand-name">Infer@</span> are the property of the
+              <span class="brand-name">Infer@</span> team unless otherwise
+              stated.
+            </li>
+            <li>
+              Users are not permitted to copy, modify, distribute, or exploit
+              content without prior written permission.
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">
+          <span class="section-number">4</span>
+          User Responsibilities
+        </h2>
+        <div class="section-content">
+          <ul>
+            <li>
+              You are responsible for maintaining the confidentiality of your
+              account and login details.
+            </li>
+            <li>
+              Any activity performed using your account will be deemed your
+              responsibility.
+            </li>
+            <li>
+              You agree not to upload harmful, offensive, or unlawful content.
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">
+          <span class="section-number">5</span>
+          Limitation of Liability
+        </h2>
+        <div class="section-content">
+          <div class="highlight-box">
+            <strong>Important:</strong> Please read this section carefully as it
+            limits our liability.
+          </div>
+          <ul>
+            <li>
+              <span class="brand-name">Infer@</span> is provided on an "as-is"
+              and "as-available" basis.
+            </li>
+            <li>
+              We are not liable for data loss, service interruptions, technical
+              errors, or third-party misuse.
+            </li>
+            <li>
+              To the fullest extent permitted by law,
+              <span class="brand-name">Infer@</span> disclaims all warranties,
+              express or implied.
+            </li>
+          </ul>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">
+          <span class="section-number">6</span>
+          Third-Party Links
+        </h2>
+        <p class="section-content">
+          <span class="brand-name">Infer@</span> may include links to external
+          websites or services. We do not control or endorse these third-party
+          platforms and are not responsible for their content or practices.
+        </p>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">
+          <span class="section-number">7</span>
+          Changes to Terms
+        </h2>
+        <p class="section-content">
+          We reserve the right to update or revise these Terms of Service at any
+          time. Updates will be posted on this page, and continued use of
+          <span class="brand-name">Infer@</span> means acceptance of the revised
+          terms.
+        </p>
+      </div>
+
+      <div class="section">
+        <h2 class="section-title">
+          <span class="section-number">8</span>
+          Governing Law
+        </h2>
+        <p class="section-content">
+          These Terms will be governed by and construed in accordance with the
+          laws of <strong>India</strong>, without regard to its conflict of law
+          principles.
+        </p>
+      </div>
+
+      <div class="section contact-section">
+        <h2 class="section-title">
+          Contact Us
+        </h2>
+        <p class="section-content">
+          <strong
+            >If you have any questions regarding these Terms of Service, please
+            contact us:</strong
+          >
+        </p>
+        <a
+          href="https://mail.google.com/mail/?view=cm&fs=1&to=inferadoc@gmail.com"
+          target="_blank"
+          class="email-link"
+        >
+          <span class="email-icon">📧</span>
+          <strong>inferadoc@gmail.com</strong>
+        </a>
+      </div>
+    </div>
+  </body>
+</html>
