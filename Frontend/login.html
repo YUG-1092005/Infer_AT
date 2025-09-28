@@ -288,7 +288,7 @@
         status.style.color = '#666';
         
         try {
-          const testUrl = `http://${ip}:5000/health`;
+          const testUrl = `https://credential-5ht0.onrender.com/api`;
           const response = await fetch(testUrl, { 
             method: 'GET',
             mode: 'cors',
@@ -296,7 +296,7 @@
           });
           
           if (response.ok) {
-            API_BASE = `http://${ip}:5000/api`;
+            API_BASE = `https://credential-5ht0.onrender.com/api`;
             status.textContent = '✅ Connected!';
             status.style.color = '#10b981';
             console.log('Connected to server:', API_BASE);
@@ -310,11 +310,11 @@
         }
       }
       
-      // Auto-try connection on load
-      window.addEventListener('load', () => {
-        document.getElementById('serverIP').value = '10.13.123.182';
-        connectToServer();
-      });
+      // // Auto-try connection on load
+      // window.addEventListener('load', () => {
+      //   document.getElementById('serverIP').value = '10.13.123.182';
+      //   connectToServer();
+      // });
       
       console.log('Initial API_BASE:', API_BASE);
 
